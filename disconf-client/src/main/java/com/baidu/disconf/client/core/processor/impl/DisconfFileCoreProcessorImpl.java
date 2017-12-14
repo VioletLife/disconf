@@ -3,6 +3,7 @@ package com.baidu.disconf.client.core.processor.impl;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.baidu.disconf.core.common.utils.FastjsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +21,6 @@ import com.baidu.disconf.client.store.processor.model.DisconfValue;
 import com.baidu.disconf.client.support.registry.Registry;
 import com.baidu.disconf.client.watch.WatchMgr;
 import com.baidu.disconf.core.common.constants.DisConfigTypeEnum;
-import com.baidu.disconf.core.common.utils.GsonUtils;
 
 /**
  * 配置文件处理器实现
@@ -144,7 +144,7 @@ public class DisconfFileCoreProcessorImpl implements DisconfCoreProcessor {
             DisConfCommonModel disConfCommonModel = disconfStoreProcessor.getCommonModel(fileName);
             if (watchMgr != null) {
                 watchMgr.watchPath(this, disConfCommonModel, fileName, DisConfigTypeEnum.FILE,
-                        GsonUtils.toJson(disconfCenterFile.getKV()));
+                        FastjsonUtils.toJson(disconfCenterFile.getKV()));
                 LOGGER.debug("watch ok.");
             } else {
                 LOGGER.warn("cannot monitor {} because watch mgr is null", fileName);

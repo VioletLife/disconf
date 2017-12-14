@@ -19,10 +19,15 @@ public class DisconfWebPathMgr {
 
     }
 
-    /**
-     * 获取 配置项 或者 是配置ITEM 的远程URL
+    /**获取 配置项 或者 是配置ITEM 的远程URL
      *
-     * @return
+     * @param urlPrefix  urlPrefix
+     * @param app app
+     * @param version version
+     * @param env env
+     * @param key key
+     * @param disConfigTypeEnum disConfigTypeEnum
+     * @return 获取 配置项 或者 是配置ITEM 的远程URL
      */
     public static String getRemoteUrlParameter(String urlPrefix, String app, String version, String env, String key,
                                                DisConfigTypeEnum disConfigTypeEnum) {
@@ -56,12 +61,20 @@ public class DisconfWebPathMgr {
         return sb.toString();
     }
 
+
+
+
+
     /**
-     * @return String
-     *
-     * @Description: 获取基本配置路径 的MAP
+     * 获取基本配置路径 的MAP
      * @author liaoqiqi
      * @date 2013-6-16
+     * disConfigTypeEnum
+     * @param app
+     * @param version
+     * @param env
+     * @param key
+     * @return
      */
     private static Map<String, String> getConfServerBasePathMap(String app, String version, String env, String key) {
 

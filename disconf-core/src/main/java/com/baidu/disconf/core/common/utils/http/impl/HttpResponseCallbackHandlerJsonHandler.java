@@ -2,6 +2,7 @@ package com.baidu.disconf.core.common.utils.http.impl;
 
 import java.io.IOException;
 
+import com.alibaba.fastjson.JSON;
 import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
 
@@ -23,8 +24,7 @@ public class HttpResponseCallbackHandlerJsonHandler<T> implements HttpResponseCa
 
         String json = EntityUtils.toString(entity, "UTF-8");
 
-        com.google.gson.Gson gson = new com.google.gson.Gson();
-        T response = gson.fromJson(json, clazz);
+        T response = JSON.parseObject(json,clazz);
 
         return response;
     }

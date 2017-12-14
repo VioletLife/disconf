@@ -1,6 +1,7 @@
 package com.baidu.disconf.core.test.restful;
 
 import java.io.File;
+import java.nio.charset.Charset;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
@@ -71,7 +72,7 @@ public class RestfulMgrTestCase extends BaseCoreTestCase {
                     true, 3, 3);
 
             File file = new File(downloadFilePath);
-            String content = FileUtils.readFileToString(file);
+            String content = FileUtils.readFileToString(file, Charset.forName("UTF-8"));
             Assert.assertEquals(RemoteMockServer.FILE_CONTENT, content);
 
         } catch (Exception e) {

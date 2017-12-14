@@ -3,6 +3,7 @@ package com.baidu.disconf.core.test.zookeeper;
 import java.util.List;
 import java.util.Random;
 
+import mockit.Expectations;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -10,7 +11,6 @@ import com.baidu.disconf.core.common.zookeeper.ZookeeperMgr;
 import com.baidu.disconf.core.common.zookeeper.inner.ResilientActiveKeyValueStore;
 import com.baidu.disconf.core.test.zookeeper.mock.ResilientActiveKeyValueStoreMock;
 
-import mockit.NonStrictExpectations;
 
 /**
  * 使用Jmockit进行测试
@@ -28,13 +28,14 @@ public class ZookeeperMgrTest {
 
         final ZookeeperMgr obj = ZookeeperMgr.getInstance();
 
+
         //
         // 注入
         //
-        new NonStrictExpectations(obj) {
+        new Expectations(obj) {
             {
                 ResilientActiveKeyValueStore store = new ResilientActiveKeyValueStoreMock();
-                this.setField(obj, "store", store);
+//                this.setField(obj, "store", store);
             }
         };
 

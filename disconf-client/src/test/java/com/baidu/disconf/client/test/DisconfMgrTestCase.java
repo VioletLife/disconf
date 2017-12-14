@@ -3,6 +3,8 @@ package com.baidu.disconf.client.test;
 import java.util.HashSet;
 import java.util.Set;
 
+import mockit.Mock;
+import mockit.MockUp;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -30,9 +32,6 @@ import com.baidu.disconf.client.test.scan.inner.ScanPackTestCase;
 import com.baidu.disconf.client.test.watch.mock.WatchMgrMock;
 import com.baidu.disconf.client.usertools.DisconfDataGetter;
 import com.baidu.disconf.client.watch.WatchMgr;
-
-import mockit.Mock;
-import mockit.MockUp;
 
 /**
  * 一个Demo示例, 远程的下载服务器使用WireMOck, Watch模块使用Jmockit

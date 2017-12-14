@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import afu.org.checkerframework.checker.oigj.qual.O;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanWrapper;
@@ -42,7 +43,9 @@ public class ReloadingPropertyPlaceholderConfigurer extends DefaultPropertyPlace
 
     protected static final Logger logger = LoggerFactory.getLogger(ReloadingPropertyPlaceholderConfigurer.class);
 
-    // 默认的 property 标识符
+    /**
+     *  默认的 property 标识符
+     */
     private String placeholderPrefix = DEFAULT_PLACEHOLDER_PREFIX;
 
     private String placeholderSuffix = DEFAULT_PLACEHOLDER_SUFFIX;
@@ -97,6 +100,26 @@ public class ReloadingPropertyPlaceholderConfigurer extends DefaultPropertyPlace
         return super.parseStringValue(buf.toString(), props, visitedPlaceholders);
     }
 
+
+    /**
+     * Resolve the given placeholder using the given properties.
+     * The default implementation simply checks for a corresponding property key.
+     * <p>Subclasses can override this for customized placeholder-to-key mappings
+     * or custom resolution strategies, possibly just using the given properties
+     * as fallback.
+     * <p>Note that system properties will still be checked before respectively
+     * after this method is invoked, according to the system properties mode.
+     *
+     * @param placeholder the placeholder to resolve
+     * @param props       the merged properties of this configurer
+     * @return the resolved value, of {@code null} if none
+     * @see #setSystemPropertiesMode
+     */
+    @Override
+    protected String resolvePlaceholder(String placeholder, Properties props) {
+        return super.resolvePlaceholder(placeholder, props);
+    }
+
     /**
      * @param currentBeanName     当前的bean name
      * @param currentPropertyName 当前它的属性
@@ -123,6 +146,7 @@ public class ReloadingPropertyPlaceholderConfigurer extends DefaultPropertyPlace
      *
      * @throws IOException
      */
+    @Override
     protected Properties mergeProperties() throws IOException {
         Properties properties = super.mergeProperties();
         this.lastMergedProperties = properties;
@@ -134,6 +158,7 @@ public class ReloadingPropertyPlaceholderConfigurer extends DefaultPropertyPlace
      *
      * @param event
      */
+    @Override
     public void propertiesReloaded(PropertiesReloadedEvent event) {
 
         Properties oldProperties = lastMergedProperties;
@@ -293,6 +318,7 @@ public class ReloadingPropertyPlaceholderConfigurer extends DefaultPropertyPlace
             return propertyName;
         }
 
+        @Override
         public boolean equals(Object o) {
             if (this == o) {
                 return true;
@@ -313,6 +339,7 @@ public class ReloadingPropertyPlaceholderConfigurer extends DefaultPropertyPlace
             return true;
         }
 
+        @Override
         public int hashCode() {
             int result;
             result = (beanName != null ? beanName.hashCode() : 0);
@@ -364,6 +391,7 @@ public class ReloadingPropertyPlaceholderConfigurer extends DefaultPropertyPlace
      * copy & paste, just so we can insert our own visitor.
      * 启动时 进行配置的解析
      */
+    @Override
     protected void processProperties(ConfigurableListableBeanFactory beanFactoryToProcess, Properties props)
             throws BeansException {
 
@@ -403,6 +431,7 @@ public class ReloadingPropertyPlaceholderConfigurer extends DefaultPropertyPlace
      * afterPropertiesSet
      * 将自己 添加 property listener
      */
+    @Override
     public void afterPropertiesSet() {
         for (Properties properties : propertiesArray) {
             if (properties instanceof ReloadableProperties) {
@@ -418,6 +447,7 @@ public class ReloadingPropertyPlaceholderConfigurer extends DefaultPropertyPlace
      *
      * @throws Exception
      */
+    @Override
     public void destroy() throws Exception {
         for (Properties properties : propertiesArray) {
             if (properties instanceof ReloadableProperties) {
@@ -438,6 +468,7 @@ public class ReloadingPropertyPlaceholderConfigurer extends DefaultPropertyPlace
             this.props = props;
         }
 
+        @Override
         protected void visitPropertyValues(MutablePropertyValues pvs) {
             PropertyValue[] pvArray = pvs.getPropertyValues();
             for (PropertyValue pv : pvArray) {
@@ -453,6 +484,7 @@ public class ReloadingPropertyPlaceholderConfigurer extends DefaultPropertyPlace
             }
         }
 
+        @Override
         protected String resolveStringValue(String strVal) throws BeansException {
             return parseStringValue(strVal, this.props, new HashSet());
         }
@@ -480,34 +512,41 @@ public class ReloadingPropertyPlaceholderConfigurer extends DefaultPropertyPlace
      */
     private ApplicationContext applicationContext;
 
+    @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
 
+    @Override
     public void setProperties(Properties properties) {
         setPropertiesArray(new Properties[] {properties});
     }
 
+    @Override
     public void setPropertiesArray(Properties[] propertiesArray) {
         this.propertiesArray = propertiesArray;
         super.setPropertiesArray(propertiesArray);
     }
 
+    @Override
     public void setPlaceholderPrefix(String placeholderPrefix) {
         this.placeholderPrefix = placeholderPrefix;
         super.setPlaceholderPrefix(placeholderPrefix);
     }
 
+    @Override
     public void setPlaceholderSuffix(String placeholderSuffix) {
         this.placeholderSuffix = placeholderSuffix;
         super.setPlaceholderSuffix(placeholderPrefix);
     }
 
+    @Override
     public void setBeanName(String beanName) {
         this.beanName = beanName;
         super.setBeanName(beanName);
     }
 
+    @Override
     public void setBeanFactory(BeanFactory beanFactory) {
         this.beanFactory = beanFactory;
         super.setBeanFactory(beanFactory);
