@@ -6,6 +6,8 @@ import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.Watcher.Event.EventType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author liaoqiqi
@@ -13,19 +15,39 @@ import org.apache.zookeeper.Watcher.Event.EventType;
  */
 public class ConfigWatcher implements Watcher {
 
+
+    Logger logger = LoggerFactory.getLogger(ConfigUpdater.class);
+
     private ResilientActiveKeyValueStore store;
 
+    /**
+     * 构造器
+     *
+     * @param hosts host地址
+     * @throws IOException          Zookeeper异常
+     * @throws InterruptedException Zookeeper异常
+     */
     public ConfigWatcher(String hosts) throws IOException, InterruptedException {
         store = new ResilientActiveKeyValueStore(true);
         store.connect(hosts);
     }
 
+    /**
+     * 显示配置信息
+     * @throws InterruptedException  Zookeeper异常
+     * @throws KeeperException Zookeeper异常
+     */
     public void displayConfig() throws InterruptedException, KeeperException {
-
         String value = store.read(ConfigUpdater.PATH, this, null);
-        System.out.printf("Read %s as %s\n", ConfigUpdater.PATH, value);
+        if (logger.isInfoEnabled()) {
+            logger.info(String.format("Read %s as %s\n", ConfigUpdater.PATH, value));
+        }
     }
 
+    /**
+     * Zookeeper 节点内容变动事件处理
+     * @param event 事件
+     */
     @Override
     public void process(WatchedEvent event) {
 
@@ -33,10 +55,14 @@ public class ConfigWatcher implements Watcher {
             try {
                 displayConfig();
             } catch (InterruptedException e) {
-                System.err.println("Interrupted. Exiting.");
+                if (logger.isErrorEnabled()) {
+                    logger.error("Interrupted. Exiting.");
+                }
                 Thread.currentThread().interrupt();
             } catch (KeeperException e) {
-                System.err.printf("KeeperException: %s. Exiting.\n", e);
+                if (logger.isErrorEnabled()) {
+                    logger.error("KeeperException: %s. Exiting.\n", e);
+                }
             }
         }
 

@@ -44,6 +44,10 @@ class ProtocolSupport {
     private int retryCount = 10;
     private List<ACL> acl = ZooDefs.Ids.OPEN_ACL_UNSAFE;
 
+    /**
+     * ZooKeeper 实例
+     * @param zookeeper ZooKeeper 实例
+     */
     public ProtocolSupport(ZooKeeper zookeeper) {
         this.zookeeper = zookeeper;
     }
@@ -140,7 +144,7 @@ class ProtocolSupport {
      * Ensures that the given path exists with no data, the current
      * ACL and no flags
      *
-     * @param path
+     * @param path path
      */
     protected void ensurePathExists(String path) {
         ensureExists(path, null, acl, CreateMode.PERSISTENT);
@@ -149,9 +153,9 @@ class ProtocolSupport {
     /**
      * Ensures that the given path exists with the given data, ACL and flags
      *
-     * @param path
-     * @param acl
-     * @param flags
+     * @param path Path
+     * @param acl ACL
+     * @param flags flags
      */
     protected void ensureExists(final String path, final byte[] data, final List<ACL> acl, final CreateMode flags) {
         try {

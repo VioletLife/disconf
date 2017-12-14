@@ -21,8 +21,13 @@ public class RemoteUrl {
 
     private List<URL> urls = new ArrayList<URL>();
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(RemoteUrl.class);
+    protected static final Logger logger = LoggerFactory.getLogger(RemoteUrl.class);
 
+    /**
+     * 远程对象URL表示，包括Host地址 和 URL
+     * @param url URL
+     * @param serverList Host地址
+     */
     public RemoteUrl(String url, List<String> serverList) {
 
         this.url = url;
@@ -42,29 +47,49 @@ public class RemoteUrl {
                 urls.add(new URL(server + url));
 
             } catch (MalformedURLException e) {
-                LOGGER.error(e.toString());
+                logger.error(e.toString());
             }
         }
     }
 
+    /**
+     * 获取URL
+     * @return URL
+     */
     public String getUrl() {
         return url;
     }
 
+    /**
+     * 设置URL
+     * @param url URL
+     */
     public void setUrl(String url) {
         this.url = url;
     }
 
+    /**
+     * 服务列表
+     * @return 服务列表
+     */
     public List<String> getServerList() {
         return serverList;
     }
 
+    /**
+     * 设置服务列表
+     * @param serverList 服务列表
+     */
     public void setServerList(List<String> serverList) {
         this.serverList = serverList;
     }
 
-    public List<URL> getUrls() {
 
+    /**
+     * 获取所有的URL
+     * @return
+     */
+    public List<URL> getUrls() {
         return urls;
     }
 

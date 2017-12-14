@@ -23,15 +23,11 @@ public final class OsUtil {
 
     }
 
+
     /**
-     * 建多层目录
      *
-     * @param filePath
-     *
-     * @return boolean
-     *
-     * @throws
-     * @Description: make directory
+     * @param filePath 创建文件路径
+     * @return 路径是否创建成功
      */
     public static boolean makeDirs(final String filePath) {
         File f = new File(filePath);
@@ -42,13 +38,12 @@ public final class OsUtil {
         return true;
     }
 
+
     /**
-     * @param filePathString
-     *
-     * @return boolean
-     *
-     * @throws Exception
-     * @Description: 文件或目录是否存在
+     * 文件是否存在
+     * @param filePathString 文件路径
+     * @return 是否存在
+     * @throws Exception 内部异常
      * @author liaoqiqi
      * @date 2013-6-13
      */
@@ -59,14 +54,11 @@ public final class OsUtil {
     }
 
     /**
-     * @param pathElements
-     *
-     * @return boolean
-     *
-     * @throws Exception
-     * @Description: JOIN PATH
+     * 合并路径
+     * @param pathElements 多个路径值
+     * @return 合并后的完整路径
      * @author liaoqiqi
-     * @date 2013-6-13
+     *  @date 2013-6-13
      */
     public static String pathJoin(final String... pathElements) {
 
@@ -77,7 +69,7 @@ public final class OsUtil {
 
         } else {
 
-            final StringBuffer sb = new StringBuffer();
+            final StringBuilder sb = new StringBuilder();
 
             for (final String pathElement : pathElements) {
 
@@ -97,10 +89,11 @@ public final class OsUtil {
         return (path);
     }
 
-    /**
-     * 获取File相对于Folder的相对路径
-     * <p/>
-     * returns null if file isn't relative to folder
+    /**获取File相对于Folder的相对路径，如果不存在相对关系，则直接返回null
+     * 相对路径
+     * @param file 文件
+     * @param folder 目录
+     * @return 相对路径
      */
     public static String getRelativePath(File file, File folder) {
 
@@ -115,14 +108,12 @@ public final class OsUtil {
     }
 
     /**
-     * @param src
-     * @param dest
      *
-     * @return void
-     *
-     * @Description: 转移文件
-     * @author liaoqiqi
+     * @param src 源文件
+     * @param dest 目标文件
+     * @throws Exception 内部异常
      * @date 2013-6-20
+     * @author liaoqiqi
      */
     public static void transferFile(File src, File dest) throws Exception {
 
@@ -138,14 +129,13 @@ public final class OsUtil {
     }
 
     /**
-     * @param src
-     * @param dest
-     *
-     * @return void
-     *
-     * @Description: 具有重试机制的 ATOM 转移文件 ，并且会校验文件是否一致 才替换
+     * 具有重试机制的 ATOM 转移文件 ，并且会校验文件是否一致 才替换
+     * @param src 源文件
+     * @param dest 目标文件
+     * @param isDeleteSource  是否删除原
      * @author liaoqiqi
      * @date 2013-6-20
+     * @throws Exception 内部异常
      */
     public static void transferFileAtom(File src, File dest, boolean isDeleteSource) throws Exception {
 

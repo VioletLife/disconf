@@ -13,11 +13,21 @@ public enum DisConfigTypeEnum {
     private int type = 0;
     private String modelName = null;
 
+    /**
+     * 构造器
+     * @param type 类型值
+     * @param modelName 名称
+     */
     private DisConfigTypeEnum(int type, String modelName) {
         this.type = type;
         this.modelName = modelName;
     }
 
+    /**
+     * 根据类型值获取 {@link com.baidu.disconf.core.common.constants.DisConfigTypeEnum}
+     * @param type 类型值
+     * @return
+     */
     public static DisConfigTypeEnum getByType(int type) {
 
         int index = 0;
@@ -33,18 +43,34 @@ public enum DisConfigTypeEnum {
         return null;
     }
 
+    /**
+     * 类型
+     * @return 类型
+     */
     public int getType() {
         return type;
     }
 
+    /**
+     * 设置类型值
+     * @param type 类型值
+     */
     public void setType(int type) {
         this.type = type;
     }
 
+    /**
+     * 获取名称
+     * @return 名称
+     */
     public String getModelName() {
         return modelName;
     }
 
+    /**
+     * 设置名称
+     * @param modelName 名称
+     */
     public void setModelName(String modelName) {
         this.modelName = modelName;
     }

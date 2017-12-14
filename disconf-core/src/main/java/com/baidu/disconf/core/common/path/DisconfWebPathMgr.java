@@ -34,10 +34,12 @@ public class DisconfWebPathMgr {
 
         Map<String, String> parameterMap = getConfServerBasePathMap(app, version, env, key);
 
-        // 配置文件或配置项
+        /**
+         * 配置文件或配置项
+         */
         parameterMap.put(Constants.TYPE, String.valueOf(disConfigTypeEnum.getType()));
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append(urlPrefix);
 
         if (disConfigTypeEnum.getType() == DisConfigTypeEnum.FILE.getType()) {
@@ -70,11 +72,11 @@ public class DisconfWebPathMgr {
      * @author liaoqiqi
      * @date 2013-6-16
      * disConfigTypeEnum
-     * @param app
-     * @param version
-     * @param env
-     * @param key
-     * @return
+     * @param app  app
+     * @param version version
+     * @param env env
+     * @param key key
+     * @return 配置信息
      */
     private static Map<String, String> getConfServerBasePathMap(String app, String version, String env, String key) {
 
@@ -89,9 +91,8 @@ public class DisconfWebPathMgr {
     }
 
     /**
-     * 获取 Disconf-Web 上的ZOO获取URL地址
-     *
-     * @return
+     * 获取 Disconf-Web 上的ZOO URL地址
+     * @return URL地址
      */
     public static String getZooHostsUrl(String urlPrefix) {
 
@@ -101,7 +102,7 @@ public class DisconfWebPathMgr {
     /**
      * 获取 Disconf-Web 上的ZOO PrefixURL
      *
-     * @return
+     * @return PrefixURL
      */
     public static String getZooPrefixUrl(String urlPrefix) {
 

@@ -24,8 +24,10 @@ public final class FileUtils extends org.apache.commons.io.FileUtils {
 
     }
 
+
     /**
-     * 关闭文件流
+     *  关闭文件流
+     * @param w 写入流
      */
     public static final void closeWriter(Writer w) {
         if (w != null) {
@@ -37,8 +39,10 @@ public final class FileUtils extends org.apache.commons.io.FileUtils {
         }
     }
 
+
     /**
      * 关闭文件流
+     * @param r 读取流
      */
     public static final void closeReader(Reader r) {
         if (r != null) {
@@ -50,8 +54,10 @@ public final class FileUtils extends org.apache.commons.io.FileUtils {
         }
     }
 
+
     /**
      * 关闭文件流
+     * @param os 关闭输出流
      */
     public static final void closeOutputStream(OutputStream os) {
         if (os != null) {
@@ -65,6 +71,7 @@ public final class FileUtils extends org.apache.commons.io.FileUtils {
 
     /**
      * 关闭文件流
+     * @param is 关闭输入流
      */
     public static final void closeInputStream(InputStream is) {
         if (is != null) {
@@ -80,13 +87,11 @@ public final class FileUtils extends org.apache.commons.io.FileUtils {
      * 使用jar包：commons-codec-1.4.jar的md5比较方法 <br/>
      * http://blog.csdn.net/very365_1208/article/details/8824033
      *
-     * @param oldName
-     * @param newName
-     *
-     * @return
+     * @param oldName 旧文件名
+     * @param newName 新文件名
+     * @return 是否相等
      */
     public static boolean isFileUpdate(String oldName, String newName) {
-
         return isFileEqual(new File(oldName), new File(newName));
     }
 
@@ -95,10 +100,9 @@ public final class FileUtils extends org.apache.commons.io.FileUtils {
      * http://www.avajava.com/tutorials/lessons/whats-a-quick-way
      * -to-tell-if-the-contents-of-two-files-are-identical-or-not.html
      *
-     * @param oldFile
-     * @param newFile
-     *
-     * @return
+     * @param oldFile 旧文件
+     * @param newFile 新文件
+     * @return 是否相等
      */
     public static boolean isFileEqual(File oldFile, File newFile) {
 

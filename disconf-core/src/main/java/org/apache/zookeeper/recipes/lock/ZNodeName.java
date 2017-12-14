@@ -31,6 +31,7 @@ class ZNodeName implements Comparable<ZNodeName> {
     private int sequence = -1;
     private static final Logger LOG = LoggerFactory.getLogger(ZNodeName.class);
 
+
     public ZNodeName(String name) {
         if (name == null) {
             throw new NullPointerException("id cannot be null");
@@ -80,6 +81,8 @@ class ZNodeName implements Comparable<ZNodeName> {
         return name.hashCode() + 37;
     }
 
+
+    @Override
     public int compareTo(ZNodeName that) {
         int answer = this.prefix.compareTo(that.prefix);
         if (answer == 0) {

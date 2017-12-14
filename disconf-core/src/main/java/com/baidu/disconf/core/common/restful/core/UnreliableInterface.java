@@ -8,6 +8,12 @@ package com.baidu.disconf.core.common.restful.core;
  */
 public interface UnreliableInterface {
 
+    /**
+     *
+     * @param <T> 泛型参数
+     * @return 泛型返回值
+     * @throws Exception 内部异常
+     */
     <T> T call() throws Exception;
 
 }

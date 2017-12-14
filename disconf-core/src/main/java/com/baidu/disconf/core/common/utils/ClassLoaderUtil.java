@@ -13,25 +13,29 @@ import org.slf4j.LoggerFactory;
  */
 public final class ClassLoaderUtil {
 
-    protected static final Logger LOGGER = LoggerFactory
+    protected static final Logger logger = LoggerFactory
             .getLogger(ClassLoaderUtil.class);
 
-    // class path
+    /**
+     * class path
+     */
     private static String classPath = "";
 
-    // loader
+    /**
+     * 当前线程上下文类加载器
+     */
     private static ClassLoader loader = Thread.currentThread().getContextClassLoader();
 
     private ClassLoaderUtil() {
     }
 
-    //
-    // get class path
-    //
+    /**
+     * ClassLoader初始化
+     */
     static {
 
         if (loader == null) {
-            LOGGER.info("using system class loader!");
+            logger.info("using system class loader!");
             loader = ClassLoader.getSystemClassLoader();
         }
 
@@ -45,7 +49,7 @@ public final class ClassLoaderUtil {
 
             // 如果是jar包内的，则返回当前路径
             if (classPath.contains(".jar!")) {
-                LOGGER.warn("using config file inline jar!" + classPath);
+                logger.warn("using config file inline jar!" + classPath);
                 classPath = System.getProperty("user.dir");
 
                 //
@@ -53,19 +57,21 @@ public final class ClassLoaderUtil {
             }
 
         } catch (Exception e) {
-            LOGGER.warn("cannot get classpath using getResource(), now using user.dir");
+            logger.warn("cannot get classpath using getResource(), now using user.dir");
             classPath = System.getProperty("user.dir");
 
             //
             addCurrentWorkingDir2Classpath(classPath);
         }
 
-        LOGGER.info("classpath: {}", classPath);
+        logger.info("classpath: {}", classPath);
     }
 
     /**
+     *
      * only support 1.7 or higher
      * http://stackoverflow.com/questions/252893/how-do-you-change-the-classpath-within-java
+     * @param path2Added 路径
      */
     private static void addCurrentWorkingDir2Classpath(String path2Added) {
 
@@ -79,14 +85,22 @@ public final class ClassLoaderUtil {
             // you have permissions to do so
             Thread.currentThread().setContextClassLoader(urlClassLoader);
         } catch (Exception e) {
-            LOGGER.warn(e.toString());
+            logger.warn(e.toString());
         }
     }
 
+    /**
+     * ClassPath 路径
+     * @return ClassPath 路径
+     */
     public static String getClassPath() {
         return classPath;
     }
 
+    /**
+     * 获取ClassLoader
+     * @return 获取ClassLoader
+     */
     public static ClassLoader getLoader() {
         return loader;
     }

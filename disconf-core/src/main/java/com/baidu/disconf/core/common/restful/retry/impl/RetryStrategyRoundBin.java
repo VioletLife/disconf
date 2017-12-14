@@ -14,13 +14,19 @@ import com.baidu.disconf.core.common.restful.retry.RetryStrategy;
  */
 public class RetryStrategyRoundBin implements RetryStrategy {
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(RetryStrategyRoundBin.class);
+    protected static final Logger logger = LoggerFactory.getLogger(RetryStrategyRoundBin.class);
 
     /**
-     * @param unreliableImpl
-     * @param retryTimes
-     * @param sleepSeconds
+     * 执行重试过程
+     *
+     * @param unreliableImpl 实现类
+     * @param retryTimes     重试次数
+     * @param sleepSeconds   睡眠时间(秒)
+     * @param <T>            泛型类
+     * @return 泛型类T实例
+     * @throws Exception 内部异常
      */
+    @Override
     public <T> T retry(UnreliableInterface unreliableImpl, int retryTimes, int sleepSeconds) throws Exception {
 
         int cur_time = 0;
@@ -32,7 +38,7 @@ public class RetryStrategyRoundBin implements RetryStrategy {
 
             } catch (Exception e) {
 
-                LOGGER.warn("cannot reach, will retry " + cur_time + " .... " + e.toString());
+                logger.warn("cannot reach, will retry " + cur_time + " .... " + e.toString());
 
                 try {
                     Thread.sleep(sleepSeconds * 1000);
@@ -41,7 +47,7 @@ public class RetryStrategyRoundBin implements RetryStrategy {
             }
         }
 
-        LOGGER.warn("finally failed....");
+        logger.warn("finally failed....");
 
         throw new Exception();
     }

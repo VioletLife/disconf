@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class ZooUtils {
 
-    protected static final Logger LOGGER = LoggerFactory
+    protected static final Logger logger = LoggerFactory
             .getLogger(ZooUtils.class);
 
     private ZooUtils() {
@@ -19,16 +19,16 @@ public final class ZooUtils {
     }
 
     /**
-     * 一个可读性良好的路径Value
+     * 获取机器IP
      *
-     * @return
+     * @return 机器IP
      */
     public static String getIp() {
 
         try {
             return MachineInfo.getHostIp();
         } catch (Exception e) {
-            LOGGER.error("cannot get host info", e);
+            logger.error("cannot get host info", e);
             return "";
         }
     }

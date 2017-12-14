@@ -15,10 +15,11 @@ public final class MachineInfo {
 
     }
 
+
     /**
-     * @return
-     *
-     * @Description: 获取机器名
+     *  获取机器名
+     * @return 机器名
+     * @throws Exception 内部异常
      */
     public static String getHostName() throws Exception {
 
@@ -34,10 +35,11 @@ public final class MachineInfo {
         }
     }
 
+
     /**
-     * @return
-     *
-     * @Description: 获取机器名
+     *  获取机器IP
+     * @return 机器IP
+     * @throws Exception 内部异常
      */
     public static String getHostIp() throws Exception {
 

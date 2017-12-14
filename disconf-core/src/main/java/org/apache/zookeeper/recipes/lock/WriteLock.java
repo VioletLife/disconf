@@ -118,6 +118,7 @@ public class WriteLock extends ProtocolSupport {
             try {
 
                 ZooKeeperOperation zopdel = new ZooKeeperOperation() {
+                    @Override
                     public boolean execute() throws KeeperException, InterruptedException {
                         zookeeper.delete(id, -1);
                         return Boolean.TRUE;
@@ -149,6 +150,7 @@ public class WriteLock extends ProtocolSupport {
      * my predecessor
      */
     private class LockWatcher implements Watcher {
+        @Override
         public void process(WatchedEvent event) {
             // lets either become the leader or watch the new/updated node
             LOG.debug("Watcher fired on path: " + event.getPath() + " state: " +
@@ -205,6 +207,7 @@ public class WriteLock extends ProtocolSupport {
          *
          * @return if the command was successful or not
          */
+        @Override
         public boolean execute() throws KeeperException, InterruptedException {
             do {
                 if (id == null) {

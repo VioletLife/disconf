@@ -8,7 +8,7 @@ import java.util.UUID;
 public class MyStringUtils {
 
     /**
-     *
+     * 获取UUID，去除-符号
      */
     private static String getUUID() {
 
@@ -18,7 +18,7 @@ public class MyStringUtils {
     }
 
     /**
-     *
+     * 获取随机名称
      */
     public static String getRandomName(String name) {
 

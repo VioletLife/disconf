@@ -1,5 +1,7 @@
 package com.baidu.disconf.core.common.constants;
 
+import java.nio.charset.Charset;
+
 /**
  * @author liaoqiqi
  * @version 2014-6-6
@@ -34,8 +36,26 @@ public class Constants {
     public final static String ZOO_HOSTS_URL_KEY = "hosts";
     public final static String ZOO_HOSTS_URL_PREFIX_KEY = "prefix";
 
-    // 通知Zookeeper更新配置的消息
+    /**
+     * 通知Zookeeper更新配置的消息
+     */
     public final static String ZOO_UPDATE_STRING = "UPDATE-NOTIFYING";
 
+    /**
+     * 路径分隔符
+     */
     public final static String SEP_STRING = "/";
+
+    /**
+     * 应用分隔符
+     */
+    public final static String SEP_APP="_";
+
+    /**
+     * 默认的HTTP字符集 UTF-8
+     */
+    public final static Charset DEFAULT_HTTP_CHARSET=Charset.forName("UTF-8");
+
+
+
 }

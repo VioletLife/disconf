@@ -19,6 +19,14 @@ public class HttpResponseCallbackHandlerJsonHandler<T> implements HttpResponseCa
         this.clazz = clazz;
     }
 
+
+    /**
+     * 捕获HttpResponse
+     * @param requestBody 请求体
+     * @param entity HTTP实体对象
+     * @return 返回T实例对象
+     * @throws IOException 内部异常
+     */
     @Override
     public T handleResponse(String requestBody, HttpEntity entity) throws IOException {
 

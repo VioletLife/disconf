@@ -25,7 +25,7 @@ import com.baidu.disconf.core.common.utils.http.HttpClientUtil;
  */
 public class RestfulMgrImpl implements RestfulMgr {
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(RestfulMgrImpl.class);
+    protected static final Logger logger = LoggerFactory.getLogger(RestfulMgrImpl.class);
 
     /**
      * 重试策略
@@ -41,13 +41,12 @@ public class RestfulMgrImpl implements RestfulMgr {
     /**
      * 获取JSON数据
      *
-     * @param clazz
-     * @param remoteUrl
-     *
-     * @return
-     *
-     * @throws Exception
+     * @param clazz 类
+     * @param remoteUrl 远程URL
+     * @return JSON数据
+     * @throws Exception 内部异常
      */
+    @Override
     public <T> T getJsonData(Class<T> clazz, RemoteUrl remoteUrl, int retryTimes, int retrySleepSeconds)
             throws Exception {
         Exception ex = null;
@@ -67,7 +66,7 @@ public class RestfulMgrImpl implements RestfulMgr {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e1) {
-                    LOGGER.info("pass");
+                    logger.info("pass");
                 }
             }
         }
@@ -75,16 +74,18 @@ public class RestfulMgrImpl implements RestfulMgr {
         throw new Exception("cannot get: " + remoteUrl, ex);
     }
 
+
     /**
-     * @param remoteUrl         远程地址
-     * @param fileName          文件名
-     * @param localFileDir      本地文件地址
-     * @param targetDirPath     下载完后，配置文件指定的文件目录
-     * @param retryTimes
-     * @param retrySleepSeconds
      *
-     * @return
-     *
+     * @param remoteUrl     远程地址
+     * @param fileName      文件名
+     * @param localFileDir  本地文件地址
+     * @param localFileDirTemp  临时文件地址
+     * @param targetDirPath 下载完后，配置文件放到此目录下
+     * @param enableLocalDownloadDirInClassPath 是否下载到classpath中
+     * @param retryTimes 重试次数
+     * @param retrySleepSeconds 重试睡眠时间
+     * @return  文件路径
      * @throws Exception
      */
     @Override
@@ -119,11 +120,11 @@ public class RestfulMgrImpl implements RestfulMgr {
                 }
             }
 
-            LOGGER.debug("Move to: " + localFile.getAbsolutePath());
+            logger.debug("Move to: " + localFile.getAbsolutePath());
 
         } catch (Exception e) {
 
-            LOGGER.warn("download file failed, using previous download file.", e);
+            logger.warn("download file failed, using previous download file.", e);
         }
 
         //
@@ -150,20 +151,24 @@ public class RestfulMgrImpl implements RestfulMgr {
         return localFile.getAbsolutePath();
     }
 
+    /**
+     * 清理HttpClient
+     */
     @Override
     public void close() {
         HttpClientUtil.close();
     }
 
+
     /**
-     * 可重试的下载
      *
-     * @param fileName
-     * @param remoteUrl
-     * @param retryTimes
-     * @param retrySleepSeconds
-     *
-     * @throws Exception
+     * @param localFileDirTemp 本地文件临时目录
+     * @param fileName 文件名称
+     * @param remoteUrl 远程URl地址
+     * @param retryTimes 重试次数
+     * @param retrySleepSeconds 休眠时间(秒)
+     * @return 文件对象 {@link File}
+     * @throws Exception 内部异常
      */
     private File retryDownload(String localFileDirTemp, String fileName, RemoteUrl remoteUrl, int retryTimes, int
             retrySleepSeconds)
@@ -180,16 +185,17 @@ public class RestfulMgrImpl implements RestfulMgr {
         return tmpFilePathUniqueFile;
     }
 
+
+
     /**
-     * copy/mv 到指定目录
      *
-     * @param srcFile
-     * @param targetDirPath
-     * @param fileName
-     *
-     * @return
-     *
-     * @throws Exception
+     * 拷贝或者移动文件到指定目录
+     * @param srcFile 源文件
+     * @param targetDirPath 目标路径
+     * @param fileName 文件名称
+     * @param isMove 是否移动
+     * @return 文件对象 {@link File}
+     * @throws Exception 内部异常
      */
     private File transfer2SpecifyDir(File srcFile, String targetDirPath, String fileName,
                                      boolean isMove) throws Exception {
@@ -204,15 +210,16 @@ public class RestfulMgrImpl implements RestfulMgr {
 
     }
 
+
+
     /**
      * Retry封装 RemoteUrl 支持多Server的下载
-     *
-     * @param remoteUrl
-     * @param localTmpFile
-     * @param retryTimes
-     * @param sleepSeconds
-     *
-     * @return
+     * @param remoteUrl 远程URL路径
+     * @param localTmpFile 本地临时文件
+     * @param retryTimes 重试次数
+     * @param sleepSeconds 睡眠时间(秒)
+     * @return 下载返回的对象
+     * @throws Exception 内部异常
      */
     private Object retry4ConfDownload(RemoteUrl remoteUrl, File localTmpFile, int retryTimes, int sleepSeconds)
             throws Exception {
@@ -231,7 +238,7 @@ public class RestfulMgrImpl implements RestfulMgr {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e1) {
-                    LOGGER.info("pass");
+                    logger.info("pass");
                 }
             }
         }

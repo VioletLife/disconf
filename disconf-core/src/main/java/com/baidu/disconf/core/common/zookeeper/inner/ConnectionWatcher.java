@@ -19,12 +19,16 @@ import org.slf4j.LoggerFactory;
  */
 public class ConnectionWatcher implements Watcher {
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(ConnectionWatcher.class);
+    protected static final Logger logger = LoggerFactory.getLogger(ConnectionWatcher.class);
 
-    // 10 秒会话时间 ，避免频繁的session expired
+    /**
+     * 10 秒会话时间 ，避免频繁的session expired
+     */
     private static final int SESSION_TIMEOUT = 10000;
 
-    // 3秒
+    /**
+     * 3秒
+     */
     private static final int CONNECT_TIMEOUT = 3000;
 
     protected ZooKeeper zk;
@@ -32,7 +36,9 @@ public class ConnectionWatcher implements Watcher {
 
     private static String internalHost = "";
 
-    // 是否调试状态
+    /**
+     * 是否调试状态
+     */
     private boolean debug = false;
 
     /**
@@ -43,13 +49,11 @@ public class ConnectionWatcher implements Watcher {
     }
 
     /**
+     * 连接ZK
+     *
      * @param hosts
-     *
-     * @return void
-     *
-     * @throws IOException
-     * @throws InterruptedException
-     * @Description: 连接ZK
+     * @throws IOException          Zookeeper异常
+     * @throws InterruptedException Zookeeper异常
      * @author liaoqiqi
      * @date 2013-6-14
      */
@@ -57,10 +61,12 @@ public class ConnectionWatcher implements Watcher {
         internalHost = hosts;
         zk = new ZooKeeper(internalHost, SESSION_TIMEOUT, this);
 
-        // 连接有超时哦
+        /**
+         * 连接有超时哦
+         */
         connectedSignal.await(CONNECT_TIMEOUT, TimeUnit.MILLISECONDS);
 
-        LOGGER.info("zookeeper: " + hosts + " , connected.");
+        logger.info("zookeeper: " + hosts + " , connected.");
     }
 
     /**
@@ -70,30 +76,34 @@ public class ConnectionWatcher implements Watcher {
     public void process(WatchedEvent event) {
         if (event.getState() == KeeperState.SyncConnected) {
 
-            LOGGER.info("zk SyncConnected");
+            logger.info("zk SyncConnected");
             connectedSignal.countDown();
 
         } else if (event.getState().equals(KeeperState.Disconnected)) {
 
-            // 这时收到断开连接的消息，这里其实无能为力，因为这时已经和ZK断开连接了，只能等ZK再次开启了
-            LOGGER.warn("zk Disconnected");
+            /**
+             * 这时收到断开连接的消息，这里其实无能为力，因为这时已经和ZK断开连接了，只能等ZK再次开启了
+             */
+            logger.warn("zk Disconnected");
 
         } else if (event.getState().equals(KeeperState.Expired)) {
 
             if (!debug) {
 
-                // 这时收到这个信息，表示，ZK已经重新连接上了，但是会话丢失了，这时需要重新建立会话。
-                LOGGER.error("zk Expired");
+                /**
+                 * 这时收到这个信息，表示，ZK已经重新连接上了，但是会话丢失了，这时需要重新建立会话。
+                 */
+                logger.error("zk Expired");
 
                 // just reconnect forever
                 reconnect();
             } else {
-                LOGGER.info("zk Expired");
+                logger.info("zk Expired");
             }
 
         } else if (event.getState().equals(KeeperState.AuthFailed)) {
 
-            LOGGER.error("zk AuthFailed");
+            logger.error("zk AuthFailed");
         }
     }
 
@@ -102,7 +112,7 @@ public class ConnectionWatcher implements Watcher {
      */
     public synchronized void reconnect() {
 
-        LOGGER.info("start to reconnect....");
+        logger.info("start to reconnect....");
 
         int retries = 0;
         while (true) {
@@ -113,7 +123,7 @@ public class ConnectionWatcher implements Watcher {
                     break;
                 }
 
-                LOGGER.warn("zookeeper lost connection, reconnect");
+                logger.warn("zookeeper lost connection, reconnect");
 
                 close();
 
@@ -121,12 +131,12 @@ public class ConnectionWatcher implements Watcher {
 
             } catch (Exception e) {
 
-                LOGGER.error(retries + "\t" + e.toString());
+                logger.error(retries + "\t" + e.toString());
 
                 // sleep then retry
                 try {
                     int sec = ResilientActiveKeyValueStore.RETRY_PERIOD_SECONDS;
-                    LOGGER.warn("sleep " + sec);
+                    logger.warn("sleep " + sec);
                     TimeUnit.SECONDS.sleep(sec);
                 } catch (InterruptedException e1) {
                 }
@@ -135,21 +145,27 @@ public class ConnectionWatcher implements Watcher {
     }
 
     /**
-     * @return void
-     *
-     * @throws InterruptedException
-     * @Description: 关闭
+     * 断开Zookeeper链接
      * @author liaoqiqi
+     * @throws InterruptedException Zookeeper异常
      * @date 2013-6-14
      */
     public void close() throws InterruptedException {
         zk.close();
     }
 
+    /**
+     * 获取 Zookeeper 实例
+     * @return Zookeeper 实例
+     */
     public ZooKeeper getZk() {
         return zk;
     }
 
+    /**
+     * 设置 Zookeeper 实例
+     * @param zk Zookeeper 实例
+     */
     public void setZk(ZooKeeper zk) {
         this.zk = zk;
     }

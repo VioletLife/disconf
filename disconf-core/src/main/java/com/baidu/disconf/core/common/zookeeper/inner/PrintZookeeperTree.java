@@ -3,6 +3,7 @@ package com.baidu.disconf.core.common.zookeeper.inner;
 import java.nio.charset.Charset;
 import java.util.List;
 
+import com.baidu.disconf.core.common.constants.Constants;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.data.Stat;
@@ -17,30 +18,40 @@ import org.slf4j.LoggerFactory;
  */
 public class PrintZookeeperTree extends ConnectionWatcher {
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(PrintZookeeperTree.class);
+    protected static final Logger logger = LoggerFactory.getLogger(PrintZookeeperTree.class);
 
+    /**
+     * 默认的字符集为UTF-8
+     */
     private static final Charset CHARSET = Charset.forName("UTF-8");
 
     /**
-     * @param
+     * 构造器
      */
     public PrintZookeeperTree() {
         super(true);
     }
 
+    /**
+     * 输出节点内容
+     *
+     * @param groupName 路径名称
+     * @throws KeeperException      Zookeeper异常
+     * @throws InterruptedException Zookeeper异常
+     */
     public void list(String groupName) throws KeeperException, InterruptedException {
 
         try {
 
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
 
-            int pathLength = StringUtils.countMatches(groupName, "/");
+            int pathLength = StringUtils.countMatches(groupName, Constants.SEP_STRING);
             for (int i = 0; i < pathLength - 1; ++i) {
                 sb.append("\t");
             }
 
-            if (groupName != "/") {
-                String node = StringUtils.substringAfterLast(groupName, "/");
+            if (!groupName.equalsIgnoreCase(Constants.SEP_STRING)) {
+                String node = StringUtils.substringAfterLast(groupName, Constants.SEP_STRING);
                 sb.append("|----" + node);
                 Stat stat = new Stat();
                 byte[] data = zk.getData(groupName, null, stat);
@@ -55,26 +66,29 @@ public class PrintZookeeperTree extends ConnectionWatcher {
                 sb.append(groupName);
             }
 
-            System.out.println(sb.toString());
+            logger.info(sb.toString());
 
             List<String> children = zk.getChildren(groupName, false);
+            /**
+             * 递归获取
+             */
             for (String child : children) {
-                if (groupName != "/") {
-                    list(groupName + "/" + child);
+                if (!groupName.equalsIgnoreCase(Constants.SEP_STRING)) {
+                    list(groupName + Constants.SEP_STRING + child);
                 } else {
                     list(groupName + child);
                 }
             }
 
         } catch (KeeperException.NoNodeException e) {
-            LOGGER.info("Group %s does not exist\n", groupName);
+            logger.info("Group %s does not exist\n", groupName);
         }
     }
 
     public static void main(String[] args) throws Exception {
 
         if (args == null || args.length != 1) {
-            LOGGER.error("PrintZookeeperTree argu error!");
+            logger.error("PrintZookeeperTree argu error!");
             System.exit(2);
         }
 

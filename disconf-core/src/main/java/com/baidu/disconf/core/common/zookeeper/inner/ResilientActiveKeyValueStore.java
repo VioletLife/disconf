@@ -21,32 +21,40 @@ import org.slf4j.LoggerFactory;
  */
 public class ResilientActiveKeyValueStore extends ConnectionWatcher {
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(ResilientActiveKeyValueStore.class);
+    protected static final Logger logger = LoggerFactory.getLogger(ResilientActiveKeyValueStore.class);
 
+    /**
+     * 默认字符集为UTF-8
+     */
     private static final Charset CHARSET = Charset.forName("UTF-8");
 
-    // 最大重试次数
+    /**
+     * 最大重试次数
+     */
     public static final int MAX_RETRIES = 3;
 
-    // 每次重试超时时间
+    /**
+     * 每次重试超时时间
+     */
     public static final int RETRY_PERIOD_SECONDS = 2;
 
     /**
-     * @param debug
+     * 构造器
+     *
+     * @param debug 是否开启debug
      */
     public ResilientActiveKeyValueStore(boolean debug) {
         super(debug);
     }
 
+
     /**
-     * @param path
-     * @param value
+     * 写PATH数据, 是持久化的
      *
-     * @return void
-     *
-     * @throws InterruptedException
-     * @throws KeeperException
-     * @Description: 写PATH数据, 是持久化的
+     * @param path  路径
+     * @param value 路径值
+     * @throws InterruptedException Zookeeper异常
+     * @throws KeeperException      Zookeeper异常
      * @author liaoqiqi
      * @date 2013-6-14
      */
@@ -76,33 +84,33 @@ public class ResilientActiveKeyValueStore extends ConnectionWatcher {
 
             } catch (KeeperException e) {
 
-                LOGGER.warn("write connect lost... will retry " + retries + "\t" + e.toString());
+                logger.warn("write connect lost... will retry " + retries + "\t" + e.toString());
 
                 if (retries++ == MAX_RETRIES) {
                     throw e;
                 }
                 // sleep then retry
                 int sec = RETRY_PERIOD_SECONDS * retries;
-                LOGGER.warn("sleep " + sec);
+                logger.warn("sleep " + sec);
                 TimeUnit.SECONDS.sleep(sec);
             }
         }
     }
 
     /**
-     * @param path
-     * @param value
+     * 创建一个临时结点，如果原本存在，则不新建, 如果存在，则更新值
      *
-     * @return void
-     *
-     * @throws InterruptedException
-     * @throws KeeperException
-     * @Description: 创建一个临时结点，如果原本存在，则不新建, 如果存在，则更新值
+     * @param path       路径
+     * @param value      值
+     * @param createMode 创建模式
+     * @return 路径
+     * @throws InterruptedException Zookeeper异常
+     * @throws KeeperException      Zookeeper异常
      * @author liaoqiqi
      * @date 2013-6-14
      */
     public String createEphemeralNode(String path, String value, CreateMode createMode)
-        throws InterruptedException, KeeperException {
+            throws InterruptedException, KeeperException {
 
         int retries = 0;
         while (true) {
@@ -130,14 +138,14 @@ public class ResilientActiveKeyValueStore extends ConnectionWatcher {
 
             } catch (KeeperException e) {
 
-                LOGGER.warn("createEphemeralNode connect lost... will retry " + retries + "\t" + e.toString());
+                logger.warn("createEphemeralNode connect lost... will retry " + retries + "\t" + e.toString());
 
                 if (retries++ == MAX_RETRIES) {
                     throw e;
                 }
                 // sleep then retry
                 int sec = RETRY_PERIOD_SECONDS * retries;
-                LOGGER.warn("sleep " + sec);
+                logger.warn("sleep " + sec);
                 TimeUnit.SECONDS.sleep(sec);
             }
         }
@@ -146,12 +154,10 @@ public class ResilientActiveKeyValueStore extends ConnectionWatcher {
     /**
      * 判断是否存在
      *
-     * @param path
-     *
-     * @return
-     *
-     * @throws InterruptedException
-     * @throws KeeperException
+     * @param path 路径
+     * @return 路径是否存在
+     * @throws InterruptedException Zookeeper异常
+     * @throws KeeperException      Zookeeper异常
      */
     public boolean exists(String path) throws InterruptedException, KeeperException {
 
@@ -177,30 +183,29 @@ public class ResilientActiveKeyValueStore extends ConnectionWatcher {
 
             } catch (KeeperException e) {
 
-                LOGGER.warn("exists connect lost... will retry " + retries + "\t" + e.toString());
+                logger.warn("exists connect lost... will retry " + retries + "\t" + e.toString());
 
                 if (retries++ == MAX_RETRIES) {
-                    LOGGER.error("connect final failed");
+                    logger.error("connect final failed");
                     throw e;
                 }
 
                 // sleep then retry
                 int sec = RETRY_PERIOD_SECONDS * retries;
-                LOGGER.warn("sleep " + sec);
+                logger.warn("sleep " + sec);
                 TimeUnit.SECONDS.sleep(sec);
             }
         }
     }
 
     /**
-     * @param path
-     * @param watcher
+     * 读取数据
      *
-     * @return String
-     *
-     * @throws InterruptedException
-     * @throws KeeperException
-     * @Description: 读数据
+     * @param path    路径
+     * @param watcher 监听器
+     * @return String 路径值
+     * @throws InterruptedException Zookeeper异常
+     * @throws KeeperException      Zookeeper异常
      * @author liaoqiqi
      * @date 2013-6-14
      */
@@ -211,9 +216,9 @@ public class ResilientActiveKeyValueStore extends ConnectionWatcher {
     }
 
     /**
-     * @return List<String>
+     * 获取根目录子节点所有数据
      *
-     * @Description: 获取子孩子数据
+     * @return 子节点数据
      * @author liaoqiqi
      * @date 2013-6-14
      */
@@ -222,21 +227,17 @@ public class ResilientActiveKeyValueStore extends ConnectionWatcher {
         List<String> children = new ArrayList<String>();
         try {
             children = zk.getChildren("/", false);
-        } catch (KeeperException e) {
-            LOGGER.error(e.toString());
-        } catch (InterruptedException e) {
-            LOGGER.error(e.toString());
+        } catch (KeeperException | InterruptedException e) {
+            logger.error(e.toString());
         }
 
         return children;
     }
 
     /**
-     * @param path
+     * 删除路径
      *
-     * @return void
-     *
-     * @Description: 删除结点
+     * @param path 路径
      * @author liaoqiqi
      * @date 2013-6-17
      */
@@ -248,15 +249,15 @@ public class ResilientActiveKeyValueStore extends ConnectionWatcher {
 
         } catch (KeeperException.NoNodeException e) {
 
-            LOGGER.error("cannot delete path: " + path, e);
+            logger.error("cannot delete path: " + path, e);
 
         } catch (InterruptedException e) {
 
-            LOGGER.warn(e.toString());
+            logger.warn(e.toString());
 
         } catch (KeeperException e) {
 
-            LOGGER.error("cannot delete path: " + path, e);
+            logger.error("cannot delete path: " + path, e);
         }
     }
 

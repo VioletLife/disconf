@@ -11,10 +11,8 @@ public class RestfulFactory {
 
     /**
      * 获取一个默认的抓取器
-     *
-     * @return
-     *
-     * @throws Exception
+     * @return 抓取器
+     * @throws Exception 内部异常
      */
     public static RestfulMgr getRestfulMgrNomal() throws Exception {
 

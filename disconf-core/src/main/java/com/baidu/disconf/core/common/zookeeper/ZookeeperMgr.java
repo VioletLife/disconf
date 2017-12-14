@@ -31,7 +31,6 @@ public class ZookeeperMgr {
 
     /**
      * @return void
-     *
      * @throws Exception
      * @Description: 初始化
      * @author liaoqiqi
@@ -81,7 +80,6 @@ public class ZookeeperMgr {
 
     /**
      * @return void
-     *
      * @throws IOException
      * @throws InterruptedException
      * @Description: 初始化
@@ -112,11 +110,10 @@ public class ZookeeperMgr {
 
         try {
 
-            boolean deafult_path_exist = store.exists(dir);
-            if (!deafult_path_exist) {
+            boolean defaultPathExist = store.exists(dir);
+            if (!defaultPathExist) {
                 LOGGER.info("create: " + dir);
                 this.writePersistentUrl(dir, data);
-            } else {
             }
 
         } catch (KeeperException e) {
@@ -131,7 +128,6 @@ public class ZookeeperMgr {
 
     /**
      * @return void
-     *
      * @Description: 应用程序必须调用它来释放zookeeper资源
      * @author liaoqiqi
      * @date 2013-6-14
@@ -143,7 +139,6 @@ public class ZookeeperMgr {
 
     /**
      * @return List<String>
-     *
      * @Description: 获取子孩子 列表
      * @author liaoqiqi
      * @date 2013-6-14
@@ -155,7 +150,6 @@ public class ZookeeperMgr {
 
     /**
      * @return List<String>
-     *
      * @Description: 写持久化结点, 没有则新建, 存在则进行更新
      * @author liaoqiqi
      * @date 2013-6-14
@@ -167,7 +161,6 @@ public class ZookeeperMgr {
 
     /**
      * @return List<String>
-     *
      * @Description: 读结点数据
      * @author liaoqiqi
      * @date 2013-6-14
@@ -177,24 +170,33 @@ public class ZookeeperMgr {
         return store.read(url, watcher, null);
     }
 
-    /*
+    /**
      * 返回zk
+     * @return
      */
     public ZooKeeper getZk() {
 
         return store.getZk();
     }
 
-    /*
-     * 路径是否存在
+    /**
+     *  路径是否存在
+     * @param path 路径
+     * @return 是否存在
+     * @throws Exception 内部异常
      */
     public boolean exists(String path) throws Exception {
 
         return store.exists(path);
     }
 
-    /*
+    /**
      * 生成一个临时结点
+     * @param path 路径
+     * @param value 值
+     * @param createMode 创建模式
+     * @return 路径
+     * @throws Exception
      */
     public String createEphemeralNode(String path, String value, CreateMode createMode) throws Exception {
 
@@ -202,15 +204,13 @@ public class ZookeeperMgr {
     }
 
     /**
-     * @param path
-     * @param watcher
-     * @param stat
-     *
-     * @return String
-     *
-     * @throws InterruptedException
-     * @throws KeeperException
-     * @Description: 带状态信息的读取数据
+     * 通过状态信息读取路径内容，并设置新的Watcher
+     * @param path 路径
+     * @param watcher 监听器
+     * @param stat Zookeeper操作状态
+     * @return String 路径节点内容
+     * @throws InterruptedException Zookeeper异常
+     * @throws KeeperException Zookeeper异常
      * @author liaoqiqi
      * @date 2013-6-17
      */
@@ -220,11 +220,8 @@ public class ZookeeperMgr {
     }
 
     /**
-     * @param path
-     *
-     * @return void
-     *
-     * @Description: 删除结点
+     * 删除节点
+     * @param path 节点路径
      * @author liaoqiqi
      * @date 2013-6-17
      */

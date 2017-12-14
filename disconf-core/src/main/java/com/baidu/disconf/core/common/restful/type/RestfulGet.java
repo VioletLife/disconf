@@ -20,7 +20,7 @@ import com.baidu.disconf.core.common.utils.http.HttpResponseCallbackHandler;
  */
 public class RestfulGet<T> implements UnreliableInterface {
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(RestfulGet.class);
+    protected static final Logger logger = LoggerFactory.getLogger(RestfulGet.class);
 
     private HttpRequestBase request = null;
     private HttpResponseCallbackHandler<T> httpResponseCallbackHandler = null;

@@ -17,7 +17,7 @@ import com.baidu.disconf.core.common.utils.OsUtil;
  */
 public class FetchConfFile implements UnreliableInterface {
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(FetchConfFile.class);
+    protected static final Logger logger = LoggerFactory.getLogger(FetchConfFile.class);
 
     private URL remoteUrl;
     private File localTmpFile;
@@ -36,6 +36,9 @@ public class FetchConfFile implements UnreliableInterface {
 
     /**
      * 进行下载
+     * @param <T> 泛型参数
+     * @return 泛型返回值
+     * @throws Exception 内部异常
      */
     @Override
     public <T> T call() throws Exception {
@@ -47,19 +50,27 @@ public class FetchConfFile implements UnreliableInterface {
             localTmpFile.delete();
         }
 
-        // start tp download
-        LOGGER.debug("start to download. From: " + remoteUrl + " , TO: " + localTmpFile.getAbsolutePath());
+        /**
+         * 开始下载日志
+         */
+        logger.debug("start to download. From: " + remoteUrl + " , TO: " + localTmpFile.getAbsolutePath());
 
-        // 下载
+        /**
+         * 文件下载
+         */
         FileUtils.copyURLToFile(remoteUrl, localTmpFile);
 
-        // check
+        /**
+         * 确认本地文件存在
+         */
         if (!OsUtil.isFileExist(localTmpFile.getAbsolutePath())) {
             throw new Exception("download is ok, but cannot find downloaded file." + localTmpFile);
         }
 
-        // download success
-        LOGGER.debug("download success!  " + localTmpFile.getAbsolutePath());
+        /**
+         * download success
+         */
+        logger.debug("download success!  " + localTmpFile.getAbsolutePath());
 
         return null;
     }
