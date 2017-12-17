@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import com.mysql.jdbc.Statement;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -805,7 +806,7 @@ public abstract class GenericDao<KEY extends Serializable, ENTITY extends BaseOb
         // 执行操作
         int rowCount = this.jdbcTemplate.update(new PreparedStatementCreator() {
             public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-                PreparedStatement ps = connection.prepareStatement(sql);
+                PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
                 int index = 1;
                 for (Object param : params) {
                     ps.setObject(index++, param);
@@ -837,7 +838,7 @@ public abstract class GenericDao<KEY extends Serializable, ENTITY extends BaseOb
         // 执行操作
         int rowCount = this.jdbcTemplate.update(new PreparedStatementCreator() {
             public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-                PreparedStatement ps = connection.prepareStatement(sql);
+                PreparedStatement ps = connection.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);
                 int index = 1;
                 for (Object param : params) {
                     ps.setObject(index++, param);
