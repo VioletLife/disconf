@@ -3,7 +3,7 @@ package com.baidu.disconf.web.service.app.dao.impl;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import com.baidu.disconf.web.service.app.bo.App;
