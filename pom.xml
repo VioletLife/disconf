@@ -11,6 +11,7 @@
     <modules>
         <module>disconf-client</module>
         <module>disconf-core</module>
+        <module>disconf-web</module>
     </modules>
 
     <inceptionYear>2017</inceptionYear>
@@ -43,7 +44,7 @@
         <spring.amqp.version>1.4.5.RELEASE</spring.amqp.version>
         <junit.version>4.10</junit.version>
         <jsp.version>2.0</jsp.version>
-        <servlet.version>4.0.0</servlet.version>
+        <servlet.version>3.1.0</servlet.version>
         <cglib.version>2.2.2</cglib.version>
 
         <!-- resource path -->
@@ -156,20 +157,7 @@
             </dependency>
 
 
-            <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>servlet-api</artifactId>
-                <version>${servlet.version}</version>
-                <scope>provided</scope>
-            </dependency>
 
-            <!-- https://mvnrepository.com/artifact/javax.servlet.jsp/javax.servlet.jsp-api -->
-            <dependency>
-                <groupId>javax.servlet.jsp</groupId>
-                <artifactId>javax.servlet.jsp-api</artifactId>
-                <version>2.3.1</version>
-                <scope>provided</scope>
-            </dependency>
 
 
             <dependency>
