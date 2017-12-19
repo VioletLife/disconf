@@ -35,10 +35,11 @@ import com.baidu.disconf.core.common.path.DisconfWebPathMgr;
  */
 public class StaticScannerFileMgrImpl extends StaticScannerMgrImplBase implements StaticScannerMgr {
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(StaticScannerFileMgrImpl.class);
+    protected static final Logger logger = LoggerFactory.getLogger(StaticScannerFileMgrImpl.class);
 
     /**
-     *
+     * 扫描数据并存储
+     * @param scanModel  {@link ScanStaticModel}
      */
     @Override
     public void scanData2Store(ScanStaticModel scanModel) {
@@ -61,6 +62,9 @@ public class StaticScannerFileMgrImpl extends StaticScannerMgrImplBase implement
      */
     private static List<DisconfCenterBaseModel> getDisconfFiles(ScanStaticModel scanModel) {
 
+        /**
+         * 配置基类
+         */
         List<DisconfCenterBaseModel> disconfCenterFiles = new ArrayList<DisconfCenterBaseModel>();
 
         Set<Class<?>> classSet = scanModel.getDisconfFileClassSet();
@@ -81,35 +85,55 @@ public class StaticScannerFileMgrImpl extends StaticScannerMgrImplBase implement
 
     /**
      * 转换配置文件
+     * @param disconfFileClass Class对象
+     * @param methods Class对象中的方法
+     * @return 配置文件内容数据
      */
     private static DisconfCenterFile transformScanFile(Class<?> disconfFileClass, Set<Method> methods) {
 
         DisconfCenterFile disconfCenterFile = new DisconfCenterFile();
 
-        //
-        // class
+        /**
+         * 保存Class信息
+         */
         disconfCenterFile.setCls(disconfFileClass);
 
+        /**
+         * 获取类上的注解 {@link DisconfFile}
+         */
         DisconfFile disconfFileAnnotation = disconfFileClass.getAnnotation(DisconfFile.class);
 
-        //
-        // file name
+        /**
+         * 配置文件名
+         */
         disconfCenterFile.setFileName(disconfFileAnnotation.filename());
 
-        // config file target dir path
+        /**
+         * 配置文件路径
+         */
         disconfCenterFile.setTargetDirPath(disconfFileAnnotation.targetDirPath().trim());
 
-        // file type
+        /**
+         * 配置文件类型枚举
+         */
         disconfCenterFile.setSupportFileTypeEnum(SupportFileTypeEnum.getByFileName(disconfFileAnnotation.filename()));
 
-        //
-        // disConfCommonModel
+        /**
+         * Disconf中设置的APP的信息
+         */
         DisConfCommonModel disConfCommonModel =
                 makeDisConfCommonModel(disconfFileAnnotation.app(), disconfFileAnnotation.env(), disconfFileAnnotation
                         .version());
+
+
+        /**
+         * 保存APP设置信息
+         */
         disconfCenterFile.setDisConfCommonModel(disConfCommonModel);
 
-        // Remote URL
+        /**
+         * 取得配置远程URL地址
+         */
         String url = DisconfWebPathMgr.getRemoteUrlParameter(DisClientSysConfig.getInstance().CONF_SERVER_STORE_ACTION,
                 disConfCommonModel.getApp(),
                 disConfCommonModel.getVersion(),
@@ -118,33 +142,43 @@ public class StaticScannerFileMgrImpl extends StaticScannerMgrImplBase implement
                 DisConfigTypeEnum.FILE);
         disconfCenterFile.setRemoteServerUrl(url);
 
-        // fields
+        /**
+         * 获取属性字段
+         */
         Field[] expectedFields = disconfFileClass.getDeclaredFields();
 
-        //
-        // KEY & VALUE
-        //
+
         Map<String, FileItemValue> keyMaps = new HashMap<String, FileItemValue>();
 
         for (Method method : methods) {
 
-            // 获取指定的域
+            /**
+             * 获取指定的域
+             */
             Field field = MethodUtils.getFieldFromMethod(method, expectedFields, DisConfigTypeEnum.FILE);
             if (field == null) {
                 continue;
             }
 
-            //
+            /**
+             * 获取 {@link DisconfFileItem} 枚举
+             */
             DisconfFileItem disconfFileItem = method.getAnnotation(DisconfFileItem.class);
             String keyName = disconfFileItem.name();
 
-            // access
+            /**
+             * 设置访问级别
+             */
             field.setAccessible(true);
 
-            // get setter method
+            /**
+             * 获取Setter方法
+             */
             Method setterMethod = MethodUtils.getSetterMethodFromField(disconfFileClass, field);
 
-            // static 则直接获取其值
+            /**
+             * 检测是否是静态域
+             */
             if (Modifier.isStatic(field.getModifiers())) {
 
                 try {
@@ -152,20 +186,19 @@ public class StaticScannerFileMgrImpl extends StaticScannerMgrImplBase implement
                     keyMaps.put(keyName, fileItemValue);
 
                 } catch (Exception e) {
-                    LOGGER.error(e.toString());
+                    logger.error(e.toString());
                 }
 
             } else {
 
-                // 非static则为Null, 这里我们没有必要获取其Bean的值
+                /**
+                 * 非static则为Null, 这里我们没有必要获取其Bean的值
+                 */
                 FileItemValue fileItemValue = new FileItemValue(null, field, setterMethod);
                 keyMaps.put(keyName, fileItemValue);
             }
         }
-
-        // 设置
         disconfCenterFile.setKeyMaps(keyMaps);
-
         return disconfCenterFile;
     }
 

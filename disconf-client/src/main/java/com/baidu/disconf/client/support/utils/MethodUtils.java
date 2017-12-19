@@ -18,10 +18,14 @@ import com.baidu.disconf.core.common.constants.DisConfigTypeEnum;
  */
 public class MethodUtils {
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(MethodUtils.class);
+    protected static final Logger logger = LoggerFactory.getLogger(MethodUtils.class);
 
     /**
-     * 对于一个 get/is 方法，返回其相对应的Field
+     *  对于一个 get/is 方法，返回其相对应的Field
+     * @param method Class中的方法(Method)
+     * @param expectedFields 字段Field
+     * @param disConfigTypeEnum 配置文件类型枚举
+     * @return
      */
     public static Field getFieldFromMethod(Method method, Field[] expectedFields, DisConfigTypeEnum disConfigTypeEnum) {
 
@@ -29,22 +33,38 @@ public class MethodUtils {
 
         if (disConfigTypeEnum.equals(DisConfigTypeEnum.FILE)) {
 
+            /**
+             * 配置文件
+             */
+
+
             DisconfFileItem disconfFileItem = method.getAnnotation(DisconfFileItem.class);
-            // 根据用户设定的注解来获取
+
+            /**
+             * 根据用户设定的注解来获取
+             */
             fieldName = disconfFileItem.associateField();
 
         } else {
 
+            /**
+             * 配置项
+             */
             DisconfItem disItem = method.getAnnotation(DisconfItem.class);
-            // 根据用户设定的注解来获取
+
+            /**
+             * 根据用户设定的注解来获取
+             */
             fieldName = disItem.associateField();
         }
 
-        //
-        // 如果用户未设定注解，则猜其名字
-        //
+        /**
+         *  如果用户未设定注解，则猜其名字
+         */
         if (StringUtils.isEmpty(fieldName)) {
-            // 从方法名 获取其 Field 名
+            /**
+             * 从方法名 获取其 Field 名
+             */
             fieldName = ClassUtils.getFieldNameByGetMethodName(method.getName());
         }
 
@@ -56,13 +76,15 @@ public class MethodUtils {
             }
         }
 
-        LOGGER.error(method.toString() + " cannot get its related field name. ");
-
+        logger.error(method.toString() + " cannot get its related field name. ");
         return null;
     }
 
     /**
-     *
+     * 根据Field获取Setter方法
+     * @param curClass 目标类
+     * @param field Field
+     * @return Setter方法
      */
     public static Method getSetterMethodFromField(Class<?> curClass, Field field) {
 

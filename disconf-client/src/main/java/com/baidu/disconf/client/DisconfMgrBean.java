@@ -37,10 +37,20 @@ public class DisconfMgrBean implements BeanDefinitionRegistryPostProcessor, Prio
         DisconfMgr.getInstance().close();
     }
 
+    /**
+     * 设置扫描包路径
+     *
+     * @param scanPackage 包路径
+     */
     public void setScanPackage(String scanPackage) {
         this.scanPackage = scanPackage;
     }
 
+    /**
+     * 执行优先级
+     *
+     * @return 优先级
+     */
     @Override
     public int getOrder() {
         return Ordered.HIGHEST_PRECEDENCE + 1;
@@ -53,9 +63,12 @@ public class DisconfMgrBean implements BeanDefinitionRegistryPostProcessor, Prio
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
     }
 
+
     /**
-     * 第一次扫描<br/>
-     * 在Spring内部的Bean定义初始化后执行，这样是最高优先级的
+     * Spring内部Bean初始化完成，下次自动BeanFactoryPostProcessor处理前调用。此处增加用于随后使用的Bean定义
+     *
+     * @param registry ${@link BeanDefinitionRegistry}
+     * @throws BeansException Beans异常
      */
     @Override
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
@@ -63,18 +76,31 @@ public class DisconfMgrBean implements BeanDefinitionRegistryPostProcessor, Prio
         // 为了做兼容
         DisconfCenterHostFilesStore.getInstance().addJustHostFileSet(fileList);
 
+        /**
+         * ${@link SCAN_SPLIT_TOKEN}分割的包名
+         */
         List<String> scanPackList = StringUtil.parseStringToStringList(scanPackage, SCAN_SPLIT_TOKEN);
-        // unique
+        /**
+         * 包路径唯一
+         */
         Set<String> hs = new HashSet<String>();
         hs.addAll(scanPackList);
         scanPackList.clear();
         scanPackList.addAll(hs);
 
-        // 进行扫描
+        /**
+         * 设置ApplicationContext
+         */
         DisconfMgr.getInstance().setApplicationContext(applicationContext);
+
+        /**
+         * 开始第一遍扫描过程
+         */
         DisconfMgr.getInstance().firstScan(scanPackList);
 
-        // register java bean
+        /**
+         * 注册 ${@link DisconfAspectJ} Bean 默认名称为:disconfAspectJ
+         */
         registerAspect(registry);
     }
 
@@ -86,7 +112,7 @@ public class DisconfMgrBean implements BeanDefinitionRegistryPostProcessor, Prio
     /**
      * register aspectJ for disconf get request
      *
-     * @param registry
+     * @param registry ${@link BeanDefinitionRegistry}
      */
     private void registerAspect(BeanDefinitionRegistry registry) {
 
@@ -100,8 +126,8 @@ public class DisconfMgrBean implements BeanDefinitionRegistryPostProcessor, Prio
         registry.registerBeanDefinition("disconfAspectJ", beanDefinition);
     }
 
-    /*
-     * 已经废弃了，不推荐使用
+    /**
+     * 已经废弃不推荐使用
      */
     @Deprecated
     private Set<String> fileList = new HashSet<String>();

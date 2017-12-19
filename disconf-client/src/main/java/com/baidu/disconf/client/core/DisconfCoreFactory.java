@@ -21,11 +21,14 @@ public class DisconfCoreFactory {
      */
     public static DisconfCoreMgr getDisconfCoreMgr(Registry registry) throws Exception {
 
+        /**
+         * 抓取器
+         */
         FetcherMgr fetcherMgr = FetcherFactory.getFetcherMgr();
 
-        //
-        // 不开启disconf，则不要watch了
-        //
+        /**
+         * 不开启disconf，则不要watch了
+         */
         WatchMgr watchMgr = null;
         if (DisClientConfig.getInstance().ENABLE_DISCONF) {
             // Watch 模块

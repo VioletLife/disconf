@@ -14,7 +14,7 @@ import com.baidu.disconf.client.support.DisconfAutowareConfig;
  */
 public class DisClientSysConfig {
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(DisClientSysConfig.class);
+    protected static final Logger logger = LoggerFactory.getLogger(DisClientSysConfig.class);
 
     protected static final DisClientSysConfig INSTANCE = new DisClientSysConfig();
 
@@ -35,7 +35,9 @@ public class DisClientSysConfig {
     }
 
     /**
-     * load config normal
+     * 加载配置
+     * @param filePath 配置文件路径
+     * @throws Exception
      */
     public synchronized void loadConfig(String filePath) throws Exception {
 

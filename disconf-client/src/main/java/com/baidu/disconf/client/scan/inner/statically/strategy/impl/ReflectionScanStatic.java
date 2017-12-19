@@ -44,7 +44,7 @@ import com.google.common.base.Predicate;
  */
 public class ReflectionScanStatic implements ScanStaticStrategy {
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(ScanStaticStrategy.class);
+    protected static final Logger logger = LoggerFactory.getLogger(ScanStaticStrategy.class);
 
     /**
      * 扫描想要的类
@@ -138,7 +138,7 @@ public class ReflectionScanStatic implements ScanStaticStrategy {
 
             } else {
 
-                LOGGER.error("cannot find CLASS ANNOTATION " + DisconfFile.class.getName()
+                logger.error("cannot find CLASS ANNOTATION " + DisconfFile.class.getName()
                         + " for disconf file item: " +
                         method.toString());
             }
@@ -154,7 +154,7 @@ public class ReflectionScanStatic implements ScanStaticStrategy {
 
             // 校验是否所有配置文件都含有配置
             if (disconfFileItemMap.get(classFile).isEmpty()) {
-                LOGGER.info("disconf file hasn't any items: " + classFile.getName());
+                logger.info("disconf file hasn't any items: " + classFile.getName());
                 continue;
             }
 
@@ -162,7 +162,7 @@ public class ReflectionScanStatic implements ScanStaticStrategy {
             DisconfFile disconfFile = classFile.getAnnotation(DisconfFile.class);
             boolean fileTypeRight = ScanVerify.isDisconfFileTypeRight(disconfFile);
             if (!fileTypeRight) {
-                LOGGER.warn("now do not support this file type" + disconfFile.toString());
+                logger.warn("now do not support this file type" + disconfFile.toString());
                 continue;
             }
         }

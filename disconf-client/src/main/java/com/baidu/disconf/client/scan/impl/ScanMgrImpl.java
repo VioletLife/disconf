@@ -26,7 +26,7 @@ import com.baidu.disconf.client.support.registry.Registry;
  */
 public class ScanMgrImpl implements ScanMgr {
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(ScanMgrImpl.class);
+    protected static final Logger logger = LoggerFactory.getLogger(ScanMgrImpl.class);
 
     // 扫描对象
     private volatile ScanStaticModel scanModel = null;
@@ -56,13 +56,14 @@ public class ScanMgrImpl implements ScanMgr {
     }
 
     /**
-     * 扫描并存储(静态)
-     *
-     * @throws Exception
+     * 扫描
+     * @param packageNameList 包名列表
+     * @throws Exception 内部异常
      */
+    @Override
     public void firstScan(List<String> packageNameList) throws Exception {
 
-        LOGGER.debug("start to scan package: " + packageNameList.toString());
+        logger.debug("start to scan package: " + packageNameList.toString());
 
         // 获取扫描对象并分析整合
         scanModel = scanStaticStrategy.scan(packageNameList);
@@ -84,6 +85,7 @@ public class ScanMgrImpl implements ScanMgr {
     /**
      * 第二次扫描(动态)
      */
+    @Override
     public void secondScan() throws Exception {
 
         // 开启disconf才需要处理回调

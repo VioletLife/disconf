@@ -18,34 +18,45 @@ public class ScanStaticModel {
 
     private Reflections reflections;
 
-    //
-    // 配置文件
+    /**
+     *  配置文件
+     */
     private Set<Class<?>> disconfFileClassSet;
 
-    // 配置文件中的函数
+    /**
+     * 配置文件中的函数
+     */
     private Set<Method> disconfFileItemMethodSet;
 
-    //
-    // 配置文件及其函数的MAP, KEY为配置文件类
+    /**
+     *  配置文件及其函数的MAP, KEY为配置文件类
+     */
     private Map<Class<?>, Set<Method>> disconfFileItemMap;
 
-    //
-    // 配置ITEM
+    /**
+     * 配置ITEM
+     */
     private Set<Method> disconfItemMethodSet;
 
-    //
-    // 主从切换的回调函数类
+    /**
+     * 主从切换的回调函数类
+     */
     private Set<Class<?>> disconfActiveBackupServiceClassSet;
 
-    //
-    // 更新 回调函数类
+    /**
+     * 更新 回调函数类
+     */
     private Set<Class<?>> disconfUpdateService;
     private Class<IDisconfUpdatePipeline> iDisconfUpdatePipeline = null;
 
-    // 只是托管的配置文件，没有注入到类中
+    /**
+     * 只是托管的配置文件，没有注入到类中
+     */
     private Set<String> justHostFiles;
 
-    // reload files
+    /**
+     * 重新载入的文件
+     */
     private Set<String> reloadableFiles;
 
     public Reflections getReflections() {
@@ -137,12 +148,11 @@ public class ScanStaticModel {
                 ", disconfFileItemMethodSet=" + disconfFileItemMethodSet +
                 ", disconfFileItemMap=" + disconfFileItemMap +
                 ", disconfItemMethodSet=" + disconfItemMethodSet +
-                ", iDisconfUpdatePipeline=" + iDisconfUpdatePipeline +
                 ", disconfActiveBackupServiceClassSet=" + disconfActiveBackupServiceClassSet +
                 ", disconfUpdateService=" + disconfUpdateService +
+                ", iDisconfUpdatePipeline=" + iDisconfUpdatePipeline +
                 ", justHostFiles=" + justHostFiles +
                 ", reloadableFiles=" + reloadableFiles +
                 '}';
     }
-
 }

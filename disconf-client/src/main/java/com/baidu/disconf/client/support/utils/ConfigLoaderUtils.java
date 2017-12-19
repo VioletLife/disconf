@@ -22,7 +22,7 @@ import com.baidu.disconf.core.common.utils.ClassLoaderUtil;
  */
 public final class ConfigLoaderUtils {
 
-    protected static final Logger LOGGER = LoggerFactory
+    protected static final Logger logger = LoggerFactory
             .getLogger(ConfigLoaderUtils.class);
 
     private ConfigLoaderUtils() {
@@ -30,11 +30,10 @@ public final class ConfigLoaderUtils {
     }
 
     /**
-     * @param propertyFilePath
-     *
-     * @return void
-     *
-     * @Description: 使用TOMCAT方式来导入
+     * 使用TOMCAT方式来导入
+     * @param propertyFilePath 配置文件路径
+     * @return 配置文件信息
+     * @throws Exception 内部异常
      * @author liaoqiqi
      * @date 2013-6-19
      */
@@ -62,29 +61,26 @@ public final class ConfigLoaderUtils {
     }
 
     /**
-     * @param propertyFilePath
-     *
-     * @return void
-     *
-     * @Description: 使用普通模式导入
+     * 使用普通模式导入
+     * @param propertyFilePath 配置文件路径
+     * @return 配置文件对象
+     * @throws Exception 内部异常
      * @author liaoqiqi
-     * @date 2013-6-19
+     *  @date 2013-6-19
      */
     private static Properties loadWithNormalMode(final String propertyFilePath)
             throws Exception {
-
         Properties props = new Properties();
         props.load(new InputStreamReader(new FileInputStream(propertyFilePath), "utf-8"));
         return props;
     }
 
+
     /**
-     * @param propertyFilePath
      *
-     * @return Properties
-     *
-     * @throws Exception
-     * @Description: 配置文件载入器助手
+     * @param propertyFilePath 配置文件路径
+     * @return 配置信息对象
+     * @throws Exception 内部异常
      * @author liaoqiqi
      * @date 2013-6-19
      */
@@ -93,7 +89,9 @@ public final class ConfigLoaderUtils {
 
         try {
 
-            // 用TOMCAT模式 来载入试试
+            /**
+             * 用TOMCAT模式 来载入试试
+             */
             return ConfigLoaderUtils.loadWithTomcatMode(propertyFilePath);
 
         } catch (Exception e1) {
@@ -110,14 +108,11 @@ public final class ConfigLoaderUtils {
         }
     }
 
+
     /**
-     * @param filePath
-     *
-     * @return InputStream
-     *
-     * @Description: 采用两种方式来载入文件
-     * @author liaoqiqi
-     * @date 2013-6-20
+     * 采用两种方式来载入文件
+     * @param filePath 文件路径
+     * @return 文件流
      */
     public static InputStream loadFile(String filePath) {
 
@@ -148,7 +143,7 @@ public final class ConfigLoaderUtils {
                 try {
                     in.close();
                 } catch (IOException e) {
-                    LOGGER.error("WHY HERE!", e);
+                    logger.error("WHY HERE!", e);
                 }
             }
         }

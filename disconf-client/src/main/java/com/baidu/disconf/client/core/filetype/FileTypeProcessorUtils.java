@@ -16,7 +16,7 @@ import com.baidu.disconf.client.core.filetype.impl.DisconfXmlProcessorImpl;
  */
 public class FileTypeProcessorUtils {
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(FileTypeProcessorUtils.class);
+    protected static final Logger logger = LoggerFactory.getLogger(FileTypeProcessorUtils.class);
 
     /**
      * 输入文件名，返回其相应的k-v数据
@@ -59,7 +59,7 @@ public class FileTypeProcessorUtils {
                 continue;
             }
 
-            LOGGER.debug(key + "\t" + dataMap.get(key));
+            logger.debug(key + "\t" + dataMap.get(key));
         }
 
         return dataMap;

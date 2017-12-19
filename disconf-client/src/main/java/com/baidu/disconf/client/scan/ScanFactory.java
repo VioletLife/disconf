@@ -11,8 +11,12 @@ import com.baidu.disconf.client.support.registry.Registry;
  */
 public class ScanFactory {
 
+
     /**
-     * @throws Exception
+     *
+     * @param registry 注册实例
+     * @return 扫描器
+     * @throws Exception 内部异常
      */
     public static ScanMgr getScanMgr(Registry registry) throws Exception {
 

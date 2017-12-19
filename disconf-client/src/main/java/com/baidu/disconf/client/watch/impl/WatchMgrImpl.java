@@ -23,7 +23,7 @@ import com.baidu.disconf.core.common.zookeeper.ZookeeperMgr;
  */
 public class WatchMgrImpl implements WatchMgr {
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(WatchMgrImpl.class);
+    protected static final Logger logger = LoggerFactory.getLogger(WatchMgrImpl.class);
 
     /**
      * zoo prefix
@@ -31,13 +31,18 @@ public class WatchMgrImpl implements WatchMgr {
     private String zooUrlPrefix;
 
     /**
-     *
+     *是否开启调试
      */
     private boolean debug;
 
     /**
-     * @Description: 获取自己的主备类型
+     * 初始化
+     * @param hosts hosts
+     * @param zooUrlPrefix zooUrlPrefix  前缀
+     * @param debug 是否开启调试
+     * @throws Exception 内部异常
      */
+    @Override
     public void init(String hosts, String zooUrlPrefix, boolean debug) throws Exception {
 
         this.zooUrlPrefix = zooUrlPrefix;
@@ -110,13 +115,14 @@ public class WatchMgrImpl implements WatchMgr {
         try {
             ZookeeperMgr.getInstance().createEphemeralNode(mainTypeFullStr, data, CreateMode.EPHEMERAL);
         } catch (Exception e) {
-            LOGGER.error("cannot create: " + mainTypeFullStr + "\t" + e.toString());
+            logger.error("cannot create: " + mainTypeFullStr + "\t" + e.toString());
         }
     }
 
     /**
      * 监控路径,监控前会事先创建路径,并且会新建一个自己的Temp子结点
      */
+    @Override
     public void watchPath(DisconfCoreProcessor disconfCoreMgr, DisConfCommonModel disConfCommonModel, String keyName,
                           DisConfigTypeEnum disConfigTypeEnum, String value) throws Exception {
 
@@ -136,8 +142,7 @@ public class WatchMgrImpl implements WatchMgr {
         try {
             ZookeeperMgr.getInstance().release();
         } catch (InterruptedException e) {
-
-            LOGGER.error(e.toString());
+            logger.error(e.toString());
         }
     }
 

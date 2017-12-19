@@ -14,7 +14,7 @@ import com.baidu.disconf.client.config.inner.DisInnerConfigHelper;
  */
 public class ConfigMgr {
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(ConfigMgr.class);
+    protected static final Logger logger = LoggerFactory.getLogger(ConfigMgr.class);
 
     private static boolean isInit = false;
 
@@ -25,26 +25,34 @@ public class ConfigMgr {
      */
     public synchronized static void init() throws Exception {
 
-        LOGGER.info("--------------- LOAD CONFIG START ---------------");
+        logger.info("--------------- LOAD CONFIG START ---------------");
 
-        //
-        LOGGER.info("Finer print: " + DisClientComConfig.getInstance().getInstanceFingerprint());
 
-        // 导入系统配置
+        logger.info("Finger Print: " + DisClientComConfig.getInstance().getInstanceFingerprint());
+
+        /**
+         * 导入系统配置
+         */
         DisClientSysConfig.getInstance().loadConfig(null);
 
-        // 校验 系统配置
+        /**
+         * 校验 系统配置
+         */
         DisInnerConfigHelper.verifySysConfig();
 
-        // 导入用户配置
+        /**
+         * 导入用户配置
+         */
         DisClientConfig.getInstance().loadConfig(null);
 
-        // 校验 用户配置
+        /**
+         * 校验 用户配置
+         */
         DisInnerConfigHelper.verifyUserConfig();
 
         isInit = true;
 
-        LOGGER.info("--------------- LOAD CONFIG END ---------------");
+        logger.info("--------------- LOAD CONFIG END ---------------");
     }
 
     /**

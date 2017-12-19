@@ -69,7 +69,7 @@ public class DisconfCenterItem extends DisconfCenterBaseModel {
      * @throws Exception
      */
     public Object getFieldValueByType(Object fieldValue) throws Exception {
-        return ClassUtils.getValeByType(field.getType(), fieldValue);
+        return ClassUtils.getValueByType(field.getType(), fieldValue);
     }
 
     public Object getFieldDefaultValue(Object object) throws Exception {

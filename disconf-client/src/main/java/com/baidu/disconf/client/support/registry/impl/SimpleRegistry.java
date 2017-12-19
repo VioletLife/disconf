@@ -13,7 +13,7 @@ import com.baidu.disconf.client.support.registry.Registry;
  */
 public class SimpleRegistry implements Registry {
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(SimpleRegistry.class);
+    protected static final Logger logger = LoggerFactory.getLogger(SimpleRegistry.class);
 
     @Override
     public <T> List<T> findByType(Class<T> type, boolean newInstance) {
@@ -24,11 +24,11 @@ public class SimpleRegistry implements Registry {
             ret.add(type.newInstance());
         } catch (InstantiationException e) {
 
-            LOGGER.error("Failed to init " + type.getSimpleName() + " " + e.toString());
+            logger.error("Failed to init " + type.getSimpleName() + " " + e.toString());
 
         } catch (IllegalAccessException e) {
 
-            LOGGER.error("Failed to init " + type.getSimpleName() + " " + e.toString());
+            logger.error("Failed to init " + type.getSimpleName() + " " + e.toString());
         }
 
         return ret;

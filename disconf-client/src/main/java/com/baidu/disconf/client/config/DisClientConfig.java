@@ -19,7 +19,7 @@ import com.baidu.disconf.core.common.constants.Constants;
  */
 public final class DisClientConfig {
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(DisClientConfig.class);
+    protected static final Logger logger = LoggerFactory.getLogger(DisClientConfig.class);
 
     protected static final DisClientConfig INSTANCE = new DisClientConfig();
 
@@ -70,7 +70,7 @@ public final class DisClientConfig {
         try {
             DisconfAutowareConfig.autowareConfig(INSTANCE, filePathInternal);
         } catch (Exception e) {
-            LOGGER.warn("cannot find " + filePathInternal + ", using sys var or user input.");
+            logger.warn("cannot find " + filePathInternal + ", using sys var or user input.");
         }
 
         // 使用system env 导入

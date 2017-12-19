@@ -21,28 +21,40 @@ import com.baidu.disconf.client.watch.WatchMgr;
  */
 public class DisconfCoreMgrImpl implements DisconfCoreMgr {
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(DisconfCoreMgrImpl.class);
+    protected static final Logger logger = LoggerFactory.getLogger(DisconfCoreMgrImpl.class);
 
     private List<DisconfCoreProcessor> disconfCoreProcessorList = new ArrayList<DisconfCoreProcessor>();
 
-    // 监控器
+    /**
+     * 监听器
+     */
     private WatchMgr watchMgr = null;
 
-    // 抓取器
+    /**
+     * 抓取器
+     */
     private FetcherMgr fetcherMgr = null;
 
-    // registry
+    /**
+     * 注册器
+     */
     private Registry registry = null;
 
+    /**
+     * 构造Disconf核心管理器实现类
+     * @param watchMgr 监听器
+     * @param fetcherMgr 抓取器
+     * @param registry 注册器
+     */
     public DisconfCoreMgrImpl(WatchMgr watchMgr, FetcherMgr fetcherMgr, Registry registry) {
 
         this.watchMgr = watchMgr;
         this.fetcherMgr = fetcherMgr;
         this.registry = registry;
 
-        //
-        // 在这里添加好配置项、配置文件的处理器
-        //
+        /**
+         * 在这里添加好配置项、配置文件的处理器
+         */
         DisconfCoreProcessor disconfCoreProcessorFile =
                 DisconfCoreProcessorFactory.getDisconfCoreProcessorFile(watchMgr, fetcherMgr, registry);
         disconfCoreProcessorList.add(disconfCoreProcessorFile);
@@ -59,6 +71,7 @@ public class DisconfCoreMgrImpl implements DisconfCoreMgr {
      * <p/>
      * 更新 所有配置数据
      */
+    @Override
     public void process() {
 
         //

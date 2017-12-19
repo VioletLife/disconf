@@ -27,19 +27,27 @@ import com.baidu.disconf.client.support.registry.RegistryFactory;
  */
 public class DisconfMgr implements ApplicationContextAware {
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(DisconfMgr.class);
+    protected static final Logger logger = LoggerFactory.getLogger(DisconfMgr.class);
 
-    // 本实例不能初始化两次
+    /**
+     * 本实例只能初始化一次
+     */
     private boolean isFirstInit = false;
     private boolean isSecondInit = false;
 
-    // application context
+    /**
+     * ApplicationContext
+     */
     private ApplicationContext applicationContext;
 
-    // 核心处理器
+    /**
+     * 核心处理器
+     */
     private DisconfCoreMgr disconfCoreMgr = null;
 
-    // scan mgr
+    /**
+     * 扫描处理器
+     */
     private ScanMgr scanMgr = null;
 
     protected static final DisconfMgr INSTANCE = new DisconfMgr();
@@ -52,8 +60,10 @@ public class DisconfMgr implements ApplicationContextAware {
 
     }
 
+
     /**
-     * 总入口
+     * 总输入框
+     * @param scanPackageList 扫描的包路径
      */
     public synchronized void start(List<String> scanPackageList) {
 
@@ -63,48 +73,60 @@ public class DisconfMgr implements ApplicationContextAware {
     }
 
     /**
-     * 第一次扫描，静态扫描 for annotation config
+     *  第一次扫描，静态扫描 for annotation config
+     * @param scanPackageList 扫描的包路径
      */
     protected synchronized void firstScan(List<String> scanPackageList) {
 
-        // 该函数不能调用两次
+        /**
+         *  该函数不能调用两次
+         */
         if (isFirstInit) {
-            LOGGER.info("DisConfMgr has been init, ignore........");
+            logger.info("DisConfMgr has been init, ignore........");
             return;
         }
 
-        //
-        //
-        //
 
         try {
 
-            // 导入配置
+            /**
+             * 导入配置
+             */
             ConfigMgr.init();
 
-            LOGGER.info("******************************* DISCONF START FIRST SCAN *******************************");
+            logger.info("******************************* DISCONF START FIRST SCAN *******************************");
 
-            // registry
+            /**
+             * registry
+             */
             Registry registry = RegistryFactory.getSpringRegistry(applicationContext);
 
-            // 扫描器
+            /**
+             * 扫描器
+             */
             scanMgr = ScanFactory.getScanMgr(registry);
 
-            // 第一次扫描并入库
+            /**
+             * 第一次扫描并入库
+             */
             scanMgr.firstScan(scanPackageList);
 
-            // 获取数据/注入/Watch
+            /**
+             * 获取数据/注入/Watch
+             */
             disconfCoreMgr = DisconfCoreFactory.getDisconfCoreMgr(registry);
             disconfCoreMgr.process();
 
-            //
+            /**
+             * 第一次初始化完成
+             */
             isFirstInit = true;
 
-            LOGGER.info("******************************* DISCONF END FIRST SCAN *******************************");
+            logger.info("******************************* DISCONF END FIRST SCAN *******************************");
 
         } catch (Exception e) {
 
-            LOGGER.error(e.toString(), e);
+            logger.error(e.toString(), e);
         }
     }
 
@@ -113,70 +135,88 @@ public class DisconfMgr implements ApplicationContextAware {
      */
     protected synchronized void secondScan() {
 
-        // 该函数必须第一次运行后才能运行
+        /**
+         * 该函数必须第一次运行后才能运行
+         */
         if (!isFirstInit) {
-            LOGGER.info("should run First Scan before Second Scan.");
+            logger.info("should run First Scan before Second Scan.");
             return;
         }
 
-        // 第二次扫描也只能做一次
+        /**
+         * 第二次扫描也只能做一次
+         */
         if (isSecondInit) {
-            LOGGER.info("should not run twice.");
+            logger.info("should not run twice.");
             return;
         }
 
-        LOGGER.info("******************************* DISCONF START SECOND SCAN *******************************");
+        logger.info("******************************* DISCONF START SECOND SCAN *******************************");
 
         try {
 
-            // 扫描回调函数
+            /**
+             * 扫描回调函数
+             */
             if (scanMgr != null) {
                 scanMgr.secondScan();
             }
 
-            // 注入数据至配置实体中
-            // 获取数据/注入/Watch
+            /**
+             * 注入数据至配置实体中
+             * 获取数据/注入/Watch
+             */
             if (disconfCoreMgr != null) {
                 disconfCoreMgr.inject2DisconfInstance();
             }
 
         } catch (Exception e) {
-            LOGGER.error(e.toString(), e);
+            logger.error(e.toString(), e);
         }
 
+        /**
+         * 第二次初始化完成
+         */
         isSecondInit = true;
 
-        //
-        // 不开启 则不要打印变量map
-        //
+        /**
+         * 不开启 则不要打印变量map
+         */
         if (DisClientConfig.getInstance().ENABLE_DISCONF) {
 
             //
             String data = DisconfStoreProcessorFactory.getDisconfStoreFileProcessor()
                     .confToString();
             if (!StringUtils.isEmpty(data)) {
-                LOGGER.info("Conf File Map: {}", data);
+                logger.info("Conf File Map: {}", data);
             }
 
             //
             data = DisconfStoreProcessorFactory.getDisconfStoreItemProcessor()
                     .confToString();
             if (!StringUtils.isEmpty(data)) {
-                LOGGER.info("Conf Item Map: {}", data);
+                logger.info("Conf Item Map: {}", data);
             }
         }
-        LOGGER.info("******************************* DISCONF END *******************************");
+        logger.info("******************************* DISCONF END *******************************");
     }
 
     /**
      * reloadable config file scan, for xml config
+     * @param fileName 配置文件名
      */
     public synchronized void reloadableScan(String fileName) {
 
+        /**
+         * 必须第一次初始化完成
+         */
         if (!isFirstInit) {
             return;
         }
 
+        /**
+         * 不开启 则不要打印变量map
+         */
         if (DisClientConfig.getInstance().ENABLE_DISCONF) {
             try {
 
@@ -189,41 +229,45 @@ public class DisconfMgr implements ApplicationContextAware {
                     if (disconfCoreMgr != null) {
                         disconfCoreMgr.processFile(fileName);
                     }
-                    LOGGER.debug("disconf reloadable file: {}", fileName);
+                    logger.debug("disconf reloadable file: {}", fileName);
                 }
 
             } catch (Exception e) {
 
-                LOGGER.error(e.toString(), e);
+                logger.error(e.toString(), e);
             }
         }
     }
 
     /**
-     * @Description: 总关闭
+     * Bean Destruction 方法
      */
     public synchronized void close() {
 
         try {
 
-            // disconfCoreMgr
-            LOGGER.info("******************************* DISCONF CLOSE *******************************");
+            /**
+             *  disconfCoreMgr
+             */
+            logger.info("******************************* DISCONF CLOSE *******************************");
             if (disconfCoreMgr != null) {
                 disconfCoreMgr.release();
             }
 
-            // close, 必须将其设置为False,以便重新更新
+            /**
+             * close, 必须将其设置为False,以便重新更新
+             */
             isFirstInit = false;
             isSecondInit = false;
 
         } catch (Exception e) {
 
-            LOGGER.error("DisConfMgr close Failed.", e);
+            logger.error("DisConfMgr close Failed.", e);
         }
     }
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
+        this.applicationContext=applicationContext;
     }
 }

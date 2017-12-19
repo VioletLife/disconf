@@ -10,7 +10,10 @@ import com.baidu.disconf.client.support.registry.impl.SpringRegistry;
 public class RegistryFactory {
 
     /**
-     *
+     * 获取 {@link SpringRegistry}
+     * @param applicationContext ApplicationContext
+     * @return {@link SpringRegistry}
+     * @throws Exception 内部异常
      */
     public static Registry getSpringRegistry(ApplicationContext applicationContext) throws Exception {
 

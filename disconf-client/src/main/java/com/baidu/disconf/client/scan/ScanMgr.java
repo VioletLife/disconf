@@ -9,18 +9,22 @@ import java.util.List;
 public interface ScanMgr {
 
     /**
-     * @throws Exception
+     *
+     * @param packageNameList 包名列表
+     * @throws Exception 内部异常
      */
-    void firstScan(List<String> packageNameLit) throws Exception;
+    void firstScan(List<String> packageNameList) throws Exception;
 
     /**
+     * 第二次扫描
      * @throws Exception
      */
     void secondScan() throws Exception;
 
+
     /**
-     * reloadable for specify files
-     *
+     *   重新载入 操作扫描
+     * @param fileName
      * @throws Exception
      */
     void reloadableScan(String fileName) throws Exception;

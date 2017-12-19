@@ -15,14 +15,16 @@ public class ClassUtils {
 
     /**
      * 由Get Method名称获取Field名
-     *
-     * @return
+     * @param methodName 方法名称 (通常情况下，是符合JavaBean规范的方法名称)
+     * @return FieldName
      */
     public static String getFieldNameByGetMethodName(String methodName) {
 
         int prefixIndex = 0;
 
-        // 必须以get或is开始的
+        /**
+         * 必须以get或is开始的
+         */
         if (methodName.startsWith("get")) {
             prefixIndex = 3;
 
@@ -51,8 +53,10 @@ public class ClassUtils {
 
     /**
      * 根据Field类型设置值
-     *
-     * @param field
+     * @param field Field
+     * @param obj 包含Field的Class对象实例
+     * @param value Field将要设置的值
+     * @throws Exception 内部异常
      */
     public static void setFieldValeByType(Field field, Object obj, String value)
             throws Exception {
@@ -97,15 +101,12 @@ public class ClassUtils {
 
     /**
      * 根据Field类型返回值
-     *
-     * @param type
-     * @param value
-     *
-     * @return
-     *
-     * @throws Exception
+     * @param type 类型
+     * @param value 值
+     * @return 返回值
+     * @throws Exception  内部异常
      */
-    public static Object getValeByType(Class<?> type, Object value)
+    public static Object getValueByType(Class<?> type, Object value)
             throws Exception {
 
         // 预处理
@@ -163,10 +164,8 @@ public class ClassUtils {
 
     /**
      * 获取一个类的所有方法
-     *
-     * @param entityClass
-     *
-     * @return
+     * @param entityClass 实体类
+     * @return 方法集合
      */
     public static Set<Method> getAllMethod(Class<?> entityClass) {
 

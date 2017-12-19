@@ -22,12 +22,12 @@ import com.baidu.disconf.client.support.utils.MethodUtils;
 import com.baidu.disconf.core.common.constants.DisConfigTypeEnum;
 import com.baidu.disconf.core.common.path.DisconfWebPathMgr;
 
-/*
- * 配置项的静态扫描 
+/**
+ *  配置项的静态扫描
  */
 public class StaticScannerItemMgrImpl extends StaticScannerMgrImplBase implements StaticScannerMgr {
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(StaticScannerItemMgrImpl.class);
+    protected static final Logger logger = LoggerFactory.getLogger(StaticScannerItemMgrImpl.class);
 
     @Override
     public void scanData2Store(ScanStaticModel scanModel) {
@@ -113,7 +113,7 @@ public class StaticScannerItemMgrImpl extends StaticScannerMgrImplBase implement
             try {
                 disconfCenterItem.setValue(field.get(null));
             } catch (Exception e) {
-                LOGGER.error(e.toString());
+                logger.error(e.toString());
                 disconfCenterItem.setValue(null);
             }
         } else {
