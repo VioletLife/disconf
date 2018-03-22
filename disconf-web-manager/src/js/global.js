@@ -1,6 +1,6 @@
-import Configufation from './configuration'
+import Configuration from './configuration'
 
-let _conf = new Configufation();
+let _conf = new Configuration();
 export {
-  _conf as Configufation
+  _conf as Conf
 }
