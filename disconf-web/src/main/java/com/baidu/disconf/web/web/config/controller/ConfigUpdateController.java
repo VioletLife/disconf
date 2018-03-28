@@ -47,7 +47,6 @@ public class ConfigUpdateController extends BaseController {
      *
      * @param configId
      * @param value
-     *
      * @return
      */
     @RequestMapping(value = "/item/{configId}", method = RequestMethod.PUT)
@@ -78,7 +77,6 @@ public class ConfigUpdateController extends BaseController {
      *
      * @param configId
      * @param file
-     *
      * @return
      */
     @ResponseBody
@@ -126,7 +124,6 @@ public class ConfigUpdateController extends BaseController {
      *
      * @param configId
      * @param fileContent
-     *
      * @return
      */
     @ResponseBody
@@ -139,7 +136,7 @@ public class ConfigUpdateController extends BaseController {
         String emailNotification = "";
         try {
 
-            String str = new String(fileContent.getBytes(), "UTF-8");
+            String str = fileContent;
             LOG.info("receive file: " + str);
 
             emailNotification = configMgr.updateItemValue(configId, str);
