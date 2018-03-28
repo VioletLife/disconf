@@ -22,7 +22,7 @@ import com.baidu.disconf.core.common.zookeeper.inner.ResilientActiveKeyValueStor
  */
 public class ZookeeperMgr {
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(ZookeeperMgr.class);
+    protected static final Logger logger = LoggerFactory.getLogger(ZookeeperMgr.class);
 
     private ResilientActiveKeyValueStore store;
 
@@ -30,9 +30,12 @@ public class ZookeeperMgr {
     private String curDefaultPrefixString = "";
 
     /**
-     * @return void
-     * @throws Exception
-     * @Description: 初始化
+     *
+     * 初始化
+     * @param host HOST
+     * @param defaultPrefixString 默认前缀
+     * @param debug 是否开启调试
+     * @throws Exception 内部异常
      * @author liaoqiqi
      * @date 2013-6-14
      */
@@ -42,7 +45,7 @@ public class ZookeeperMgr {
 
             initInternal(host, defaultPrefixString, debug);
 
-            LOGGER.debug("ZookeeperMgr init.");
+            logger.debug("ZookeeperMgr init.");
 
         } catch (Exception e) {
 
@@ -95,7 +98,7 @@ public class ZookeeperMgr {
         store = new ResilientActiveKeyValueStore(debug);
         store.connect(hosts);
 
-        LOGGER.info("zoo prefix: " + defaultPrefixString);
+        logger.info("zoo prefix: " + defaultPrefixString);
 
         // 新建父目录
         makeDir(defaultPrefixString, ZooUtils.getIp());
@@ -104,7 +107,8 @@ public class ZookeeperMgr {
     /**
      * Zoo的新建目录
      *
-     * @param dir
+     * @param dir 目录路径
+     * @param data 节点数据
      */
     public void makeDir(String dir, String data) {
 
@@ -112,17 +116,17 @@ public class ZookeeperMgr {
 
             boolean defaultPathExist = store.exists(dir);
             if (!defaultPathExist) {
-                LOGGER.info("create: " + dir);
+                logger.info("create: " + dir);
                 this.writePersistentUrl(dir, data);
             }
 
         } catch (KeeperException e) {
 
-            LOGGER.error("cannot create path: " + dir, e);
+            logger.error("cannot create path: " + dir, e);
 
         } catch (Exception e) {
 
-            LOGGER.error("cannot create path: " + dir, e);
+            logger.error("cannot create path: " + dir, e);
         }
     }
 

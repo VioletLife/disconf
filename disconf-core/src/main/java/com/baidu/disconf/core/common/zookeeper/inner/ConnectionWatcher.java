@@ -51,7 +51,7 @@ public class ConnectionWatcher implements Watcher {
     /**
      * 连接ZK
      *
-     * @param hosts
+     * @param hosts Host地址
      * @throws IOException          Zookeeper异常
      * @throws InterruptedException Zookeeper异常
      * @author liaoqiqi
