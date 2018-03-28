@@ -1,0 +1,70 @@
+(function (window) {
+  var serverUrl = "/";
+  var stylesFiles = [
+    'dep/bootstrap/css/bootstrap.css',
+    'dep/jquery-ui-1.10.4.custom/css/ui-lightness/jquery-ui-1.10.4.custom.css',
+    'assets/css/project.css',
+    'plugins/element-ui/lib/theme-chalk/index.css'
+  ];
+
+  var scriptFiles = [
+    'plugins/vue/dist/vue.min.js',
+    'plugins/element-ui/lib/index.js',
+    'assets/js/jquery-1.11.0.js',
+    'dep/jquery-ui-1.10.4.custom/js/jquery-ui-1.10.4.custom.js',
+    'dep/bootstrap/js/bootstrap.js',
+    'assets/js/util.js',
+    'assets/js/common.js'
+  ];
+
+  var loadStyles = function () {
+    var allStyleContent = "";
+    stylesFiles.forEach(function (value) {
+      var styleElement = '<link rel="stylesheet" href="' + serverUrl + value + '" />';
+      allStyleContent += styleElement;
+    });
+    document.write(allStyleContent);
+    initLoadScripts(scriptFiles);
+  };
+  /**
+   * 加载页面基本CSS文件
+   */
+
+  /**
+   * 加载页面基本JS文件
+   */
+  var initLoadScripts = function (scriptPaths) {
+    var allScriptContent = "";
+    scriptPaths.forEach(function (value) {
+      var scriptElement = '<script src="' + serverUrl + value + '"></script>';
+      allScriptContent += scriptElement;
+    });
+    document.write(allScriptContent);
+  };
+
+  var loadScripts = function (scriptPaths) {
+    scriptPaths.forEach(function (value) {
+      var scriptElement = document.createElement("script");
+      scriptElement.src = serverUrl + value;
+      document.body.appendChild(scriptElement);
+    });
+  };
+
+  loadStyles();
+  var _disconf = function () {
+    var self = this;
+    var globalConf = {
+      scriptPaths: []
+    };
+    self.ready = function ({scriptPaths = []}) {
+      globalConf.scriptPaths = scriptPaths;
+    };
+    self.loadScripts = loadScripts;
+    self.conf = globalConf;
+  }
+  var disconfObject = new _disconf();
+  window.disconf = window.disconf || disconfObject;
+  window.addEventListener("DOMContentLoaded", function () {
+    window.disconf.loadScripts(window.disconf.conf.scriptPaths);
+  }, false);
+})(window);
