@@ -883,6 +883,7 @@ label {
 
 a {
   text-decoration: none;
+  color: inherit;
 }
 
 table {
@@ -1121,3 +1122,15 @@ q:before, q:after {
   max-width: 500px;
   width: auto;
 }
+
+.el-menu--horizontal > .el-menu-item a, .el-menu--horizontal > .el-menu-item a:hover {
+  color: inherit;
+}
+
+.el-header {
+  padding: 0 !important;
+}
+
+
+
+

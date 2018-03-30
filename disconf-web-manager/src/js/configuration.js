@@ -1,11 +1,11 @@
 export default class Configuration {
-  constructor() {
+  constructor () {
     this.disconf = {
-      serverUrl: ""
-    };
+      serverUrl: ''
+    }
   }
 
-  conf() {
-    return this.disconf;
+  conf () {
+    return this.disconf
   }
 }
