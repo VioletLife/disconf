@@ -1,5 +1,6 @@
 let globalEnv = {
-  serverUrl: '/'
+  serverUrl: '/',
+  serverAPIUrl: '/'
 }
 let globalEnvVar = '_GLOBAL_ENV_'
 if (window) {

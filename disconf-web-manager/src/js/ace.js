@@ -1,5 +1,7 @@
+/* global  ace:true */
 import GlobalEnv from './global_env'
-
+import $ from 'jquery'
+import _ from 'lodash'
 export default class ACELoader {
   static defaultOptions () {
     return {
