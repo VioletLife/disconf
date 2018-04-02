@@ -385,102 +385,93 @@
 
 
 <script>
-  var _hmt = _hmt || [];
-  (function () {
-    var hm = document.createElement("script");
-    hm.src = "//hm.baidu.com/hm.js?c4578bda90040ec19ded56112b82246f";
-    var s = document.getElementsByTagName("script")[0];
-    s.parentNode.insertBefore(hm, s);
-  })();
-</script>
-<script>
   if (window.disconf) {
     window.disconf.ready({
-      scriptPaths: ["assets/js/mainList.js", "assets/js/footer.js"],
+      scriptPaths: ['assets/js/mainList.js', 'assets/js/footer.js'],
       completed: function () {
         new Vue({
           el: '#disconfApplication',
           data: function () {
             return {
-              activeName: "",
+              activeName: '',
               activeCollapseNames: [],
               isCollapse: false,
               activeIndex: '0',
               htmlPath: {
-                password: window.disconf.serverUrl + "modifypassword.html",
-                app: window.disconf.serverUrl + "newapp.html",
-                appConfigItem: window.disconf.serverUrl + "newconfig_item.html",
-                appConfigFile: window.disconf.serverUrl + "newconfig_file.html",
-                appLogin: window.disconf.serverUrl + "login.html"
+                password: window.disconf.serverUrl + 'modifypassword.html',
+                app: window.disconf.serverUrl + 'newapp.html',
+                appConfigItem: window.disconf.serverUrl + 'newconfig_item.html',
+                appConfigFile: window.disconf.serverUrl + 'newconfig_file.html',
+                appLogin: window.disconf.serverUrl + 'login.html'
               },
               visible: false,
               userAppList: [],
               userEnvList: [],
-              currentAppName: "",
+              currentAppName: '',
               currentAppId: 0,
               currentAppVersionInfo: [],
               currentAppEnvId: 0,
               currentAppEnvName: 0,
               confContentDialog: {
                 confContentVisible: false,
-                confContentTitle: "",
-                confContent: ""
+                confContentTitle: '',
+                confContent: ''
               }
             }
           },
           mounted: function () {
-            var vmSelf = this;
+            var vmSelf = this
             window.disconf.ajax({
-              type: "GET",
-              url: "api/app/list",
+              type: 'GET',
+              url: 'api/app/list',
               success: function (response) {
                 if (response.success === 'true') {
-                  vmSelf.userAppList = response.page.result;
+                  vmSelf.userAppList = response.page.result
                   /**
                    * 默认选中第一个应用
                    */
-                  vmSelf.currentAppName = response.page.result[0].name;
-                  vmSelf.currentAppId = response.page.result[0].id;
-                  vmSelf.loadAppAndVersionList(vmSelf.currentAppId, vmSelf.currentAppEnvId);
+                  vmSelf.currentAppName = response.page.result[0].name
+                  vmSelf.currentAppId = response.page.result[0].id
+                  vmSelf.loadAppAndVersionList(vmSelf.currentAppId, vmSelf.currentAppEnvId)
                 }
               }
-            });
+            })
             window.disconf.ajax({
-              type: "GET",
-              url: "api/env/list",
+              type: 'GET',
+              url: 'api/env/list',
               success: function (response) {
                 if (response.success === 'true') {
-                  vmSelf.userEnvList = response.page.result;
+                  vmSelf.userEnvList = response.page.result
                   vmSelf.$nextTick(() => {
                     /**
                      * 默认选中第一个环境
                      * @type {string}
                      */
-                    vmSelf.activeName = `env_` + vmSelf.userEnvList[0].id;
-                    vmSelf.currentAppEnvId = vmSelf.userEnvList[0].id;
-                    vmSelf.currentAppEnvName = vmSelf.userEnvList[0].name;
-                    console.info("vmSelf.currentAppEnvId"+vmSelf.currentAppEnvId);
-                    vmSelf.loadAppAndVersionList(vmSelf.currentAppId, vmSelf.currentAppEnvId);
-                  });
+                    vmSelf.activeName = `env_` + vmSelf.userEnvList[0].id
+                    vmSelf.currentAppEnvId = vmSelf.userEnvList[0].id
+                    vmSelf.currentAppEnvName = vmSelf.userEnvList[0].name
+                    console.info('vmSelf.currentAppEnvId' + vmSelf.currentAppEnvId)
+                    vmSelf.loadAppAndVersionList(vmSelf.currentAppId, vmSelf.currentAppEnvId)
+                  })
                 }
               }
-            });
+            })
           },
           methods: {
             handleSelect(key, keyPath) {
-              console.log(key, keyPath);
+              console.log(key, keyPath)
             },
             handleOpen(key, keyPath) {
-              console.log(key, keyPath);
+              console.log(key, keyPath)
             },
             handleClose(key, keyPath) {
-              console.log(key, keyPath);
+              console.log(key, keyPath)
             },
             appMenuItemIndex(menuIndex, appId) {
-              return `${menuIndex}-${appId}`;
+              return `${menuIndex}-${appId}`
             },
             appEnvItemName(env) {
-              return `env_${env.id}`;
+              return `env_${env.id}`
             },
             handleEnvChange(value) {
               // console.info(value);
@@ -490,45 +481,45 @@
               // });
             },
             handleAppMenuItemClick(app) {
-              this.currentAppName = app.name;
-              this.currentAppId = app.id;
-              this.currentAppEnvId = this.userEnvList[0].id;
-              this.currentAppEnvName = this.userEnvList[0].name;
-              console.info("this.currentAppId:" + this.currentAppId + ",this.currentAppEnvId:" + this.currentAppEnvId);
+              this.currentAppName = app.name
+              this.currentAppId = app.id
+              this.currentAppEnvId = this.userEnvList[0].id
+              this.currentAppEnvName = this.userEnvList[0].name
+              console.info('this.currentAppId:' + this.currentAppId + ',this.currentAppEnvId:' + this.currentAppEnvId)
               this.$nextTick(() => {
-                this.loadAppAndVersionList(this.currentAppId, this.currentAppEnvId);
-              });
+                this.loadAppAndVersionList(this.currentAppId, this.currentAppEnvId)
+              })
             },
             handleTabClick(tab, event) {
-              this.currentAppEnvId = parseInt(tab.name.replace('env_', ''));
-              this.currentAppEnvName = tab.label;
-              this.loadAppAndVersionList(this.currentAppId, this.currentAppEnvId);
+              this.currentAppEnvId = parseInt(tab.name.replace('env_', ''))
+              this.currentAppEnvName = tab.label
+              this.loadAppAndVersionList(this.currentAppId, this.currentAppEnvId)
             },
             loadAppAndVersionList(appId, envId) {
-              var vmSelf = this;
+              var vmSelf = this
               if (appId > 0 && envId > 0) {
                 var createVersionConf = function ({version, versionConf}) {
                   return {
                     version,
                     versionConf
-                  };
-                };
+                  }
+                }
                 window.disconf.ajax({
-                  type: "GET",
-                  url: "api/web/config/versionlist",
+                  type: 'GET',
+                  url: 'api/web/config/versionlist',
                   data: {
                     appId,
                     envId
                   },
                   success: function (response) {
                     if (response.success === 'true') {
-                      var allVersion = [];
-                      var allVersionNames = [];
+                      var allVersion = []
+                      var allVersionNames = []
                       response.page.result.forEach(function (version, index) {
-                        allVersionNames.push(String(index));
+                        allVersionNames.push(String(index))
                         window.disconf.ajax({
-                            type: "GET",
-                            url: "api/web/config/list",
+                            type: 'GET',
+                            url: 'api/web/config/list',
                             async: false,
                             data: {
                               appId,
@@ -537,24 +528,24 @@
                             },
                             success: function (versionResponse) {
                               for (var index = 0; index < versionResponse.page.result.length; index++) {
-                                versionResponse.page.result[index]['confIndex'] = index + 1;
+                                versionResponse.page.result[index]['confIndex'] = index + 1
                               }
-                              allVersion.push(createVersionConf({version, versionConf: versionResponse.page.result}));
+                              allVersion.push(createVersionConf({version, versionConf: versionResponse.page.result}))
                             }
                           }
-                        );
-                      });
-                      vmSelf.activeCollapseNames = allVersionNames;
-                      vmSelf.currentAppVersionInfo = allVersion;
+                        )
+                      })
+                      vmSelf.activeCollapseNames = allVersionNames
+                      vmSelf.currentAppVersionInfo = allVersion
                     }
                   }
-                });
+                })
               }
             },
             showConfContent(row) {
-              this.confContentDialog.confContent = row.value;
-              this.confContentDialog.confContentVisible = true;
-              this.confContentDialog.confContentTitle = `${row.type}:${row.key}`;
+              this.confContentDialog.confContent = row.value
+              this.confContentDialog.confContentVisible = true
+              this.confContentDialog.confContentTitle = `${row.type}:${row.key}`
 
               // confContentDialog: {
               //   confContentVisible: false,
@@ -572,9 +563,8 @@
                * 配置文件
                * 配置项
                */
-              var editorUrl = `${window.disconf.serverUrl}#/conf/file/edit?appId=${this.currentAppId}&appName=${encodeURIComponent(this.currentAppName)}&envId=${this.currentAppEnvId}&envName=${encodeURIComponent(this.currentAppEnvName)}&version=${version}`;
-              console.info(editorUrl);
-
+              var editorUrl = `${window.disconf.serverUrl}#/conf/file/edit?appId=${this.currentAppId}&appName=${encodeURIComponent(this.currentAppName)}&envId=${this.currentAppEnvId}&envName=${encodeURIComponent(this.currentAppEnvName)}&version=${version}&fileKey=${encodeURIComponent(row.key)}&configId=${row.configId}`
+              console.info(editorUrl)
             },
             handleDelete(index, row, version) {
 
@@ -583,10 +573,10 @@
 
             },
             zkDeployData(appId, envId, version) {
-              var vmSelf = this;
+              var vmSelf = this
               window.disconf.ajax({
-                  type: "GET",
-                  url: "api/zoo/zkdeploy",
+                  type: 'GET',
+                  url: 'api/zoo/zkdeploy',
                   async: false,
                   data: {
                     appId,
@@ -594,32 +584,32 @@
                     version
                   },
                   success: function (response) {
-                    vmSelf.confContentDialog.confContent = response.result.hostInfo;
-                    vmSelf.confContentDialog.confContentVisible = true;
-                    vmSelf.confContentDialog.confContentTitle = "ZK部署情况";
+                    vmSelf.confContentDialog.confContent = response.result.hostInfo
+                    vmSelf.confContentDialog.confContentVisible = true
+                    vmSelf.confContentDialog.confContentTitle = 'ZK部署情况'
                   }
                 }
-              );
+              )
             },
             batchDownLoad() {
 
             },
             downLoadUrl(appId, envId, version) {
-              var serverUrl = window.disconf.serverUrl;
-              return `${serverUrl}api/web/config/downloadfilebatch?appId=${appId}&envId=${envId}&version=${version}`;
+              var serverUrl = window.disconf.serverUrl
+              return `${serverUrl}api/web/config/downloadfilebatch?appId=${appId}&envId=${envId}&version=${version}`
             }
           },
           watch: {
             currentAppId: function () {
-              this.loadAppAndVersionList(this.currentAppId, this.currentAppEnvId);
+              this.loadAppAndVersionList(this.currentAppId, this.currentAppEnvId)
             },
             currentAppEnvId: function () {
-              this.loadAppAndVersionList(this.currentAppId, this.currentAppEnvId);
+              this.loadAppAndVersionList(this.currentAppId, this.currentAppEnvId)
             }
           },
           filters: {
             versionFormat(value) {
-              return `版本:${value}`;
+              return `版本:${value}`
             }
           },
           computed: {
@@ -627,9 +617,9 @@
 
             }
           }
-        });
+        })
       }
-    });
+    })
   }
 </script>
 </body>

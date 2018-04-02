@@ -1,5 +1,6 @@
 (function ($) {
-
+  var globalEnv = '_GLOBAL_ENV_'
+  var serverAPIUrl = JSON.parse(window.localStorage.getItem(globalEnv)).serverAPIUrl;
     $("#indexMain").attr("href", "/");
 
     getSession2Redirect();
@@ -20,7 +21,7 @@
 
         $.ajax({
             type: "POST",
-            url: "/api/account/signin",
+            url: serverAPIUrl+"api/account/signin",
             data: {
                 "name": email,
                 "password": pwd,
@@ -31,7 +32,7 @@
                 window.VISITOR = data.result.visitor;
                 $("#loginError").hide();
                 headShowInit();
-                window.location.href = "/main.html";
+                window.location.href = "main.html";
             } else {
                 Util.input.whiteError($("#loginError"), data);
                 $("#loginError").show();
