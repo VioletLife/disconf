@@ -1,8 +1,8 @@
 package com.baidu.disconf.web.service.sign.form;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.Range;
 
 import com.baidu.dsp.common.form.RequestFormBase;
