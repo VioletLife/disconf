@@ -1,6 +1,7 @@
 (function (window) {
   var globalEnv = '_GLOBAL_ENV_'
-  var serverUrl = JSON.parse(window.localStorage.getItem(globalEnv)).serverUrl;
+  var serverUrl = JSON.parse(window.localStorage.getItem(globalEnv)).serverUrl + 'static/html/';
+  var serverAPIUrl = JSON.parse(window.localStorage.getItem(globalEnv)).serverAPIUrl;
   var stylesFiles = [
     // 'dep/bootstrap/css/bootstrap.css',
     // 'dep/jquery-ui-1.10.4.custom/css/ui-lightness/jquery-ui-1.10.4.custom.css',
@@ -67,8 +68,9 @@
     self.loadScripts = loadScripts
     self.conf = globalConf
     self.serverUrl = serverUrl
+    self.serverAPIUrl = serverAPIUrl
     self.ajax = function (options) {
-      options.url = self.serverUrl + options.url
+      options.url = self.serverAPIUrl + options.url
       if (window.$ && window.jQuery) {
         window.$.ajax(options)
       }
