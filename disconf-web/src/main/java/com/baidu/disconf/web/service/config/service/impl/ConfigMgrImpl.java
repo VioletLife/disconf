@@ -2,13 +2,10 @@ package com.baidu.disconf.web.service.config.service.impl;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
+import com.baidu.disconf.web.service.config.vo.ConfHistoryVo;
+import com.baidu.disconf.web.service.config.vo.ConfigVo;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -105,7 +102,6 @@ public class ConfigMgrImpl implements ConfigMgr {
      * 配置文件的整合
      *
      * @param confListForm
-     *
      * @return
      */
     public List<File> getDisconfFileList(ConfListForm confListForm) {
@@ -383,7 +379,6 @@ public class ConfigMgrImpl implements ConfigMgr {
      *
      * @param newValue
      * @param identify
-     *
      * @return
      */
     private String getNewValue(String newValue, String identify, String htmlClick) {
@@ -463,7 +458,6 @@ public class ConfigMgrImpl implements ConfigMgr {
      * 转换成配置返回
      *
      * @param config
-     *
      * @return
      */
     private ConfListVo convert(Config config, String appNameString, String envName, ZkDisconfData zkDisconfData) {
@@ -542,5 +536,13 @@ public class ConfigMgrImpl implements ConfigMgr {
         machineListVo.setMachineSize(datalist.size());
 
         return machineListVo;
+    }
+
+
+    @Override
+    public Optional<List<ConfigVo>> getConfigContent(Long appId, Long envId, String version, DisConfigTypeEnum disConfigTypeEnum) {
+        List<Config> configList = configDao.getConfigList(appId, envId, version, disConfigTypeEnum);
+        Optional<List<ConfigVo>> configVos = fromBoToVo(ConfigVo.class, configList);
+        return configVos;
     }
 }

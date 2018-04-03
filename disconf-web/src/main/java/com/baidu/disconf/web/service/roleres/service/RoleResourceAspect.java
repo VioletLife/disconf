@@ -66,9 +66,9 @@ public class RoleResourceAspect {
         }
 
         String urlPattarn = clsUrl + methodUrl;
-        if (!urlPattarn.endsWith(RoleResourceConstant.URL_SPLITOR)) {
-            urlPattarn += RoleResourceConstant.URL_SPLITOR;
-        }
+//        if (!urlPattarn.endsWith(RoleResourceConstant.URL_SPLITOR)) {
+//            urlPattarn += RoleResourceConstant.URL_SPLITOR;
+//        }
 
         if (noAuthCheckUrl != null && noAuthCheckUrl.contains(urlPattarn)) {
 

@@ -1,7 +1,8 @@
 package com.baidu.disconf.web.service.config.service.impl;
 
-import java.util.Date;
+import java.util.*;
 
+import com.baidu.disconf.web.service.config.vo.ConfHistoryVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,5 +41,13 @@ public class ConfigHistoryMgrImpl implements ConfigHistoryMgr {
         configHistory.setCreateTime(curTime);
 
         configHistoryDao.create(configHistory);
+    }
+
+    @Override
+    public Optional<List<ConfHistoryVo>> getConfigHistoryByConfigId(Long configId) {
+        List<ConfigHistory> history = configHistoryDao.getConfigHistoryByConfigId(configId);
+        Optional<List<ConfHistoryVo>> confHistoryVos = fromBoToVo(ConfHistoryVo.class, history);
+        confHistoryVos.orElse(Collections.emptyList());
+        return confHistoryVos;
     }
 }

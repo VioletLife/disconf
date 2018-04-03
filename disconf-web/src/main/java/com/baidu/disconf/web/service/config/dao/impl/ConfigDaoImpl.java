@@ -90,7 +90,7 @@ public class ConfigDaoImpl extends AbstractDao<Long, Config> implements ConfigDa
         if (hasValue) {
             return find(matchs, new ArrayList<Order>());
         } else {
-            return findColumns(matchs, new String[] {Columns.CONFIG_ID, Columns.TYPE, Columns.NAME, Columns.CREATE_TIME
+            return findColumns(matchs, new String[]{Columns.CONFIG_ID, Columns.TYPE, Columns.NAME, Columns.CREATE_TIME
                     , Columns.UPDATE_TIME, Columns.STATUS, Columns.APP_ID, Columns.ENV_ID, Columns.VERSION});
         }
     }
@@ -128,5 +128,15 @@ public class ConfigDaoImpl extends AbstractDao<Long, Config> implements ConfigDa
     public String getValue(Long configId) {
         Config config = get(configId);
         return config.getValue();
+    }
+
+    @Override
+    public List<Config> getConfigList(Long appId, Long envId, String version, DisConfigTypeEnum disConfigTypeEnum) {
+        List<Match> matches = new ArrayList<>();
+        matches.add(new Match(Columns.APP_ID, appId));
+        matches.add(new Match(Columns.ENV_ID, envId));
+        matches.add(new Match(Columns.VERSION, version));
+        matches.add(new Match(Columns.TYPE, disConfigTypeEnum.getType()));
+        return find(matches, new ArrayList<>());
     }
 }

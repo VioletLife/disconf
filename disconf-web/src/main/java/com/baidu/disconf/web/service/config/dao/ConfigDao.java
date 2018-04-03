@@ -64,7 +64,19 @@ public interface ConfigDao extends BaseDao<Long, Config> {
 
 
     /**
+     * 获取配置信息内容
+     * @param appId appId
+     * @param envId envId
+     * @param version version
+     * @param disConfigTypeEnum disConfigTypeEnum
+     * @return 配置信息列表
+     */
+    List<Config> getConfigList(Long appId, Long envId, String version, DisConfigTypeEnum disConfigTypeEnum);
+
+
+    /**
      * @param configId
      */
     void deleteItem(Long configId);
+
 }

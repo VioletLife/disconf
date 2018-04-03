@@ -2,12 +2,17 @@ package com.baidu.disconf.web.service.config.service;
 
 import java.io.File;
 import java.util.List;
+import java.util.Optional;
 
 import com.baidu.disconf.core.common.constants.DisConfigTypeEnum;
+import com.baidu.disconf.web.service.BaseService;
 import com.baidu.disconf.web.service.config.bo.Config;
+import com.baidu.disconf.web.service.config.bo.ConfigHistory;
 import com.baidu.disconf.web.service.config.form.ConfListForm;
 import com.baidu.disconf.web.service.config.form.ConfNewItemForm;
+import com.baidu.disconf.web.service.config.vo.ConfHistoryVo;
 import com.baidu.disconf.web.service.config.vo.ConfListVo;
+import com.baidu.disconf.web.service.config.vo.ConfigVo;
 import com.baidu.disconf.web.service.config.vo.MachineListVo;
 import com.baidu.ub.common.db.DaoPageResult;
 
@@ -15,11 +20,10 @@ import com.baidu.ub.common.db.DaoPageResult;
  * @author liaoqiqi
  * @version 2014-6-16
  */
-public interface ConfigMgr {
+public interface ConfigMgr extends BaseService {
 
     /**
      * @param
-     *
      * @return
      */
     List<String> getVersionListByAppEnv(Long appId, Long envId);
@@ -31,21 +35,18 @@ public interface ConfigMgr {
 
     /**
      * @param configId
-     *
      * @return
      */
     ConfListVo getConfVo(Long configId);
 
     /**
      * @param configId
-     *
      * @return
      */
     MachineListVo getConfVoWithZk(Long configId);
 
     /**
      * @param configId
-     *
      * @return
      */
     Config getConfigById(Long configId);
@@ -54,7 +55,6 @@ public interface ConfigMgr {
      * 更新 配置项/配置文件
      *
      * @param configId
-     *
      * @return
      */
     String updateItemValue(Long configId, String value);
@@ -63,7 +63,6 @@ public interface ConfigMgr {
      * 获取config value
      *
      * @param configId
-     *
      * @return
      */
     String getValue(Long configId);
@@ -92,9 +91,20 @@ public interface ConfigMgr {
 
     /**
      * @param confListForm
-     *
      * @return
      */
     List<File> getDisconfFileList(ConfListForm confListForm);
+
+
+    /**
+     * 获取配置内容
+     *
+     * @param appId   appId
+     * @param envId   envId
+     * @param version version
+     * @param disConfigTypeEnum  disConfigTypeEnum
+     * @return 配置内容
+     */
+    Optional<List<ConfigVo>> getConfigContent(Long appId, Long envId, String version, DisConfigTypeEnum disConfigTypeEnum);
 
 }

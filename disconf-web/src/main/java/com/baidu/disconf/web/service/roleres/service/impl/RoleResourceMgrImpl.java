@@ -55,9 +55,9 @@ public class RoleResourceMgrImpl implements RoleResourceMgr {
         for (RoleResource roleRes : roleResList) {
 
             String urlPattern = roleRes.getUrlPattern();
-            if (!urlPattern.endsWith(RoleResourceConstant.URL_SPLITOR)) {
-                urlPattern += RoleResourceConstant.URL_SPLITOR;
-            }
+//            if (!urlPattern.endsWith(RoleResourceConstant.URL_SPLITOR)) {
+//                urlPattern += RoleResourceConstant.URL_SPLITOR;
+//            }
             // LOG.info(urlPattern);
 
             Map<RequestMethod, List<Integer>> value = infoMap.get(urlPattern);
