@@ -32,15 +32,15 @@
             </el-col>
             <el-col :span="3">
               <span class="app-header-label">历史版本：</span>
-              <span class="app-header-item app-header-link">1个</span>
+              <span class="app-header-item app-header-link">{{appInfo.historyNumber}}个</span>
             </el-col>
             <el-col :span="3">
               <span class="app-header-label">配置文件：</span>
-              <span class="app-header-item app-header-link">1个</span>
+              <span class="app-header-item app-header-link">{{appInfo.fileNumber}}个</span>
             </el-col>
             <el-col :span="3">
               <span class="app-header-label">配置项：</span>
-              <span class="app-header-item app-header-link">1个</span>
+              <span class="app-header-item app-header-link">{{appInfo.itemNumber}}个</span>
             </el-col>
           </el-row>
         </div>
@@ -125,7 +125,7 @@
 
   export default {
     name: 'EditConfFile',
-    data () {
+    data() {
       return {
         appInfo: {
           appId: -1,
@@ -134,7 +134,10 @@
           envName: '',
           version: '',
           fileKey: '',
-          configId: -1
+          configId: -1,
+          fileNumber: 0,
+          itemNumber: 0,
+          historyNumber: 0
         },
         fileContent: '',
         fileEditorMode: false,
@@ -144,13 +147,8 @@
       }
     },
     mounted: function () {
-      let originContent = '#权重设置\n' +
-        'hint.key=123\n' +
-        '#网页URL参数\n' +
-        '#Baidu首页地址\n' +
-        'hint.addres=http://www.baidu.com\n'
-      let fileAllItems = resolve(originContent)
-      this.fileItems = fileAllItems
+      let vmSelf = this
+      vmSelf.updatePageContent()
       this.$nextTick(() => {
         let vmSelf = this
         let registerClipboardEvent = new ClipboardJS('.disconf-icon-copy')
@@ -170,16 +168,18 @@
       // envName=rd&
       // version=1_0_0_0&
       // fileKey=autoconfig.properties
+
       this.appInfo = this.$route.query
+      this.loadConfigHistory()
     },
     methods: {
-      handleEdit (row) {
+      handleEdit(row) {
 
       },
-      handleDelete (row) {
+      handleDelete(row) {
 
       },
-      loaderAceEditor () {
+      loaderAceEditor() {
         let vmSelf = this
         if (this.editorInstance) {
           this.editorInstance.destroy()
@@ -189,25 +189,59 @@
             el: 'mainEditor',
             ready: function (editor) {
               vmSelf.editorInstance = editor
-              Utils.ajax({
-                url: 'api/web/config/' + vmSelf.$route.query.configId,
-                type: 'get',
-                success: function (response) {
-                  setTimeout(function () {
-                    editor.session.setValue(response.result.value)
-                  }, 100)
-                }
-              })
+              vmSelf.updatePageContent(editor)
             }
           })
         }, 100)
       },
-      setEditorMode () {
+      updatePageContent(editor) {
+        let vmSelf = this
+        Utils.ajax({
+          url: 'api/web/config/' + vmSelf.$route.query.configId,
+          type: 'get',
+          success: function (response) {
+            setTimeout(function () {
+              if (editor) {
+                editor.session.setValue(response.result.value)
+              }
+              vmSelf.fileItems = resolve(response.result.value)
+            }, 100)
+          }
+        })
+      },
+      setEditorMode() {
         this.fileEditorMode = !this.fileEditorMode
         this.fileEditorName = this.fileEditorMode ? '切换至列表模式' : '切换至文件模式'
         this.$nextTick(() => {
           if (this.fileEditorMode) {
             this.loaderAceEditor()
+          }
+        })
+      },
+      loadConfigHistory() {
+        let vmSelf = this;
+        let configId = this.$route.query.configId
+        let {appId, envId, version} = this.$route.query
+        Utils.ajax({
+          url: 'api/web/config/statistics/file',
+          data: {
+            configId,
+            appId,
+            envId,
+            version
+          },
+          success: function (response) {
+            if (response && response.result) {
+              if (response.result.history) {
+                vmSelf.appInfo.historyNumber = response.result.history.length;
+              }
+              if (response.result.configFiles) {
+                vmSelf.appInfo.fileNumber = response.result.configFiles.length;
+              }
+              if (response.result.configItems) {
+                vmSelf.appInfo.itemNumber = response.result.configItems.length;
+              }
+            }
           }
         })
       }
