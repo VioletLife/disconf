@@ -563,8 +563,9 @@
                * 配置文件
                * 配置项
                */
-              var editorUrl = `${window.disconf.serverUrl}#/conf/file/edit?appId=${this.currentAppId}&appName=${encodeURIComponent(this.currentAppName)}&envId=${this.currentAppEnvId}&envName=${encodeURIComponent(this.currentAppEnvName)}&version=${version}&fileKey=${encodeURIComponent(row.key)}&configId=${row.configId}`
+              var editorUrl = `${window.disconf.originServerUrl}#/conf/file/edit?appId=${this.currentAppId}&appName=${encodeURIComponent(this.currentAppName)}&envId=${this.currentAppEnvId}&envName=${encodeURIComponent(this.currentAppEnvName)}&version=${version}&fileKey=${encodeURIComponent(row.key)}&configId=${row.configId}`
               console.info(editorUrl)
+              window.location.href = editorUrl
             },
             handleDelete(index, row, version) {
 
