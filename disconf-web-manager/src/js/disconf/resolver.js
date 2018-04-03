@@ -1,9 +1,73 @@
+import _ from 'lodash'
+
 let createFileItem = function ({key, value, comments}) {
   return {
     key,
     value,
     comments
   }
+}
+
+let Exception = function (message) {
+  let self = this
+  self.message = message
+}
+
+/**
+ *AUTO:如果不存在，则新增，如果存在则更新
+ * ADD:新增  如果已存在，则自动覆盖，如果用户的explicit为Function，则根据用户返回的执行进行处理(参考MergeAddExplicitOptions)
+ * UPDATE:更新
+ * REMOVE:删除
+ * @returns {{ADD: string, UPDATE: string, REMOVE: string}}
+ * @constructor
+ */
+let MergeOptions = () => {
+  return {
+    ADD: {
+      name: 'ADD',
+      explicit: MergeAddExplicitOptions().AUTO_OVERRIDE
+    },
+    UPDATE: 'UPDATE',
+    REMOVE: 'REMOVE',
+    AUTO: 'AUTO'
+  }
+}
+
+/**
+ * 新增过程中的策略:
+ * AUTO_OVERRIDE:自动覆盖
+ * APPEND:忽略已存在值，执行追加操作
+ * SKIP:自动跳过不处理
+ * ERROR:打印错误信息，跳过不处理
+ * ABORT:终止操作过程
+ *
+ * @returns {{AUTO_OVERRIDE: string, APPEND: string, SKIP: string, ERROR: string}}
+ * @constructor
+ */
+let MergeAddExplicitOptions = () => {
+  return {
+    AUTO_OVERRIDE: 'AUTO_OVERRIDE',
+    APPEND: 'APPEND',
+    SKIP: 'SKIP',
+    ERROR: 'ERROR',
+    ABORT: 'ABORT'
+  }
+}
+
+let convertArrayToMap = (arrays) => {
+  let map = new Map()
+  if (arrays) {
+    arrays.forEach(function (item) {
+      if (item.key) {
+        map.set(item.key, item)
+      }
+    })
+  }
+  return map
+}
+
+let createFileItemForProcess = function ({key, value, comments, mergeOptions = MergeOptions().AUTO}) {
+  return {key, value, comments, mergeOptions}
 }
 
 let resolve = function (fileContent) {
@@ -16,7 +80,9 @@ let resolve = function (fileContent) {
     let fileItemKey = ''
     let fileItemValue = ''
     let fileItemComments = ''
-    fileContent = fileContent.split('\n').filter(function (value) { return !!(value && value.replace(/\s/gi, '').length > 0) })
+    fileContent = fileContent.split('\n').filter(function (value) {
+      return !!(value && value.replace(/\s/gi, '').length > 0)
+    })
     fileContent.forEach(function (value) {
       if (value.indexOf('#') === 0) {
         fileItemComments += value + '\n'
@@ -32,6 +98,105 @@ let resolve = function (fileContent) {
   return allFileItems
 }
 
+let merge = function (fileContent, targetItems) {
+  let mergeOptions = MergeOptions()
+  let fileItems = resolve(fileContent)
+  let fileItemsMap = convertArrayToMap(fileItems)
+  targetItems = validate(targetItems)
+  let appendPlaceHolders = []
+  let removeKeys = []
+  let targetItemsMap = convertArrayToMap(targetItems)
+  if (fileItems && fileItems.length > 0) {
+    fileItems.forEach(function (fileItem, index) {
+      let targetItem = targetItemsMap.get(fileItem.key)
+      let mergeObject = targetItem
+      switch (mergeObject.mergeOptions) {
+        case mergeOptions.ADD.name: {
+          let explicit = ''
+          if (typeof mergeObject.ADD.explicit === 'string') {
+            explicit = mergeObject.ADD.explicit
+          }
+          if (typeof mergeObject.ADD.explicit === 'function') {
+            explicit = mergeObject.ADD.explicit()
+          }
+          explicit = (explicit || '').toUpperCase()
+          let mergeAddExplicitOptions = MergeAddExplicitOptions()
+          switch (explicit) {
+            case mergeAddExplicitOptions.AUTO_OVERRIDE: {
+              fileItem = _.merge(fileItem, targetItem)
+            }
+              break
+            case mergeAddExplicitOptions.APPEND: {
+              let cleanerObject = JSON.parse(JSON.stringify(targetItem))
+              delete cleanerObject.mergeOptions
+              appendPlaceHolders.push(cleanerObject)
+            }
+              break
+            case mergeAddExplicitOptions.SKIP: {
+              /**
+               * SKIP
+               */
+            }
+              break
+            case mergeAddExplicitOptions.ERROR: {
+              /**
+               * ERROR
+               */
+            }
+              break
+            case mergeAddExplicitOptions.ABORT: {
+              /**
+               * ABORT
+               */
+              throw new Exception('MergeAddExplicitOptions.ABORT')
+            }
+              break
+          }
+        }
+          break
+        case mergeOptions.UPDATE: {
+          fileItem = _.merge(fileItem, targetItem)
+        }
+          break
+        case mergeOptions.REMOVE: {
+          removeKeys.push(fileItem.key)
+        }
+          break
+        case mergeOptions.AUTO: {
+          if (targetItem) {
+            fileItem = _.merge(fileItem, targetItem)
+          } else {
+            let cleanerObject = JSON.parse(JSON.stringify(targetItem))
+            delete cleanerObject.mergeOptions
+            appendPlaceHolders.push(cleanerObject)
+          }
+        }
+          break
+      }
+    })
+  }
+  if (removeKeys && removeKeys.length > 0) {
+
+  }
+}
+
+let validate = (targetItems) => {
+  if (targetItems) {
+    return targetItems.filter(function (fileItems) {
+      let {key, mergeOptions} = fileItems
+      if (key) {
+        if (!mergeOptions) {
+          fileItems.mergeOptions = MergeOptions().AUTO
+        }
+        return true
+      }
+      return false
+    })
+  }
+}
+
 export {
-  resolve
+  resolve,
+  merge,
+  createFileItemForProcess
 }
