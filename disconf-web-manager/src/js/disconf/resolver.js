@@ -1,3 +1,4 @@
+/* eslint-disable no-lone-blocks */
 import _ from 'lodash'
 
 let createFileItem = function ({key, value, comments}) {
@@ -85,7 +86,7 @@ let resolve = function (fileContent) {
     })
     fileContent.forEach(function (value) {
       if (value.indexOf('#') === 0) {
-        fileItemComments += value + '\n'
+        fileItemComments += value.slice(1) + '\n'
       } else {
         let equalsOperatorIndex = value.indexOf('=')
         fileItemKey = value.substring(0, equalsOperatorIndex)
@@ -105,11 +106,10 @@ let merge = function (fileContent, targetItems) {
   targetItems = validate(targetItems)
   let appendPlaceHolders = []
   let removeKeys = []
-  let targetItemsMap = convertArrayToMap(targetItems)
-  if (fileItems && fileItems.length > 0) {
-    fileItems.forEach(function (fileItem, index) {
-      let targetItem = targetItemsMap.get(fileItem.key)
-      let mergeObject = targetItem
+  if (fileItems && fileItems.length > 0 && targetItems && targetItems.length > 0) {
+    targetItems.forEach(function (target) {
+      let targetItem = fileItemsMap.get(target.key)
+      let mergeObject = target
       switch (mergeObject.mergeOptions) {
         case mergeOptions.ADD.name: {
           let explicit = ''
@@ -123,11 +123,17 @@ let merge = function (fileContent, targetItems) {
           let mergeAddExplicitOptions = MergeAddExplicitOptions()
           switch (explicit) {
             case mergeAddExplicitOptions.AUTO_OVERRIDE: {
-              fileItem = _.merge(fileItem, targetItem)
+              if (targetItem) {
+                targetItem = _.merge(targetItem, target)
+              } else {
+                let cleanerObject = JSON.parse(JSON.stringify(target))
+                delete cleanerObject.mergeOptions
+                appendPlaceHolders.push(cleanerObject)
+              }
             }
               break
             case mergeAddExplicitOptions.APPEND: {
-              let cleanerObject = JSON.parse(JSON.stringify(targetItem))
+              let cleanerObject = JSON.parse(JSON.stringify(target))
               delete cleanerObject.mergeOptions
               appendPlaceHolders.push(cleanerObject)
             }
@@ -136,6 +142,7 @@ let merge = function (fileContent, targetItems) {
               /**
                * SKIP
                */
+              console.info('SKIP')
             }
               break
             case mergeAddExplicitOptions.ERROR: {
@@ -150,23 +157,24 @@ let merge = function (fileContent, targetItems) {
                */
               throw new Exception('MergeAddExplicitOptions.ABORT')
             }
-              break
           }
         }
           break
         case mergeOptions.UPDATE: {
-          fileItem = _.merge(fileItem, targetItem)
+          if (targetItem) {
+            targetItem = _.merge(targetItem, target)
+          }
         }
           break
         case mergeOptions.REMOVE: {
-          removeKeys.push(fileItem.key)
+          removeKeys.push(target.key)
         }
           break
         case mergeOptions.AUTO: {
           if (targetItem) {
-            fileItem = _.merge(fileItem, targetItem)
+            targetItem = _.merge(targetItem, target)
           } else {
-            let cleanerObject = JSON.parse(JSON.stringify(targetItem))
+            let cleanerObject = JSON.parse(JSON.stringify(target))
             delete cleanerObject.mergeOptions
             appendPlaceHolders.push(cleanerObject)
           }
@@ -175,8 +183,48 @@ let merge = function (fileContent, targetItems) {
       }
     })
   }
+  /**
+   * 删除指定Key
+   */
   if (removeKeys && removeKeys.length > 0) {
+    removeKeys.forEach(function (removeItem) {
+      fileItemsMap.delete(removeItem)
+    })
+  }
 
+  /**
+   * 新增配置
+   */
+  if (appendPlaceHolders && appendPlaceHolders.length > 0) {
+    appendPlaceHolders.forEach(function (holder) {
+      fileItemsMap.set(holder.key, holder)
+    })
+  }
+
+  /**
+   * 重建fileItems
+   */
+  if (fileItemsMap && fileItemsMap.size > 0) {
+    let fileItemsCache = []
+    fileItemsMap.forEach(function (item) {
+      fileItemsCache.push(item)
+    })
+    fileItems = fileItemsCache
+  }
+  return {
+    fileItems,
+    toString() {
+      let fileContentCache = ''
+      this.fileItems.forEach(function (fileItem) {
+        if (fileItem.comments && fileItem.comments.length > 0) {
+          fileContentCache += `#${fileItem.comments}\n${fileItem.key}=${fileItem.value}\n\n`
+        }
+        else {
+          fileContentCache += `${fileItem.key}=${fileItem.value}\n\n`
+        }
+      })
+      return fileContentCache
+    }
   }
 }
 
@@ -198,5 +246,7 @@ let validate = (targetItems) => {
 export {
   resolve,
   merge,
+  MergeOptions,
+  MergeAddExplicitOptions,
   createFileItemForProcess
 }
