@@ -50,8 +50,9 @@
       <el-col :span="24">
         <el-col :span="15"><span class="app-message-warnings">正处于编辑状态</span></el-col>
         <el-col :span="9" style="text-align: right;padding-right: 10px;box-sizing: border-box;">
+          <el-button type="primary" style="margin-left: 10px;" @click="addFileItem">新增配置</el-button>
           <el-button type="primary" style="margin-left: 10px;" @click="setEditorMode">{{fileEditorName}}</el-button>
-          <el-button type="primary" style="margin-left: 10px;">保存配置</el-button>
+          <el-button type="primary" style="margin-left: 10px;" @click="saveAllFileItems">保存配置</el-button>
           <el-button type="danger" style="margin-left: 10px;">删除配置</el-button>
         </el-col>
       </el-col>
@@ -96,7 +97,7 @@
                 @click="handleEdit(scope.$index, scope.row)">
               </el-button>
               <el-button
-                size="mini"
+                size="mini" handleEdit
                 icon="el-icon-delete"
                 type="danger"
                 @click="handleDelete(scope.$index, scope.row)">
@@ -115,17 +116,44 @@
         </div>
       </el-col>
     </el-row>
+
+
+    <el-dialog :title="dialogFileItemTitle" :visible.sync="updateFileItemVisible">
+      <el-form :model="fileItemForm" :rules="fileItemRules" ref="fileItemFormRef">
+        <el-form-item label="Key" :label-width="formLabelWidth" prop="itemKey">
+          <el-input v-model="fileItemForm.itemKey" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="Value" :label-width="formLabelWidth" prop="itemValue">
+          <el-input v-model="fileItemForm.itemValue" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="Value" :label-width="formLabelWidth" prop="itemComment">
+          <el-input
+            type="textarea"
+            :rows="3"
+            placeholder="配置说明"
+            v-model="fileItemForm.itemComment">
+          </el-input>
+        </el-form-item>
+
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="closeUpdateFileItemDialog">取 消</el-button>
+        <el-button type="primary" @click="confirmUpdateFileItemDialog('fileItemFormRef')">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
-  import {resolve} from '../js/disconf/resolver'
+  import {
+    resolve, merge, MergeOptions, MergeAddExplicitOptions, createFileItemForProcess
+  } from '../js/disconf/resolver'
   import ClipboardJS from 'clipboard'
   import ACELoader from '../js/ace'
   import Utils from '../js/utils'
 
   export default {
     name: 'EditConfFile',
-    data() {
+    data () {
       return {
         appInfo: {
           appId: -1,
@@ -138,6 +166,25 @@
           fileNumber: 0,
           itemNumber: 0,
           historyNumber: 0
+        },
+        fileItemContent: '',
+        dialogFileItemTitle: '修改配置内容',
+        updateFileItemVisible: false,
+        dialogFIleItemMode: 'Update',
+        formLabelWidth: '120px',
+        fileItemForm: {
+          itemKey: '',
+          itemValue: '',
+          itemComment: ''
+        },
+        fileItemRules: {
+          itemKey: {
+            required: true,
+            type: 'string',
+            message: '请输入有效的键值'
+          },
+          itemValue: {},
+          itemComment: {}
         },
         fileContent: '',
         fileEditorMode: false,
@@ -173,13 +220,37 @@
       this.loadConfigHistory()
     },
     methods: {
-      handleEdit(row) {
-
+      handleEdit (index, row) {
+        console.info(row)
+        this.fileItemForm.itemKey = row.key
+        this.fileItemForm.itemValue = row.value
+        this.fileItemForm.itemComment = row.comments
+        /**
+         * 显示Dialog
+         * @type {boolean}
+         */
+        this.updateFileItemVisible = true
       },
-      handleDelete(row) {
-
+      handleDelete (index, row) {
+        let vmSelf = this
+        this.$confirm(`确定删除配置Key:${row.key}`, '删除确认', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消'
+        }).then(() => {
+          let targetItem = createFileItemForProcess({
+            key: row.key,
+            mergeOptions: MergeOptions().REMOVE
+          })
+          let targetItems = [targetItem]
+          vmSelf.updateFileContent(targetItems).then(() => {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
+          })
+        })
       },
-      loaderAceEditor() {
+      loaderAceEditor () {
         let vmSelf = this
         if (this.editorInstance) {
           this.editorInstance.destroy()
@@ -194,13 +265,14 @@
           })
         }, 100)
       },
-      updatePageContent(editor) {
+      updatePageContent (editor) {
         let vmSelf = this
         Utils.ajax({
           url: 'api/web/config/' + vmSelf.$route.query.configId,
           type: 'get',
           success: function (response) {
             setTimeout(function () {
+              vmSelf.fileItemContent = response.result.value
               if (editor) {
                 editor.session.setValue(response.result.value)
               }
@@ -209,7 +281,7 @@
           }
         })
       },
-      setEditorMode() {
+      setEditorMode () {
         this.fileEditorMode = !this.fileEditorMode
         this.fileEditorName = this.fileEditorMode ? '切换至列表模式' : '切换至文件模式'
         this.$nextTick(() => {
@@ -218,8 +290,8 @@
           }
         })
       },
-      loadConfigHistory() {
-        let vmSelf = this;
+      loadConfigHistory () {
+        let vmSelf = this
         let configId = this.$route.query.configId
         let {appId, envId, version} = this.$route.query
         Utils.ajax({
@@ -233,16 +305,97 @@
           success: function (response) {
             if (response && response.result) {
               if (response.result.history) {
-                vmSelf.appInfo.historyNumber = response.result.history.length;
+                vmSelf.appInfo.historyNumber = response.result.history.length
               }
               if (response.result.configFiles) {
-                vmSelf.appInfo.fileNumber = response.result.configFiles.length;
+                vmSelf.appInfo.fileNumber = response.result.configFiles.length
               }
               if (response.result.configItems) {
-                vmSelf.appInfo.itemNumber = response.result.configItems.length;
+                vmSelf.appInfo.itemNumber = response.result.configItems.length
               }
             }
           }
+        })
+      },
+      closeUpdateFileItemDialog () {
+        this.updateFileItemVisible = false
+      },
+      confirmUpdateFileItemDialog (formName) {
+        let vmSelf = this
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            /**
+             * 创建处理对象
+             * @type {{key, value, comments, mergeOptions}}
+             */
+            let targetItem = createFileItemForProcess({
+              key: vmSelf.fileItemForm.itemKey,
+              value: vmSelf.fileItemForm.itemValue,
+              comments: vmSelf.fileItemForm.itemComment,
+              mergeOptions: MergeOptions().AUTO
+            })
+            let targetItems = [targetItem]
+            vmSelf.updateFileContent(targetItems)
+          } else {
+            return false
+          }
+        })
+        this.updateFileItemVisible = false
+      },
+      updateFileContent (targetItems) {
+        let vmSelf = this
+        return new Promise((resolve, reject) => {
+          /**
+           * 合并配置Key
+           */
+          let newFileContent = merge(vmSelf.fileItemContent, targetItems).toString()
+          vmSelf.updateOriginFileContent(newFileContent).then(() => {
+            resolve()
+          })
+        })
+      },
+      updateOriginFileContent (originFileContent) {
+        let vmSelf = this
+        return new Promise((resolve, reject) => {
+          /**
+           * 更新数据库信息
+           */
+          Utils.ajax({
+            url: 'api/web/config/filetext/' + vmSelf.$route.query.configId,
+            type: 'PUT',
+            data: {
+              fileContent: originFileContent
+            },
+            success: function (response) {
+              vmSelf.$message({
+                type: 'success',
+                message: '已保存!'
+              })
+              vmSelf.$nextTick(() => {
+                /**
+                 * 更新当前页面数据
+                 */
+                vmSelf.updatePageContent()
+                resolve()
+              })
+            }
+          })
+        })
+      },
+      addFileItem () {
+        this.dialogFileItemTitle = '新增配置内容'
+        this.dialogFIleItemMode = 'Add'
+        this.updateFileItemVisible = true
+      },
+      saveAllFileItems () {
+        if (this.editorInstance) {
+          this.fileItemContent = this.editorInstance.session.getValue()
+        }
+        this.updateOriginFileContent(this.fileItemContent).then(() => {
+          this.$message({
+            type: 'success',
+            message: '已保存!'
+          })
         })
       }
     }
