@@ -167,12 +167,20 @@
                             </el-table-column>
                             <el-table-column
                               prop="key"
-                              label="Key">
+                              label="Key"
+                              width="220"
+                            >
                             </el-table-column>
                             <el-table-column
                               label="配置内容">
                               <template slot-scope="scope">
                                 <a href="#" class="row-data-link" @click="showConfContent(scope.row)">配置内容</a>
+                              </template>
+                            </el-table-column>
+                            <el-table-column
+                              label="下载">
+                              <template slot-scope="scope">
+                                <a :href="scope.row.configId | downloadFormat" class="row-data-link">下载</a>
                               </template>
                             </el-table-column>
                             <el-table-column
@@ -187,7 +195,7 @@
                             </el-table-column>
                             <el-table-column
                               label="操作"
-                              width="220"
+                              width="180"
                             >
                               <template slot-scope="scope">
                                 <el-button
@@ -202,12 +210,12 @@
                                   type="danger"
                                   @click="handleDelete(scope.$index, scope.row,version.version)">
                                 </el-button>
-                                <el-button
-                                  size="mini"
-                                  type="success"
-                                  icon="el-icon-download"
-                                  @click="handleDownload(scope.$index, scope.row,version.version)">
-                                </el-button>
+                                <!--<el-button-->
+                                <!--size="mini"-->
+                                <!--type="success"-->
+                                <!--icon="el-icon-download"-->
+                                <!--@click="handleDownload(scope.$index, scope.row,version.version)">-->
+                                <!--</el-button>-->
                               </template>
                             </el-table-column>
                           </el-table>
@@ -402,7 +410,8 @@
                 app: window.disconf.serverUrl + 'newapp.html',
                 appConfigItem: window.disconf.serverUrl + 'newconfig_item.html',
                 appConfigFile: window.disconf.serverUrl + 'newconfig_file.html',
-                appLogin: window.disconf.serverUrl + 'login.html'
+                appLogin: window.disconf.serverUrl + 'login.html',
+                fileDownload: window.disconf.serverAPIUrl + 'api/web/config/download/'
               },
               visible: false,
               userAppList: [],
@@ -450,7 +459,6 @@
                     vmSelf.activeName = `env_` + vmSelf.userEnvList[0].id
                     vmSelf.currentAppEnvId = vmSelf.userEnvList[0].id
                     vmSelf.currentAppEnvName = vmSelf.userEnvList[0].name
-                    console.info('vmSelf.currentAppEnvId' + vmSelf.currentAppEnvId)
                     vmSelf.loadAppAndVersionList(vmSelf.currentAppId, vmSelf.currentAppEnvId)
                   })
                 }
@@ -568,7 +576,33 @@
               window.location.href = editorUrl
             },
             handleDelete(index, row, version) {
+              let tipsMessage = row.typeId === 0 ? '确认删除该配置文件：' : '确认删除该配置项：'
+              let vmSelf = this
 
+              const h = this.$createElement
+
+              this.$msgbox({
+                title: '删除确认',
+                message: h('div', null, [tipsMessage, h('span', {style: {color: 'red'}}, [row.key])]),
+                showCancelButton: true,
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                callback: function (action, instance) {
+                  if (action === 'confirm') {
+                    window.disconf.ajax({
+                      type: 'DELETE',
+                      url: 'api/web/config/' + row.configId,
+                      success: function () {
+                        vmSelf.loadAppAndVersionList(vmSelf.currentAppId, vmSelf.currentAppEnvId)
+                        vmSelf.$message({
+                          type: 'success',
+                          message: '已删除!'
+                        })
+                      }
+                    })
+                  }
+                }
+              })
             },
             handleDownload(index, row, version) {
 
@@ -611,6 +645,9 @@
           filters: {
             versionFormat(value) {
               return `版本:${value}`
+            },
+            downloadFormat(value) {
+              return window.disconf.serverAPIUrl + 'api/web/config/download/' + value
             }
           },
           computed: {

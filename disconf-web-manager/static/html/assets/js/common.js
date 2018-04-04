@@ -1,11 +1,13 @@
 /* global VISITOR:true */
-var globalEnv = '_GLOBAL_ENV_'
-var serverAPIUrl = JSON.parse(window.localStorage.getItem(globalEnv)).serverAPIUrl;
+
 // 初始入口
 (function () {
   window.VISITOR = {}
 })()
-
+var globalEnv = '_GLOBAL_ENV_'
+var serverUrl = JSON.parse(window.localStorage.getItem(globalEnv)).serverUrl + 'static/html/'
+var originServerUrl = JSON.parse(window.localStorage.getItem(globalEnv)).serverUrl
+var serverAPIUrl = JSON.parse(window.localStorage.getItem(globalEnv)).serverAPIUrl
 //
 // 头部显示初始化
 //
@@ -27,9 +29,9 @@ function headShowInit () {
 //
 function loginActions () {
   if (VISITOR.id) {
-    $('#brand_url').attr('href', '/main.html')
+    $('#brand_url').attr('href', serverUrl + 'main.html')
   } else {
-    $('#brand_url').attr('href', '/')
+    $('#brand_url').attr('href', serverUrl)
   }
 }
 
@@ -46,10 +48,10 @@ function getSession () {
       window.VISITOR = data.result.visitor
       headShowInit()
     } else {
-      window.location.href = '/login.html'
+      window.location.href = serverUrl + 'login.html'
     }
   }).fail(function (xmlHttpRequest, textStatus) {
-    window.location.href = '/login.html'
+    window.location.href = serverUrl + 'login.html'
   })
 }
 
@@ -60,7 +62,7 @@ function getSession2Redirect () {
     url: serverAPIUrl + 'api/account/session'
   }).done(function (data) {
     if (data.success === 'true') {
-      window.location.href = '/main.html'
+      window.location.href = serverUrl + 'main.html'
     } else {
     }
   })
