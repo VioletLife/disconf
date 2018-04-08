@@ -18,10 +18,10 @@
 
         <property name="filters" value="stat" />
 
-        <property name="maxActive" value="20" />
-        <property name="initialSize" value="1" />
-        <property name="maxWait" value="60000" />
-        <property name="minIdle" value="1" />
+        <property name="maxActive" value="${disconf.jdbc.maxPoolSize}" />
+        <property name="initialSize" value="${disconf.jdbc.initialPoolSize}" />
+        <property name="maxWait" value="${disconf.jdbc.maxIdleTime}" />
+        <property name="minIdle" value="${disconf.jdbc.minPoolSize}" />
 
         <property name="timeBetweenEvictionRunsMillis" value="60000" />
         <property name="minEvictableIdleTimeMillis" value="300000" />
