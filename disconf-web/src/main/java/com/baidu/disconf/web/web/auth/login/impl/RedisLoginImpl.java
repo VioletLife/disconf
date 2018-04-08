@@ -3,6 +3,8 @@ package com.baidu.disconf.web.web.auth.login.impl;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.alibaba.fastjson.JSON;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.baidu.disconf.web.service.user.bo.User;
@@ -13,6 +15,9 @@ import com.baidu.disconf.web.web.auth.login.RedisLogin;
 import com.baidu.ub.common.commons.ThreadContext;
 import com.github.knightliao.apollo.redis.RedisCacheManager;
 import com.github.knightliao.apollo.utils.web.CookieUtils;
+import org.springframework.data.redis.core.RedisTemplate;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author liaoqiqi
@@ -21,13 +26,12 @@ import com.github.knightliao.apollo.utils.web.CookieUtils;
 public class RedisLoginImpl implements RedisLogin {
 
     @Autowired
-    private RedisCacheManager redisCacheMgr;
+    private RedisTemplate<String, String> redisTemplate;
 
     /**
      * 获取Redis上的User Key
      *
      * @param baiduId
-     *
      * @return
      */
     private String getRedisKey(String baiduId) {
@@ -44,7 +48,11 @@ public class RedisLoginImpl implements RedisLogin {
 
         if (xId != null) {
 
-            Visitor visitor = (Visitor) redisCacheMgr.get(this.getRedisKey(xId));
+            String visitorCache = redisTemplate.opsForValue().get(this.getRedisKey(xId));
+            Visitor visitor = null;
+            if (StringUtils.isNotEmpty(visitorCache)) {
+                visitor = JSON.parseObject(visitorCache, Visitor.class);
+            }
 
             //
             // 登录了
@@ -105,11 +113,11 @@ public class RedisLoginImpl implements RedisLogin {
             // 更新
             if (visitor != null) {
 
-                redisCacheMgr.put(this.getRedisKey(xcookieName), expireTime, visitor);
+                redisTemplate.opsForValue().set(this.getRedisKey(xcookieName), JSON.toJSONString(visitor), expireTime, TimeUnit.SECONDS);
             } else {
 
                 // 删除
-                redisCacheMgr.remove(this.getRedisKey(xcookieName));
+                redisTemplate.delete(this.getRedisKey(xcookieName));
             }
         }
     }
@@ -120,6 +128,7 @@ public class RedisLoginImpl implements RedisLogin {
      * @param session
      * @param visitor
      */
+    @Override
     public void updateSessionVisitor(HttpSession session, Visitor visitor) {
 
         if (visitor != null) {
