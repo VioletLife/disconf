@@ -53,21 +53,21 @@
 
     <bean id="zooConfig"
           class="com.baidu.disconf.web.service.zookeeper.config.ZooConfig">
-        <property name="zooHosts" value="${hosts}"/>
-        <property name="zookeeperUrlPrefix" value="${zookeeper_url_prefix}"/>
+        <property name="zooHosts" value="${disconf.zookeeper.hosts}"/>
+        <property name="zookeeperUrlPrefix" value="${disconf.zookeeper.choot}"/>
     </bean>
 
     <bean id="applicationPropertyConfig"
           class="com.baidu.disconf.web.config.ApplicationPropertyConfig">
-        <property name="emailHost" value="${EMAIL_HOST}"/>
-        <property name="emailPassword" value="${EMAIL_HOST_PASSWORD}"/>
-        <property name="emailUser" value="${EMAIL_HOST_USER}"/>
-        <property name="emailPort" value="${EMAIL_PORT}"/>
-        <property name="fromEmail" value="${DEFAULT_FROM_EMAIL}"/>
-        <property name="emailReceiver" value="${EMAIL_RECEIVER}"/>
-        <property name="emailMonitorOn" value="${EMAIL_MONITOR_ON}"/>
-        <property name="checkConsistencyOn" value="${CHECK_CONSISTENCY_ON}"/>
-        <property name="domain" value="${domain}"/>
+        <property name="emailHost" value="${disconf.email.host}"/>
+        <property name="emailPassword" value="${disconf.email.host.password}"/>
+        <property name="emailUser" value="${disconf.email.host.user}"/>
+        <property name="emailPort" value="${disconf.email.port}"/>
+        <property name="fromEmail" value="${disconf.default.from_email}"/>
+        <property name="emailReceiver" value="${disconf.email.receiver}"/>
+        <property name="emailMonitorOn" value="${disconf.email.monitor.on}"/>
+        <property name="checkConsistencyOn" value="${disconf.check_consistency_on}"/>
+        <property name="domain" value="${disconf.domain}"/>
     </bean>
 
     <!-- import -->

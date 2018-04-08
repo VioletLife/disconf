@@ -4,9 +4,11 @@ import com.baidu.disconf.web.service.BaseVo;
 import com.baidu.dsp.common.dao.Columns;
 import com.baidu.unbiz.common.genericdao.annotation.Column;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import sun.reflect.CallerSensitive;
 
+@EqualsAndHashCode(callSuper = false)
 @Data
 @ToString(callSuper = true)
 public class ConfigVo extends BaseVo {

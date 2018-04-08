@@ -2,7 +2,7 @@ package com.baidu.disconf.web.utils;
 
 import java.io.IOException;
 
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

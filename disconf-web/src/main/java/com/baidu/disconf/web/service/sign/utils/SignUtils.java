@@ -13,7 +13,7 @@ public class SignUtils {
      */
     public static String createPassword(String password) {
 
-        String data = DigestUtils.shaHex(password);
+        String data = DigestUtils.sha1Hex(password);
         return data;
     }
 
@@ -26,7 +26,7 @@ public class SignUtils {
 
         String uuid = UUID.randomUUID().toString();
 
-        String data = DigestUtils.shaHex(uuid + phone);
+        String data = DigestUtils.sha1Hex(uuid + phone);
         return data;
     }
 }

@@ -7,7 +7,9 @@ import com.baidu.unbiz.common.genericdao.annotation.Table;
 import com.github.knightliao.apollo.db.bo.BaseObject;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+@EqualsAndHashCode(callSuper = false)
 @Data
 @Table(db = DB.DB_NAME, name = "config_history", keyColumn = "id")
 public class ConfigHistory extends BaseObject<Long> {

@@ -1,8 +1,8 @@
 package com.baidu.disconf.web.service.config.form;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  * 新建配置项表格

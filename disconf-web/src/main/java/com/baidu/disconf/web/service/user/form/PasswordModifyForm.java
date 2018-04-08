@@ -7,11 +7,13 @@ import javax.validation.constraints.NotNull;
 import com.baidu.dsp.common.form.RequestFormBase;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * @author liaoqiqi
  * @version 2014-1-24
  */
+@EqualsAndHashCode(callSuper = false)
 @Data
 public class PasswordModifyForm extends RequestFormBase {
 

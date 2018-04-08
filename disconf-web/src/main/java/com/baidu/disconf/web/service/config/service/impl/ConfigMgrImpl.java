@@ -2,13 +2,15 @@ package com.baidu.disconf.web.service.config.service.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.*;
 
+import com.alibaba.fastjson.JSON;
 import com.baidu.disconf.web.service.config.vo.ConfHistoryVo;
 import com.baidu.disconf.web.service.config.vo.ConfigVo;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,6 +106,7 @@ public class ConfigMgrImpl implements ConfigMgr {
      * @param confListForm
      * @return
      */
+    @Override
     public List<File> getDisconfFileList(ConfListForm confListForm) {
 
         List<Config> configList =
@@ -297,7 +300,7 @@ public class ConfigMgrImpl implements ConfigMgr {
         if (confListVo.getTypeId().equals(DisConfigTypeEnum.FILE.getType())) {
 
             zooKeeperDriver.notifyNodeUpdate(confListVo.getAppName(), confListVo.getEnvName(), confListVo.getVersion(),
-                    confListVo.getKey(), GsonUtils.toJson(confListVo.getValue()),
+                    confListVo.getKey(), confListVo.getValue(),
                     DisConfigTypeEnum.FILE);
 
         } else {
@@ -383,6 +386,7 @@ public class ConfigMgrImpl implements ConfigMgr {
      */
     private String getNewValue(String newValue, String identify, String htmlClick) {
 
+
         String contentString = StringEscapeUtils.escapeHtml4(identify) + "<br/>" + htmlClick + "<br/><br/> ";
 
         String data = "<br/><br/><br/><span style='color:#FF0000'>New value:</span><br/>";
@@ -400,7 +404,7 @@ public class ConfigMgrImpl implements ConfigMgr {
 
         Properties prop = new Properties();
         try {
-            prop.load(IOUtils.toInputStream(dbData));
+            prop.load(IOUtils.toInputStream(dbData,Charset.forName("UTF-8")));
         } catch (Exception e) {
             LOG.error(e.toString());
             errorKeyList.add(zkData);

@@ -64,7 +64,7 @@ public class BeanUtils {
      * 循环向上转型,获取对象的DeclaredField.
      */
     private static Field getDeclaredField(Object object, String fieldName) throws NoSuchFieldException {
-        Assert.notNull(object);
+        Assert.notNull(object,"object can't be null");
         return getDeclaredField(object.getClass(), fieldName);
     }
 
@@ -73,8 +73,8 @@ public class BeanUtils {
      */
     @SuppressWarnings("rawtypes")
     private static Field getDeclaredField(Class clazz, String fieldName) throws NoSuchFieldException {
-        Assert.notNull(clazz);
-        Assert.hasText(fieldName);
+        Assert.notNull(clazz,"clazz can't be null");
+        Assert.hasText(fieldName,"fieldName  contains valid text content; that is, it must not be null and must contain at least one non-whitespace character");
         for (Class superClass = clazz; superClass != Object.class; superClass = superClass.getSuperclass()) {
             try {
                 return superClass.getDeclaredField(fieldName);

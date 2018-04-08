@@ -1,17 +1,19 @@
 package com.baidu.disconf.web.service.app.form;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.validator.constraints.NotEmpty;
 
 import com.baidu.dsp.common.form.RequestFormBase;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * @author liaoqiqi
  * @version 2014-1-24
  */
+@EqualsAndHashCode(callSuper = false)
 @Data
 public class AppNewForm extends RequestFormBase {
 

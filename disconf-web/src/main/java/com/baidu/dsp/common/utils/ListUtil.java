@@ -3,6 +3,7 @@ package com.baidu.dsp.common.utils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -94,7 +95,7 @@ public class ListUtil {
             return false;
         }
         for (T t : list) {
-            if (ObjectUtils.equals(value, t)) {
+            if (Objects.equals(value, t)) {
                 return true;
             }
         }

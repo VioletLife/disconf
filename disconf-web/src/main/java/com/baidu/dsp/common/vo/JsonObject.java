@@ -6,6 +6,7 @@ import java.util.Map;
 import com.baidu.dsp.common.constant.FrontEndInterfaceConstant;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 多层结构的 成功返回
@@ -13,6 +14,7 @@ import lombok.Data;
  * @author liaoqiqi
  * @version 2013-12-3
  */
+@EqualsAndHashCode(callSuper = false)
 @Data
 public class JsonObject extends JsonObjectBase {
 
