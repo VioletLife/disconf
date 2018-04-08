@@ -7,11 +7,11 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @Data
 public class RedisConfig {
-    @Value("${spring.redis.cluster.nodes}")
+    @Value("${disconf.redis.cluster.nodes}")
     String nodes;
 
-    @Value("${spring.redis.cluster.max-redirects}")
+    @Value("${disconf.redis.cluster.max-redirects}")
     String maxRedirects;
-    @Value("${spring.redis.cluster.timeout}")
+    @Value("${disconf.redis.cluster.timeout}")
     String timeout;
 }
