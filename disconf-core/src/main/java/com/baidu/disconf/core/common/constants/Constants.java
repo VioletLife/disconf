@@ -56,6 +56,11 @@ public class Constants {
      */
     public final static Charset DEFAULT_HTTP_CHARSET=Charset.forName("UTF-8");
 
+    /**
+     * 配置文件支持
+     */
+    public final static String[] SUPPORT_FILE_TYPE={".properties",".xml",".yaml"};
+
 
 
 }

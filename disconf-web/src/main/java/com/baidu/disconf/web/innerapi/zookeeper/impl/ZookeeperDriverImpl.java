@@ -314,12 +314,18 @@ public class ZookeeperDriverImpl implements ZooKeeperDriver, InitializingBean, D
 
     }
 
+    /**
+     * 释放Zookeeper资源
+     */
     @Override
     public void destroy() throws Exception {
 
         ZookeeperMgr.getInstance().release();
     }
 
+    /**
+     * 初始化Zookeeper配置信息
+     */
     @Override
     public synchronized void afterPropertiesSet() throws Exception {
 
