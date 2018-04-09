@@ -3,9 +3,14 @@ package com.baidu.disconf.web.web.config.controller;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import com.baidu.disconf.web.common.Constants;
+import org.apache.commons.compress.utils.ByteUtils;
+import org.apache.commons.io.IOUtils;
+import org.mozilla.universalchardet.UniversalDetector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,6 +28,11 @@ import com.baidu.dsp.common.constant.WebConstants;
 import com.baidu.dsp.common.controller.BaseController;
 import com.baidu.dsp.common.exception.FileUploadException;
 import com.baidu.dsp.common.vo.JsonObjectBase;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 /**
  * 专用于配置新建
@@ -45,11 +55,17 @@ public class ConfigNewController extends BaseController {
     @Autowired
     private FileUploadValidator fileUploadValidator;
 
+
+    @Value("${disconf.file.properties.max.size}")
+    private String filePropertiesMaxSize;
+
+    @Value("${disconf.file.yaml.max.size}")
+    private String fileYamlMaxSize;
+
     /**
      * 配置项的新建
      *
      * @param confNewForm
-     *
      * @return
      */
     @RequestMapping(value = "/item", method = RequestMethod.POST)
@@ -70,20 +86,25 @@ public class ConfigNewController extends BaseController {
      *
      * @param confNewForm
      * @param file
-     *
      * @return
      */
     @ResponseBody
     @RequestMapping(value = "/file", method = RequestMethod.POST)
-    public JsonObjectBase updateFile(@Valid ConfNewForm confNewForm, @RequestParam("myfilerar") MultipartFile file) {
+    public JsonObjectBase updateFile(@Valid ConfNewForm confNewForm, @RequestParam("file") MultipartFile file) {
 
         LOG.info(confNewForm.toString());
 
         //
         // 校验
         //
-        int fileSize = 1024 * 1024 * 4;
-        String[] allowExtName = {".properties", ".xml"};
+        int fileSize = 0;
+        if (file.getOriginalFilename().endsWith(Constants.PROPERTIES_SUFFIX)) {
+            fileSize = Integer.parseInt(filePropertiesMaxSize);
+        }
+        if (file.getOriginalFilename().endsWith(Constants.YAML_SUFFIX)) {
+            fileSize = Integer.parseInt(fileYamlMaxSize);
+        }
+        String[] allowExtName = Constants.ACCEPT_CONF_SUFFIX;
         fileUploadValidator.validateFile(file, fileSize, allowExtName);
 
         //
@@ -91,8 +112,10 @@ public class ConfigNewController extends BaseController {
         //
         String fileContent = "";
         try {
-
-            fileContent = new String(file.getBytes(), "UTF-8");
+            byte[] fileContentBytes = new byte[Long.valueOf(file.getSize()).intValue()];
+            InputStream inputStream = file.getInputStream();
+            IOUtils.read(inputStream, fileContentBytes, 0, Long.valueOf(file.getSize()).intValue());
+            fileContent = new String(fileContentBytes, "UTF-8");
             LOG.info("receive file: " + fileContent);
 
         } catch (Exception e) {
@@ -121,7 +144,6 @@ public class ConfigNewController extends BaseController {
      * @param confNewForm
      * @param fileContent
      * @param fileName
-     *
      * @return
      */
     @ResponseBody
