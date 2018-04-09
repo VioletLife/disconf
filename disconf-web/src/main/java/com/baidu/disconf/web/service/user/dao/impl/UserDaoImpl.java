@@ -17,6 +17,7 @@ public class UserDaoImpl extends AbstractDao<Long, User> implements UserDao {
     /**
      * 执行SQL
      */
+    @Override
     public void executeSql(String sql) {
 
         executeSQL(sql, null);

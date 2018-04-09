@@ -19,6 +19,7 @@ public class MyAuthenticator extends Authenticator {
     }
 
     // 覆盖Authenticator类中的getPasswordAuthentication方法
+    @Override
     protected PasswordAuthentication getPasswordAuthentication() {
         // 使用外部传入的用户名和密码创建对象
         return new PasswordAuthentication(username, password);

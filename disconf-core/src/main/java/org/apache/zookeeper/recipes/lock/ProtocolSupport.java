@@ -159,15 +159,13 @@ class ProtocolSupport {
      */
     protected void ensureExists(final String path, final byte[] data, final List<ACL> acl, final CreateMode flags) {
         try {
-            retryOperation(new ZooKeeperOperation() {
-                public boolean execute() throws KeeperException, InterruptedException {
-                    Stat stat = zookeeper.exists(path, false);
-                    if (stat != null) {
-                        return true;
-                    }
-                    zookeeper.create(path, data, acl, flags);
+            retryOperation(() -> {
+                Stat stat = zookeeper.exists(path, false);
+                if (stat != null) {
                     return true;
                 }
+                zookeeper.create(path, data, acl, flags);
+                return true;
             });
         } catch (KeeperException e) {
             LOG.warn("Caught: " + e, e);

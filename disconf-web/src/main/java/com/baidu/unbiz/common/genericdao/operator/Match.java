@@ -20,6 +20,7 @@ public class Match implements Pair {
     private String column;
     private Object value;
 
+    @Override
     public String getColumn() {
         return column;
     }
@@ -28,6 +29,7 @@ public class Match implements Pair {
         this.column = column;
     }
 
+    @Override
     public Object getValue() {
         return value;
     }

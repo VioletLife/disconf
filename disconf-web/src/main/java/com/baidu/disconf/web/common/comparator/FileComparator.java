@@ -25,6 +25,7 @@ public class FileComparator extends CommonComparator {
         this.revised = revised;
     }
 
+    @Override
     protected List<Delta> getDeltas() throws IOException {
 
         final List<String> originalFileLines = fileToLines(original);

@@ -31,6 +31,7 @@ public abstract class DspException extends Exception implements GlobalExceptionA
      *
      * @return
      */
+    @Override
     public ErrorCode getErrorCode() {
         return errorCode;
     }
@@ -40,6 +41,7 @@ public abstract class DspException extends Exception implements GlobalExceptionA
      *
      * @return
      */
+    @Override
     public String getErrorMessage() {
 
         return exceptionMessage;

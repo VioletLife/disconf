@@ -14,10 +14,12 @@ public class MinValidatorForDouble implements ConstraintValidator<DoubleMin, Dou
 
     private double minValue;
 
+    @Override
     public void initialize(DoubleMin minValue) {
         this.minValue = minValue.value();
     }
 
+    @Override
     public boolean isValid(Double value, ConstraintValidatorContext constraintValidatorContext) {
 
         // null values are valid

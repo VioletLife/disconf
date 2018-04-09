@@ -20,18 +20,22 @@ public class ContextReaderImpl implements ApplicationContextAware, ContextReader
 
     private ApplicationContext context;
 
+    @Override
     public void setApplicationContext(ApplicationContext arg0) throws BeansException {
         this.context = arg0;
     }
 
+    @Override
     public String getMessage(String resourceMessage) throws NoSuchMessageException {
         return context.getMessage(resourceMessage, null, Locale.SIMPLIFIED_CHINESE);
     }
 
+    @Override
     public String getMessage(String resourceMessage, Object[] args) throws NoSuchMessageException {
         return context.getMessage(resourceMessage, args, Locale.SIMPLIFIED_CHINESE);
     }
 
+    @Override
     public String getMessage(MessageSourceResolvable resolvable) throws NoSuchMessageException {
         return context.getMessage(resolvable, Locale.SIMPLIFIED_CHINESE);
     }

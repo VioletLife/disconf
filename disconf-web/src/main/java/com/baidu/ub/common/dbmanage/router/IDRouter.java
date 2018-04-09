@@ -30,6 +30,7 @@ public class IDRouter extends ApplicationObjectSupport implements Router {
     /**
      * @see Router#getTargetDataSource(long)
      */
+    @Override
     public String getTargetDataSourceKey(int userid, boolean readMaster) {
         String vdbkey = prefix;
         String dbkey = null;

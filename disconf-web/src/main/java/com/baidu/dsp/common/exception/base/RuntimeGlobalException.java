@@ -43,6 +43,7 @@ public abstract class RuntimeGlobalException extends RuntimeException implements
         this.cause = cause;
     }
 
+    @Override
     public Throwable getCause() {
         return cause;
     }
@@ -52,6 +53,7 @@ public abstract class RuntimeGlobalException extends RuntimeException implements
      *
      * @return
      */
+    @Override
     public ErrorCode getErrorCode() {
         return errorCode;
     }
@@ -61,6 +63,7 @@ public abstract class RuntimeGlobalException extends RuntimeException implements
      *
      * @return
      */
+    @Override
     public String getErrorMessage() {
 
         return exceptionMessage;

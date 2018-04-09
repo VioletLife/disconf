@@ -123,6 +123,7 @@ public abstract class GenericDao<KEY extends Serializable, ENTITY extends BaseOb
         return (int) (shardKey % orMapping.getShardCount());
     }
 
+    @Override
     public ENTITY get(KEY id) {
         if (id == null) {
             throw new RuntimeException("param is null!");
@@ -138,6 +139,7 @@ public abstract class GenericDao<KEY extends Serializable, ENTITY extends BaseOb
         return entities.get(0);
     }
 
+    @Override
     public List<ENTITY> get(Collection<KEY> ids) {
         if (ids == null) {
             throw new RuntimeException("param is null!");
@@ -264,6 +266,7 @@ public abstract class GenericDao<KEY extends Serializable, ENTITY extends BaseOb
         return delete(Operators.match(column, value));
     }
 
+    @Override
     public List<ENTITY> findAll() {
         return find();
     }
@@ -487,11 +490,7 @@ public abstract class GenericDao<KEY extends Serializable, ENTITY extends BaseOb
         }
 
         // 查询
-        return findBySQL(sql, params, new RowMapper<N>() {
-            public N mapRow(ResultSet rs, int count) throws SQLException {
-                return (N) (rs.getObject(mapperColumnIndex));
-            }
-        });
+        return findBySQL(sql, params, (rs, count) -> (N) (rs.getObject(mapperColumnIndex)));
     }
 
     /**
@@ -574,30 +573,21 @@ public abstract class GenericDao<KEY extends Serializable, ENTITY extends BaseOb
                     }
                 });
             } else {
-                return findBySQL(sql, params, new RowMapper<N>() {
-                    public N mapRow(ResultSet rs, int count) throws SQLException {
-                        Number n = (Number) (rs.getObject(mapperColumnIndex));
-                        return (N) n;
-                    }
+                return findBySQL(sql, params, (rs, count) -> {
+                    Number n = (Number) (rs.getObject(mapperColumnIndex));
+                    return (N) n;
                 });
             }
         } else if (resultClass.equals(String.class)) {
-            return findBySQL(sql, params, new RowMapper<N>() {
-                public N mapRow(ResultSet rs, int count) throws SQLException {
-                    return (N) (rs.getString(mapperColumnIndex));
-                }
-            });
+            return findBySQL(sql, params, (rs, count) -> (N) (rs.getString(mapperColumnIndex)));
         } else if (resultClass.equals(Date.class)) {
-            return findBySQL(sql, params, new RowMapper<N>() {
-                public N mapRow(ResultSet rs, int count) throws SQLException {
-                    return (N) (rs.getDate(mapperColumnIndex));
-                }
-            });
+            return findBySQL(sql, params, (rs, count) -> (N) (rs.getDate(mapperColumnIndex)));
         } else {
             throw new RuntimeException("not supported type");
         }
     }
 
+    @Override
     public boolean update(ENTITY entity) {
 
         if (entity == null) {
@@ -616,6 +606,7 @@ public abstract class GenericDao<KEY extends Serializable, ENTITY extends BaseOb
      *
      * @return
      */
+    @Override
     public int update(List<ENTITY> entities) {
 
         if (entities == null || entities.size() == 0) {
@@ -627,6 +618,7 @@ public abstract class GenericDao<KEY extends Serializable, ENTITY extends BaseOb
         String sql = queries.get(0).getSql();
         jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
+            @Override
             public void setValues(PreparedStatement stmt, int index) throws SQLException {
                 int i = 1;
                 List<Object> params = queries.get(index).getParams();
@@ -635,6 +627,7 @@ public abstract class GenericDao<KEY extends Serializable, ENTITY extends BaseOb
                 }
             }
 
+            @Override
             public int getBatchSize() {
                 return queries.size();
             }
@@ -653,10 +646,12 @@ public abstract class GenericDao<KEY extends Serializable, ENTITY extends BaseOb
         return executeSQL(query.getSql(), query.getParams());
     }
 
+    @Override
     public boolean delete(ENTITY e) {
         return delete(e.getId());
     }
 
+    @Override
     public int delete(Collection<ENTITY> entities) {
         if (entities == null || entities.size() == 0) {
             return 0;
@@ -671,6 +666,7 @@ public abstract class GenericDao<KEY extends Serializable, ENTITY extends BaseOb
         return delete(keys);
     }
 
+    @Override
     public boolean delete(KEY id) {
         if (id == null) {
             recordLog(" param id is null!");
@@ -681,6 +677,7 @@ public abstract class GenericDao<KEY extends Serializable, ENTITY extends BaseOb
         return delete(keys) > 0;
     }
 
+    @Override
     public int delete(List<KEY> ids) {
         if (ids == null || ids.size() == 0) {
             recordLog(" param ids is empty!");
@@ -753,10 +750,12 @@ public abstract class GenericDao<KEY extends Serializable, ENTITY extends BaseOb
         return sb.toString();
     }
 
+    @Override
     public ENTITY create(ENTITY entity) {
         return create(entity, null);
     }
 
+    @Override
     public ENTITY create(ENTITY entity, InsertOption option) {
 
         // 如果空值则返回
@@ -804,15 +803,13 @@ public abstract class GenericDao<KEY extends Serializable, ENTITY extends BaseOb
         recordLog(sql);
 
         // 执行操作
-        int rowCount = this.jdbcTemplate.update(new PreparedStatementCreator() {
-            public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-                PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-                int index = 1;
-                for (Object param : params) {
-                    ps.setObject(index++, param);
-                }
-                return ps;
+        int rowCount = this.jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            int index = 1;
+            for (Object param : params) {
+                ps.setObject(index++, param);
             }
+            return ps;
         }, keyHolder);
 
         // 如果插入成功则获取keyHolder中的key
@@ -836,15 +833,13 @@ public abstract class GenericDao<KEY extends Serializable, ENTITY extends BaseOb
         recordLog(sql);
 
         // 执行操作
-        int rowCount = this.jdbcTemplate.update(new PreparedStatementCreator() {
-            public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-                PreparedStatement ps = connection.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);
-                int index = 1;
-                for (Object param : params) {
-                    ps.setObject(index++, param);
-                }
-                return ps;
+        int rowCount = this.jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);
+            int index = 1;
+            for (Object param : params) {
+                ps.setObject(index++, param);
             }
+            return ps;
         }, keyHolder);
 
         // 如果插入成功则获取keyHolder中的key
@@ -865,14 +860,17 @@ public abstract class GenericDao<KEY extends Serializable, ENTITY extends BaseOb
      */
     public abstract KEY getNextId();
 
+    @Override
     public int create(List<ENTITY> entities) {
         return create(entities, null);
     }
 
+    @Override
     public int[] insert(List<ENTITY> entities) {
         return insert(entities, null);
     }
 
+    @Override
     public int create(List<ENTITY> entities, InsertOption option) {
 
         if (entities == null || entities.size() == 0) {
@@ -918,6 +916,7 @@ public abstract class GenericDao<KEY extends Serializable, ENTITY extends BaseOb
         // }
     }
 
+    @Override
     public int[] insert(List<ENTITY> entities, InsertOption option) {
         if (entities == null || entities.size() == 0) {
             recordLog(" param entities is empty!");

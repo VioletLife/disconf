@@ -38,6 +38,7 @@ public abstract class AbstractDao<KEY extends Serializable, ENTITY extends BaseO
         super.setJdbcTemplate(jdbcTemplate);
     }
 
+    @Override
     public KEY getNextId() {
         // 好像没用到@Sequence注解
         return null;

@@ -32,6 +32,7 @@ public class GenericMapper<ENTITY extends BaseObject<K>, K extends Serializable>
 
     private List<Setter> setters = null;
 
+    @Override
     public ENTITY mapRow(ResultSet rs, int rowIndex) throws SQLException {
 
         if (setters == null) {

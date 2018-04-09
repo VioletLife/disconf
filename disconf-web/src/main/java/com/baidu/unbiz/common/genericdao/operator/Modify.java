@@ -23,6 +23,7 @@ public class Modify implements Pair {
     private String column;
     private Object value;
 
+    @Override
     public String getColumn() {
         return column;
     }
@@ -31,6 +32,7 @@ public class Modify implements Pair {
         this.column = column;
     }
 
+    @Override
     public Object getValue() {
         return value;
     }

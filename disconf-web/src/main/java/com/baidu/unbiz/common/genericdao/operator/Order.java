@@ -28,10 +28,12 @@ public class Order implements Pair {
         return asc;
     }
 
+    @Override
     public String getColumn() {
         return column;
     }
 
+    @Override
     public Object getValue() {
         return asc;
     }

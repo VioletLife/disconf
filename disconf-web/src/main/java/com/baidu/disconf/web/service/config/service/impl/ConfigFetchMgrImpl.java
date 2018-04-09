@@ -39,6 +39,7 @@ public class ConfigFetchMgrImpl implements ConfigFetchMgr {
     /**
      * 根据详细参数获取配置返回
      */
+    @Override
     public ValueVo getConfItemByParameter(Long appId, Long envId, String version, String key) {
 
         Config config = configDao.getByParameter(appId, envId, version, key, DisConfigTypeEnum.ITEM);
@@ -56,6 +57,7 @@ public class ConfigFetchMgrImpl implements ConfigFetchMgr {
     /**
      * 根据详细参数获取配置列表返回
      */
+    @Override
     public List<Config> getConfListByParameter(Long appId, Long envId, String version, Boolean hasValue) {
         return configDao.getConfigList(appId, envId, version, hasValue);
     }

@@ -47,6 +47,7 @@ public class MyExceptionHandler extends SimpleMappingExceptionResolver implement
 
     protected ApplicationContext context;
 
+    @Override
     public void setApplicationContext(ApplicationContext arg0) throws BeansException {
         this.context = arg0;
     }

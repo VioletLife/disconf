@@ -14,10 +14,12 @@ public class MaxValidatorForDouble implements ConstraintValidator<DoubleMax, Dou
 
     private double maxValue;
 
+    @Override
     public void initialize(DoubleMax maxValue) {
         this.maxValue = maxValue.value();
     }
 
+    @Override
     public boolean isValid(Double value, ConstraintValidatorContext constraintValidatorContext) {
 
         // null values are valid
