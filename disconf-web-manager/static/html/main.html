@@ -135,93 +135,92 @@
               <el-tabs v-model="activeName" @tab-click="handleTabClick" type="card">
                 <template v-for="env in userEnvList">
                   <el-tab-pane :label="env.name" :name="appEnvItemName(env)">
-                    <el-collapse v-model="activeCollapseNames" @change="handleEnvChange">
-                      <template
-                        v-for="(version,index) in currentAppVersionInfo">
-                        <el-collapse-item :name="index">
-                          <template slot="title">
-                            <el-row>
-                              <el-col :span="16"> {{version.version | versionFormat}}</el-col>
-                              <el-col :span="7" style="text-align: right;padding-right: 10px;box-sizing: border-box;"><a
-                                class="el-button el-button--primary el-button--small"
-                                :href="downLoadUrl(currentAppId,env.id,version.version)">批量下载</a>
-                                <el-button type="primary" @click="zkDeployData(currentAppId,env.id,version.version)"
-                                           size="small">ZK部署情况
-                                </el-button>
-                              </el-col>
-                            </el-row>
-                          </template>
-                          <el-table
-                            :data="version.versionConf"
-                            border
-                            style="width: 100%">
-                            <el-table-column
-                              prop="confIndex"
-                              label="序号"
-                              width="60">
-                            </el-table-column>
-                            <el-table-column
-                              prop="appId"
-                              label="AppID"
-                              width="80">
-                            </el-table-column>
-                            <el-table-column
-                              prop="key"
-                              label="Key"
-                              width="220"
-                            >
-                            </el-table-column>
-                            <el-table-column
-                              label="配置内容">
-                              <template slot-scope="scope">
-                                <a href="#" class="row-data-link" @click="showConfContent(scope.row)">配置内容</a>
-                              </template>
-                            </el-table-column>
-                            <el-table-column
-                              label="下载">
-                              <template slot-scope="scope">
-                                <a :href="scope.row.configId | downloadFormat" class="row-data-link">下载</a>
-                              </template>
-                            </el-table-column>
-                            <el-table-column
-                              label="实例列表">
-                              <template slot-scope="scope">
-                                <a href="#" class="row-data-link">{{scope.row.machineSize}}台 OK</a>
-                              </template>
-                            </el-table-column>
-                            <el-table-column
-                              prop="modifyTime"
-                              label="修改时间">
-                            </el-table-column>
-                            <el-table-column
-                              label="操作"
-                              width="180"
-                            >
-                              <template slot-scope="scope">
-                                <el-button
-                                  size="mini"
-                                  icon="el-icon-edit"
-                                  type="primary"
-                                  @click="handleEdit(scope.$index, scope.row,version.version)">
-                                </el-button>
-                                <el-button
-                                  size="mini"
-                                  icon="el-icon-delete"
-                                  type="danger"
-                                  @click="handleDelete(scope.$index, scope.row,version.version)">
-                                </el-button>
-                                <!--<el-button-->
-                                <!--size="mini"-->
-                                <!--type="success"-->
-                                <!--icon="el-icon-download"-->
-                                <!--@click="handleDownload(scope.$index, scope.row,version.version)">-->
-                                <!--</el-button>-->
-                              </template>
-                            </el-table-column>
-                          </el-table>
-                        </el-collapse-item>
-                      </template>
-                    </el-collapse>
+                    <template
+                      v-for="(version,index) in currentAppVersionInfo">
+                      <el-card class="box-card" style="width: 96%;margin: 6px auto;">
+                        <div slot="header" class="clearfix">
+                          <span>{{version.version | versionFormat}}</span>
+                          <a
+                            class="el-button el-button--primary el-button--small"
+                            :href="downLoadUrl(currentAppId,env.id,version.version)" style="float: right;margin-left: 10px;">批量下载</a>
+                          <el-button type="primary" @click="zkDeployData(currentAppId,env.id,version.version)"
+                                     size="small" style="float: right;">ZK部署情况
+                          </el-button>
+                          <el-button type="primary" @click="addConf(currentAppId,env.id,version.version)"
+                                     size="small" style="float: right;">新建配置
+                          </el-button>
+                        </div>
+                        <el-table
+                          :data="version.versionConf"
+                          border
+                          style="width: 100%">
+                          <el-table-column
+                            prop="confIndex"
+                            label="序号"
+                            width="60">
+                          </el-table-column>
+                          <el-table-column
+                            prop="appId"
+                            label="AppID"
+                            width="80">
+                          </el-table-column>
+                          <el-table-column
+                            prop="key"
+                            label="Key"
+                            width="220"
+                          >
+                          </el-table-column>
+                          <el-table-column
+                            label="配置内容">
+                            <template slot-scope="scope">
+                              <a href="#" class="row-data-link" @click="showConfContent(scope.row)">配置内容</a>
+                            </template>
+                          </el-table-column>
+                          <el-table-column
+                            label="下载">
+                            <template slot-scope="scope">
+                              <a :href="scope.row.configId | downloadFormat" class="row-data-link">下载</a>
+                            </template>
+                          </el-table-column>
+                          <el-table-column
+                            label="实例列表">
+                            <template slot-scope="scope">
+                              <a href="#" class="row-data-link">{{scope.row.machineSize}}台 OK</a>
+                            </template>
+                          </el-table-column>
+                          <el-table-column
+                            prop="modifyTime"
+                            width="220"
+                            label="修改时间">
+                          </el-table-column>
+                          <el-table-column
+                            label="操作"
+                            width="180"
+                          >
+                            <template slot-scope="scope">
+                              <el-button
+                                size="mini"
+                                icon="el-icon-edit"
+                                type="primary"
+                                @click="handleEdit(scope.$index, scope.row,version.version)">
+                              </el-button>
+                              <el-button
+                                size="mini"
+                                icon="el-icon-delete" handleDelete
+                                type="danger"
+                                @click="handleDelete(scope.$index, scope.row,version.version)">
+                              </el-button>
+                              <!--<el-button-->
+                              <!--size="mini"-->
+                              <!--type="success"-->
+                              <!--icon="el-icon-download"-->
+                              <!--@click="handleDownload(scope.$index, scope.row,version.version)">-->
+                              <!--</el-button>-->
+                            </template>
+                          </el-table-column>
+                        </el-table>
+                      </el-card>
+                    </template>
                   </el-tab-pane>
                 </template>
               </el-tabs>
@@ -388,7 +387,76 @@
     </div>
   </div>
 
-
+  <el-dialog title="新增配置" :visible.sync="addConfFormVisible">
+    <el-form :model="addConfForm">
+      <el-form-item label="应用名称" :label-width="formLabelWidth">
+        <span>{{addConfForm.appName}}</span>
+      </el-form-item>
+      <el-form-item label="应用版本" :label-width="formLabelWidth">
+        <span>{{addConfForm.appVersion}}</span>
+      </el-form-item>
+      <el-form-item label="配置类型" :label-width="formLabelWidth">
+        <el-select v-model="confType" placeholder="请选择配置类型">
+          <el-option
+            v-for="item in confTypeOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+      </el-form-item>
+      <template v-if="confType==='1'">
+        <el-form-item label="文件上传" :label-width="formLabelWidth">
+          <el-upload
+            class="upload-demo"
+            ref="propertiesUpload"
+            :action="addConfForm.fileUploadUrl"
+            accept=".properties"
+            :data="addConfForm.fileData"
+            :on-preview="handlePropertiesPreview"
+            :on-remove="handlePropertiesRemove"
+            :on-success="handlePropertiesSuccess"
+            :on-change="handlePropertiesChange"
+            :file-list="addConfForm.fileUploadList.propertiesFiles"
+            :auto-upload="false">
+            <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+            <div slot="tip" class="el-upload__tip">只能上传properties文件，且不超过10KB</div>
+          </el-upload>
+        </el-form-item>
+      </template>
+      <template v-if="confType==='2'">
+        <el-form-item label="文件上传" :label-width="formLabelWidth">
+          <el-upload
+            class="upload-demo"
+            ref="yamlUpload"
+            accept=".yaml"
+            :data="addConfForm.fileData"
+            :action="addConfForm.fileUploadUrl"
+            :on-preview="handleYamlPreview"
+            :on-remove="handleYamlRemove"
+            :on-success="handleYamlSuccess"
+            :on-change="handleYamlChange"
+            :file-list="addConfForm.fileUploadList.yamlFIles"
+            :auto-upload="false">
+            <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+            <div slot="tip" class="el-upload__tip">只能上传yaml文件，且不超过10KB</div>
+          </el-upload>
+        </el-form-item>
+      </template>
+      <template v-if="confType==='3'">
+        <el-form-item label="配置项Key" :label-width="formLabelWidth">
+          <el-input v-model="addConfForm.itemKey" placeholder="请输入配置项Key"></el-input>
+        </el-form-item>
+        <el-form-item label="配置项Value" :label-width="formLabelWidth">
+          <el-input v-model="addConfForm.itemValue" placeholder="请输入配置项Key"></el-input>
+        </el-form-item>
+      </template>
+    </el-form>
+    <div slot="footer" class="dialog-footer">
+      <el-button @click="addConfFormVisible = false">取 消</el-button>
+      <el-button type="primary" @click="confirmAddConf">{{addConfFormConfirmText}}</el-button>
+    </div>
+  </el-dialog>
 </div>
 
 
@@ -401,31 +469,84 @@
           el: '#disconfApplication',
           data: function () {
             return {
-              activeName: '',
-              activeCollapseNames: [],
-              isCollapse: false,
-              activeIndex: '0',
-              htmlPath: {
-                password: window.disconf.serverUrl + 'modifypassword.html',
-                app: window.disconf.serverUrl + 'newapp.html',
-                appConfigItem: window.disconf.serverUrl + 'newconfig_item.html',
-                appConfigFile: window.disconf.serverUrl + 'newconfig_file.html',
-                appLogin: window.disconf.serverUrl + 'login.html',
-                fileDownload: window.disconf.serverAPIUrl + 'api/web/config/download/'
+              addConfFormVisible: false,
+              addConfFormConfirmText: '创建',
+              formLabelWidth: '100px',
+              addConfForm: {
+                appName: '',
+                appVersion: '',
+                itemKey: '',
+                itemValue: '',
+                fileData: {
+                  appId: 0,
+                  version: '',
+                  envId: 0
+                },
+                fileUploadUrl: window.disconf.serverAPIUrl + 'api/web/config/file',
+                fileUploadList: {
+                  propertiesFIles: [],
+                  yamlFIles: []
+                }
               },
+              confType: '0',
+              confTypeOptions: [{
+                value: '0',
+                label: '请选择配置类型'
+              }, {
+                value: '1',
+                label: 'Properties文件'
+              }, {
+                value: '2',
+                label: 'Yaml文件'
+              }, {
+                value: '3',
+                label: '配置项'
+              }],
+              activeName:
+                '',
+              activeCollapseNames:
+                [],
+              isCollapse:
+                false,
+              activeIndex:
+                '0',
+              htmlPath:
+                {
+                  password: window.disconf.serverUrl + 'modifypassword.html',
+                  app:
+                  window.disconf.serverUrl + 'newapp.html',
+                  appConfigItem:
+                  window.disconf.serverUrl + 'newconfig_item.html',
+                  appConfigFile:
+                  window.disconf.serverUrl + 'newconfig_file.html',
+                  appLogin:
+                  window.disconf.serverUrl + 'login.html',
+                  fileDownload:
+                  window.disconf.serverAPIUrl + 'api/web/config/download/'
+                },
               visible: false,
-              userAppList: [],
-              userEnvList: [],
-              currentAppName: '',
-              currentAppId: 0,
-              currentAppVersionInfo: [],
-              currentAppEnvId: 0,
-              currentAppEnvName: 0,
-              confContentDialog: {
-                confContentVisible: false,
-                confContentTitle: '',
-                confContent: ''
-              }
+              userAppList:
+                [],
+              userEnvList:
+                [],
+              currentAppName:
+                '',
+              currentAppId:
+                0,
+              currentAppVersionInfo:
+                [],
+              currentAppEnvId:
+                0,
+              currentAppEnvName:
+                0,
+              confContentDialog:
+                {
+                  confContentVisible: false,
+                  confContentTitle:
+                    '',
+                  confContent:
+                    ''
+                }
             }
           },
           mounted: function () {
@@ -607,6 +728,31 @@
             handleDownload(index, row, version) {
 
             },
+            addConf(appId, envId, version) {
+              /**
+               * 新增配置
+               * 包含配置文件和配置项
+               */
+              this.addConfForm.appName = this.currentAppName
+              this.addConfForm.appVersion = version
+              this.addConfForm.fileData.appId = appId
+              this.addConfForm.fileData.envId = envId
+              this.addConfForm.fileData.version = version
+              this.addConfFormVisible = true
+            },
+            confirmAddConf() {
+              /**
+               * 确认新增配置
+               * 包含配置文件和配置项
+               */
+              let currentConfType = this.confType
+              if (currentConfType === '1') {
+                this.$refs.propertiesUpload.submit()
+              }
+              if (currentConfType === '2') {
+                this.$refs.yamlUpload.submit()
+              }
+            },
             zkDeployData(appId, envId, version) {
               var vmSelf = this
               window.disconf.ajax({
@@ -632,6 +778,69 @@
             downLoadUrl(appId, envId, version) {
               var serverUrl = window.disconf.serverUrl
               return `${serverUrl}api/web/config/downloadfilebatch?appId=${appId}&envId=${envId}&version=${version}`
+            },
+            handlePropertiesPreview(file) {
+              console.info(file)
+            },
+            handlePropertiesRemove() {
+
+            },
+            handlePropertiesSuccess(response, file, fileList) {
+              this.closeAddConfDialog(response, file, fileList)
+            },
+            handlePropertiesChange(file, fileList) {
+              if (file && /\.properties$/gi.test(file.name) && file.size <= 10 * 1024) {
+
+              } else {
+                let fileIndex = -1
+                fileList.forEach(function (fileObj, index) {
+                  if (fileObj.name === file.name) {
+                    fileIndex = index
+                  }
+                })
+                if (fileIndex > -1) {
+                  fileList.splice(fileIndex)
+                }
+                this.$message.error('请上传properties文件并且文件小于10KB')
+              }
+            },
+            handleYamlPreview(file) {
+              console.info(file)
+            },
+            handleYamlRemove() {
+
+            },
+            handleYamlSuccess(response, file, fileList) {
+              this.closeAddConfDialog(response, file, fileList)
+            },
+            handleYamlChange(file, fileList) {
+              if (file && /\.yaml$/gi.test(file.name) && file.size <= 10 * 1024) {
+
+              } else {
+                let fileIndex = -1
+                fileList.forEach(function (fileObj, index) {
+                  if (fileObj.name === file.name) {
+                    fileIndex = index
+                  }
+                })
+                if (fileIndex > -1) {
+                  fileList.splice(fileIndex)
+                }
+                this.$message.error('请上传yaml文件并且文件小于10KB')
+              }
+            },
+            closeAddConfDialog(response, file, fileList) {
+              this.$message({
+                message: '创建成功',
+                type: 'success'
+              })
+
+              this.$nextTick(() => {
+                this.loadAppAndVersionList(this.currentAppId, this.currentAppEnvId)
+              })
+              setTimeout(() => {
+                this.addConfFormVisible = false
+              }, 200)
             }
           },
           watch: {
