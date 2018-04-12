@@ -5,6 +5,7 @@ import AddConfFile from '@/components/AddConfFile'
 import EditConfFile from '@/components/EditConfFile'
 import AddConfItem from '@/components/AddConfItem'
 import EditConfItem from '@/components/EditConfItem'
+import AddApp from '@/components/AddApp'
 
 Vue.use(Router)
 
@@ -34,6 +35,11 @@ export default new Router({
       path: '/conf/item/edit',
       name: 'EditConfItem',
       component: EditConfItem
+    },
+    {
+      path: '/app/add',
+      name: 'AddApp',
+      component: AddApp
     }
   ]
 })
