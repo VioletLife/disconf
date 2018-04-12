@@ -37,7 +37,33 @@
       color: #409eff;
     }
 
+    #footer {
+      width: 100%;
+      height: 160px;
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+      flex-direction: column;
+    }
 
+    #footer div {
+      -webkit-box-flex: 1;
+      -ms-flex: 1;
+      flex: 1;
+    }
+
+    #footer .svg-github-icon {
+      opacity: 0.8;
+      cursor: pointer;
+    }
+
+    #footer .svg-github-icon:hover {
+      opacity: 1;
+      cursor: pointer;
+    }
   </style>
 </head>
 
@@ -266,128 +292,28 @@
       </el-main>
     </el-container>
 
-    <el-footer>
-      <div id="footer">
-        <div id="BottomMain">
-          <div class="inner">
-            <strong>
-              <a href="#" class="dark">关于</a> &nbsp;
-            </strong>
-            <strong>
-              <a href="#" class="dark">升级</a> &nbsp;
-            </strong>
-            <div class="sep10"></div>
-            <span>分布式配置管理平台</span>
-            <div class="sep10"></div>
-            <span class="myfade">Theme by <a href="http://sov5.com/" target="_blank">Sov5搜索</a>，
-                        Power by 百度程序化广告交易工程平台技术部，
-                    Copyright &copy; 2014~2016 </span>
+    <el-footer style="height: 60px; padding: 0px; margin: 0px; width: 100%;">
+      <div id="footer" style="background-color: rgb(84, 92, 100);">
+        <div></div>
+        <div>
+          <div class="el-row" style="width: 100%; text-align: center;">
+            <div class="el-col el-col-24">
+              <svg height="28" viewBox="0 0 16 16" version="1.1" width="28" aria-hidden="true" class="svg-github-icon"
+                   style="color: white;">
+                <path fill-rule="evenodd"
+                      d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="el-row" style="width: 100%; text-align: center; color: white;">
+            <div class="el-col el-col-24"><span>Disconf分布式配置管理平台 </span> <span>Power by 百度程序化广告交易工程平台技术部 Copyright © 2014~2018  </span>
+            </div>
           </div>
         </div>
+        <div></div>
       </div>
     </el-footer>
   </el-container>
-
-  <!--<div class="navbar navbar-fixed-top clearfix">-->
-  <!--<div class="navbar-inner zu-top">-->
-  <!--<div class="container">-->
-  <!--<button type="button" class="btn btn-navbar collapsed" data-toggle="collapse" data-target=".nav-collapse">-->
-  <!--<span class="icon-bar"></span>-->
-  <!--<span class="icon-bar"></span>-->
-  <!--<span class="icon-bar"></span>-->
-  <!--</button>-->
-  <!--<div class="nav-collapse collapse">-->
-
-  <!--<a id="brand_url" href="/main.html" class="brand" style="margin-left:0px;padding:8px;"> <span-->
-  <!--class="zu-top-nav-link">Disconf</span> </a>-->
-
-  <!--<span class="span2"> </span>-->
-  <!--<form class="navbar-form pull-left">-->
-  <!--<button class="btn btn-warning" title="GitHub" type="button" style=""-->
-  <!--onclick="window.open('https://github.com/knightliao/disconf', '_blank');">-->
-  <!--<i class="icon-circle-arrow-up  icon-white"></i> <b>GitHub</b>-->
-  <!--</button>-->
-  <!--</form>-->
-
-  <!--<ul class="nav pull-right">-->
-
-  <!--<div class="login-yes" style="display:none;padding:10px;">-->
-  <!--<li style="display:inline;">-->
-  <!--<a href="#">-->
-  <!--<span class="zu-top-nav-link loginName" id="username"></span>-->
-  <!--</a>-->
-  <!--</li>-->
-  <!--&nbsp;&nbsp;&nbsp;&nbsp;-->
-  <!--<li style="display:inline;" class="dropdown">-->
-  <!--<a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">-->
-  <!--<span class="zu-top-nav-link">新建<b class="caret"></b></span>-->
-  <!--</a>-->
-  <!--<ul class="dropdown-menu">-->
-  <!--<li><a :href="htmlPath.app">新建APP</a></li>-->
-  <!--<li><a :href="htmlPath.appConfigItem">新建配置项</a></li>-->
-  <!--<li><a :href="htmlPath.appConfigFile">新建配置文件</a></li>-->
-  <!--</ul>-->
-  <!--</li>-->
-  <!--&nbsp;&nbsp;&nbsp;&nbsp;-->
-  <!--<li style="display:inline;">-->
-  <!--<a :href="htmlPath.password">-->
-  <!--<span class="zu-top-nav-link">修改密码</span>-->
-  <!--</a>-->
-  <!--</li>-->
-  <!--&nbsp;&nbsp;&nbsp;&nbsp;-->
-  <!--<li style="display:inline;">-->
-  <!--&lt;!&ndash;<a href="#" id="signout">&ndash;&gt;-->
-  <!--&lt;!&ndash;<span class="zu-top-nav-link">退出</span>&ndash;&gt;-->
-  <!--&lt;!&ndash;</a>&ndash;&gt;-->
-  <!--</li>-->
-  <!--</div>-->
-
-  <!--<div class="login-no" style="padding:10px;">-->
-  <!--<li style="display:inline;">-->
-  <!--<a :href="htmlPath.appLogin"><span class="zu-top-nav-link">登录</span></a>-->
-  <!--</li>-->
-  <!--</div>-->
-
-  <!--</ul>-->
-  <!--</div>-->
-  <!--</div>-->
-
-  <!--</div>-->
-  <!--</div>-->
-
-
-  <div id="Wrapper" class="clearfix">
-    <div id="Main" style="margin-top:50px;">
-      <div class="container-fluid">
-        <div class="row-fluid" style="min-height:400px;">
-          <div class="sidebar span2" style="float:left;overflow:visible;">
-
-
-          </div>
-          <div class="span10" style="float:left">
-
-          </div>
-
-          <!-- 详细信息单行模板-->
-          <div id="tbodyTpl" class="hide" style="width:0px;">
-            <table>
-              <tr>
-                <td>{12}</td>
-                <td style="max-width:100px">{1}</td>
-                <td style="max-width:100px">{6} &nbsp; {5}</td>
-                <td>{14}</td>
-                <td>{15}</td>
-                <td>{8}</td>
-                <td>{10} &nbsp; {11} &nbsp; {13} &nbsp;</td>
-              </tr>
-            </table>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </div>
-
   <el-dialog title="新增配置" :visible.sync="addConfFormVisible">
     <el-form :model="addConfForm">
       <el-form-item label="应用名称" :label-width="formLabelWidth">
@@ -473,7 +399,6 @@
     </div>
   </el-dialog>
 </div>
-
 
 <script>
   if (window.disconf) {
