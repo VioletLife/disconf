@@ -38,37 +38,22 @@
           </el-submenu>
         </el-menu>
       </el-header>
-      <el-container>
+      <el-container style="min-height: 600px;">
         <router-view/>
       </el-container>
-      <el-footer>
-        <div id="footer">
-          <div id="BottomMain">
-            <div class="inner">
-              <strong>
-                <a href="#" class="dark">关于</a> &nbsp;
-              </strong>
-              <strong>
-                <a href="#" class="dark">升级</a> &nbsp;
-              </strong>
-              <div class="sep10"></div>
-              <span>分布式配置管理平台</span>
-              <div class="sep10"></div>
-              <span class="myfade">Theme by <a href="http://sov5.com/" target="_blank">Sov5搜索</a>，
-                        Power by 百度程序化广告交易工程平台技术部，
-                    Copyright &copy; 2014~2016 </span>
-            </div>
-          </div>
-        </div>
+      <el-footer style="padding: 0;margin: 0;width:100%;">
+        <disconf-footer :theme="footerDarkTheme"></disconf-footer>
       </el-footer>
     </el-container>
   </div>
 </template>
 <script>
   import GlobalEnv from './js/global_env'
+  import DisconfFooter from './components/DisconfFooter.vue'
 
   export default {
     name: 'app',
+    components: {DisconfFooter},
     data: function () {
       return {
         activeName: '',
@@ -95,6 +80,9 @@
           confContentVisible: false,
           confContentTitle: '',
           confContent: ''
+        },
+        footerDarkTheme: {
+          'background-color': 'rgb(84, 92, 100)'
         }
       }
     },
@@ -102,7 +90,7 @@
 
     },
     methods: {
-      handleSelect(key, keyPath) {
+      handleSelect (key, keyPath) {
         console.log(key, keyPath)
       }
     }
