@@ -77,6 +77,11 @@
         window.$.ajax(options)
       }
     }
+    self.sleep = function (timeout) {
+      return new Promise((resolve, reject) => {
+        setTimeout(resolve, timeout)
+      })
+    }
   }
   var disconfObject = new _disconf()
   window.disconf = window.disconf || disconfObject
