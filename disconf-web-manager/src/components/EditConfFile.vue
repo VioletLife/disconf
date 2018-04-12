@@ -53,7 +53,7 @@
           <el-button type="primary" style="margin-left: 10px;" @click="addFileItem">新增配置</el-button>
           <el-button type="primary" style="margin-left: 10px;" @click="setEditorMode">{{fileEditorName}}</el-button>
           <el-button type="primary" style="margin-left: 10px;" @click="saveAllFileItems">保存配置</el-button>
-          <el-button type="danger" style="margin-left: 10px;">删除配置</el-button>
+          <el-button type="danger" style="margin-left: 10px;" @click="deleteConfFile">删除配置</el-button>
         </el-col>
       </el-col>
     </el-row>
@@ -150,7 +150,7 @@
   import ClipboardJS from 'clipboard'
   import ACELoader from '../js/ace'
   import Utils from '../js/utils'
-
+  import GlobalEnv from '../js/global_env'
   export default {
     name: 'EditConfFile',
     data () {
@@ -396,6 +396,41 @@
             type: 'success',
             message: '已保存!'
           })
+        })
+      },
+      deleteConfFile () {
+        let tipsMessage = '确认删除该配置文件：'
+        let vmSelf = this
+
+        const h = this.$createElement
+
+        this.$msgbox({
+          title: '删除确认',
+          message: h('div', null, [tipsMessage, h('span', {style: {color: 'red'}}, [vmSelf.appInfo.fileKey])]),
+          showCancelButton: true,
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          callback: function (action, instance) {
+            if (action === 'confirm') {
+              Utils.ajax({
+                type: 'DELETE',
+                url: 'api/web/config/' + vmSelf.$route.query.configId,
+                success: function () {
+                  vmSelf.$message({
+                    type: 'success',
+                    message: '已删除!'
+                  })
+                  setTimeout(function () {
+                    /**
+                     * 导航至列表页面
+                     * @type {string}
+                     */
+                    window.location.href = GlobalEnv.env().serverUrl + 'static/html/main.html'
+                  }, 500)
+                }
+              })
+            }
+          }
         })
       }
     }
