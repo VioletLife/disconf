@@ -56,7 +56,7 @@
       >
         <el-submenu index="1">
           <template slot="title">应用中心</template>
-          <el-menu-item index="1-1">我的应用</el-menu-item>
+          <el-menu-item index="1-1"><a :href="htmlPath.appPageList">我的应用</a></el-menu-item>
           <el-menu-item index="1-2">
             <a :href="htmlPath.app">创建应用</a>
           </el-menu-item>
@@ -142,7 +142,8 @@
                           <span>{{version.version | versionFormat}}</span>
                           <a
                             class="el-button el-button--primary el-button--small"
-                            :href="downLoadUrl(currentAppId,env.id,version.version)" style="float: right;margin-left: 10px;">批量下载</a>
+                            :href="downLoadUrl(currentAppId,env.id,version.version)"
+                            style="float: right;margin-left: 10px;">批量下载</a>
                           <el-button type="primary" @click="zkDeployData(currentAppId,env.id,version.version)"
                                      size="small" style="float: right;">ZK部署情况
                           </el-button>
@@ -206,7 +207,7 @@
                               </el-button>
                               <el-button
                                 size="mini"
-                                icon="el-icon-delete" handleDelete
+                                icon="el-icon-delete"
                                 type="danger"
                                 @click="handleDelete(scope.$index, scope.row,version.version)">
                               </el-button>
@@ -457,6 +458,20 @@
       <el-button type="primary" @click="confirmAddConf">{{addConfFormConfirmText}}</el-button>
     </div>
   </el-dialog>
+  <el-dialog title="更新配置项" :visible.sync="updateConfFormItemVisible">
+    <el-form :model="updateConfForm">
+      <el-form-item label="配置项Key" :label-width="formLabelWidth">
+        <span>{{updateConfForm.itemKey}}</span>
+      </el-form-item>
+      <el-form-item label="配置项Value" :label-width="formLabelWidth">
+        <el-input v-model="updateConfForm.itemValue"></el-input>
+      </el-form-item>
+    </el-form>
+    <div slot="footer" class="dialog-footer">
+      <el-button @click="updateConfFormItemVisible = false">取 消</el-button>
+      <el-button type="primary" @click="confirmUpdateConfItem">保 存</el-button>
+    </div>
+  </el-dialog>
 </div>
 
 
@@ -488,6 +503,12 @@
                   yamlFIles: []
                 }
               },
+              updateConfFormItemVisible: false,
+              updateConfForm: {
+                itemKey: '',
+                itemValue: '',
+                rawValue: null
+              },
               confType: '0',
               confTypeOptions: [{
                 value: '0',
@@ -510,20 +531,15 @@
                 false,
               activeIndex:
                 '0',
-              htmlPath:
-                {
-                  password: window.disconf.serverUrl + 'modifypassword.html',
-                  app:
-                  window.disconf.serverUrl + 'newapp.html',
-                  appConfigItem:
-                  window.disconf.serverUrl + 'newconfig_item.html',
-                  appConfigFile:
-                  window.disconf.serverUrl + 'newconfig_file.html',
-                  appLogin:
-                  window.disconf.serverUrl + 'login.html',
-                  fileDownload:
-                  window.disconf.serverAPIUrl + 'api/web/config/download/'
-                },
+              htmlPath: {
+                password: window.disconf.serverUrl + 'modifypassword.html',
+                app: window.disconf.serverUrl + 'newapp.html',
+                appConfigItem: window.disconf.serverUrl + 'newconfig_item.html',
+                appConfigFile: window.disconf.serverUrl + 'newconfig_file.html',
+                appLogin: window.disconf.serverUrl + 'login.html',
+                appPageList: window.disconf.serverUrl + 'main.html',
+                fileDownload: window.disconf.serverAPIUrl + 'api/web/config/download/'
+              },
               visible: false,
               userAppList:
                 [],
@@ -539,14 +555,11 @@
                 0,
               currentAppEnvName:
                 0,
-              confContentDialog:
-                {
-                  confContentVisible: false,
-                  confContentTitle:
-                    '',
-                  confContent:
-                    ''
-                }
+              confContentDialog: {
+                confContentVisible: false,
+                confContentTitle: '',
+                confContent: ''
+              }
             }
           },
           mounted: function () {
@@ -692,9 +705,25 @@
                * 配置文件
                * 配置项
                */
-              var editorUrl = `${window.disconf.originServerUrl}#/conf/file/edit?appId=${this.currentAppId}&appName=${encodeURIComponent(this.currentAppName)}&envId=${this.currentAppEnvId}&envName=${encodeURIComponent(this.currentAppEnvName)}&version=${version}&fileKey=${encodeURIComponent(row.key)}&configId=${row.configId}`
-              console.info(editorUrl)
-              window.location.href = editorUrl
+
+              /**
+               * 配置项
+               */
+              if (row.typeId === 1) {
+                this.updateConfForm.itemValue = row.value
+                this.updateConfForm.itemKey = row.key
+                this.updateConfForm.rawValue = row
+                this.updateConfFormItemVisible = true
+              }
+
+              /**
+               * 配置文件
+               */
+              if (row.typeId === 0) {
+                var editorUrl = `${window.disconf.originServerUrl}#/conf/file/edit?appId=${this.currentAppId}&appName=${encodeURIComponent(this.currentAppName)}&envId=${this.currentAppEnvId}&envName=${encodeURIComponent(this.currentAppEnvName)}&version=${version}&fileKey=${encodeURIComponent(row.key)}&configId=${row.configId}`
+                console.info(editorUrl)
+                window.location.href = editorUrl
+              }
             },
             handleDelete(index, row, version) {
               let tipsMessage = row.typeId === 0 ? '确认删除该配置文件：' : '确认删除该配置项：'
@@ -741,6 +770,7 @@
               this.addConfFormVisible = true
             },
             confirmAddConf() {
+              var vmSelf = this
               /**
                * 确认新增配置
                * 包含配置文件和配置项
@@ -751,6 +781,25 @@
               }
               if (currentConfType === '2') {
                 this.$refs.yamlUpload.submit()
+              }
+              if (currentConfType === '3') {
+                var {appId, version, envId} = this.addConfForm.fileData
+                window.disconf.ajax({
+                  type: 'POST',
+                  url: 'api/web/config/item',
+                  data: {
+                    appId,
+                    version,
+                    envId,
+                    key: this.addConfForm.itemKey,
+                    value: this.addConfForm.itemValue
+                  },
+                  success: function (response) {
+                    if (response && response.success && response.success === 'true') {
+                      vmSelf.closeAddConfDialog()
+                    }
+                  }
+                })
               }
             },
             zkDeployData(appId, envId, version) {
@@ -841,6 +890,47 @@
               setTimeout(() => {
                 this.addConfFormVisible = false
               }, 200)
+            },
+            confirmUpdateConfItem() {
+              var vmSelf = this
+              /**
+               * 创建配置项
+               * /api/web/config/item
+               * formData
+               * appId: 32
+               * version: 1_0_0_0
+               * key: hint.weight
+               * envId: 3
+               * value: 100
+               *
+               * 更新配置项
+               * /api/web/config/item/459
+               *  value: 1000
+               *
+               *
+               *
+               *
+               *
+               *
+               */
+              window.disconf.ajax({
+                type: 'PUT',
+                url: `api/web/config/item/` + this.updateConfForm.rawValue.configId,
+                data: {
+                  value: this.updateConfForm.itemValue
+                },
+                success: function (response) {
+                  if (response && response.success && response.success === 'true') {
+                    vmSelf.$message({
+                      type: 'success',
+                      message: '已更新'
+                    })
+                    window.disconf.sleep(500).then(function () {
+                      window.location.href = window.disconf.serverUrl + 'main.html'
+                    })
+                  }
+                }
+              })
             }
           },
           watch: {
