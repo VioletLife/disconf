@@ -13,7 +13,7 @@
         >
           <el-submenu index="1">
             <template slot="title">应用中心</template>
-            <el-menu-item index="1-1">我的应用</el-menu-item>
+            <el-menu-item index="1-1"><a :href="htmlPath.appPageList">我的应用</a></el-menu-item>
             <el-menu-item index="1-2">
               <a :href="htmlPath.app">创建应用</a>
             </el-menu-item>
@@ -66,6 +66,7 @@
 </template>
 <script>
   import GlobalEnv from './js/global_env'
+
   export default {
     name: 'app',
     data: function () {
@@ -75,11 +76,13 @@
         isCollapse: false,
         activeIndex: '0',
         htmlPath: {
-          password: GlobalEnv.env().serverUrl + 'modifypassword.html',
-          app: GlobalEnv.env().serverUrl + 'newapp.html',
-          appConfigItem: GlobalEnv.env().serverUrl + 'newconfig_item.html',
-          appConfigFile: GlobalEnv.env().serverUrl + 'newconfig_file.html',
-          appLogin: GlobalEnv.env().serverUrl + 'login.html'
+          password: GlobalEnv.env().serverUrl + 'static/html/modifypassword.html',
+          app: GlobalEnv.env().serverUrl + 'static/html/newapp.html',
+          appConfigItem: GlobalEnv.env().serverUrl + 'static/html/newconfig_item.html',
+          appConfigFile: GlobalEnv.env().serverUrl + 'static/html/newconfig_file.html',
+          appLogin: GlobalEnv.env().serverUrl + 'static/html/login.html',
+          appPageList: GlobalEnv.env().serverUrl + 'static/html/main.html',
+          fileDownload: GlobalEnv.env().serverUrl + 'api/web/config/download/'
         },
         visible: false,
         userAppList: [],
@@ -99,7 +102,7 @@
 
     },
     methods: {
-      handleSelect (key, keyPath) {
+      handleSelect(key, keyPath) {
         console.log(key, keyPath)
       }
     }
