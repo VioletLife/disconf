@@ -13,6 +13,7 @@
         <module>disconf-core</module>
         <module>disconf-web</module>
         <module>disconf-web-manager</module>
+        <module>disconf-mybatis-generator</module>
     </modules>
 
     <inceptionYear>2017</inceptionYear>

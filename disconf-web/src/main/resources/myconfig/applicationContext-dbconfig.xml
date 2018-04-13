@@ -12,30 +12,39 @@
     <!-- onedb configure start -->
 
     <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
-        <property name="url" value="${disconf.jdbc.db_0.url}" />
-        <property name="username" value="${disconf.jdbc.db_0.username}" />
-        <property name="password" value="${disconf.jdbc.db_0.password}" />
+        <property name="url" value="${disconf.jdbc.db_0.url}"/>
+        <property name="username" value="${disconf.jdbc.db_0.username}"/>
+        <property name="password" value="${disconf.jdbc.db_0.password}"/>
 
-        <property name="filters" value="stat" />
+        <property name="filters" value="stat"/>
 
-        <property name="maxActive" value="${disconf.jdbc.maxPoolSize}" />
-        <property name="initialSize" value="${disconf.jdbc.initialPoolSize}" />
-        <property name="maxWait" value="${disconf.jdbc.maxIdleTime}" />
-        <property name="minIdle" value="${disconf.jdbc.minPoolSize}" />
+        <property name="maxActive" value="${disconf.jdbc.maxPoolSize}"/>
+        <property name="initialSize" value="${disconf.jdbc.initialPoolSize}"/>
+        <property name="maxWait" value="${disconf.jdbc.maxIdleTime}"/>
+        <property name="minIdle" value="${disconf.jdbc.minPoolSize}"/>
 
-        <property name="timeBetweenEvictionRunsMillis" value="60000" />
-        <property name="minEvictableIdleTimeMillis" value="300000" />
+        <property name="timeBetweenEvictionRunsMillis" value="60000"/>
+        <property name="minEvictableIdleTimeMillis" value="300000"/>
 
-        <property name="testWhileIdle" value="true" />
-        <property name="testOnBorrow" value="false" />
-        <property name="testOnReturn" value="false" />
+        <property name="testWhileIdle" value="true"/>
+        <property name="testOnBorrow" value="false"/>
+        <property name="testOnReturn" value="false"/>
 
-        <property name="poolPreparedStatements" value="true" />
-        <property name="maxOpenPreparedStatements" value="20" />
+        <property name="poolPreparedStatements" value="true"/>
+        <property name="maxOpenPreparedStatements" value="20"/>
 
-        <property name="asyncInit" value="true" />
+        <property name="asyncInit" value="true"/>
     </bean>
 
+
+    <bean id="sqlSessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="markerInterface" value="com.baidu.disconf.web.service.MybatisMapper"/>
+        <property name="basePackage" value="com.baidu.disconf.web.service"/>
+    </bean>
     <bean id="onedbJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
         <property name="dataSource" ref="dataSource"/>
     </bean>

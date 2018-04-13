@@ -3,6 +3,7 @@ package com.baidu.disconf.web.service.env.service.impl;
 import com.baidu.disconf.web.service.BaseService;
 import com.baidu.disconf.web.service.env.bo.EnvDefault;
 import com.baidu.disconf.web.service.env.dao.EnvDefaultDao;
+import com.baidu.disconf.web.service.env.mybatis.EnvDefaultMapper;
 import com.baidu.disconf.web.service.env.service.EnvDefaultMgr;
 import com.baidu.disconf.web.service.env.vo.EnvDefaultVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,10 @@ public class EnvDefaultMgrImpl implements EnvDefaultMgr {
 
     @Autowired
     EnvDefaultDao envDefaultDao;
+
+
+    @Autowired
+    EnvDefaultMapper envDefaultMapper;
 
     @Override
     public Optional<List<EnvDefaultVo>> findAll() {

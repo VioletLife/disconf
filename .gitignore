@@ -13,6 +13,7 @@
 /.DS_Store
 /*-baidu.xml
 /log
+/disconf-mybatis-generator
 .idea
 BCLOUD
 build.sh
