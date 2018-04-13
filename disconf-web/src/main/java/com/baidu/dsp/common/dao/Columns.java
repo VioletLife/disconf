@@ -37,6 +37,9 @@ public class Columns {
 
     public static final String ROLE_ID = "role_id";
 
+
+    public static final String ID="id";
+
     public static final class RoleColumns {
         public final static String ROLE_NAME = "role_name";
     }
