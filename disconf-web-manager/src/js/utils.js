@@ -4,6 +4,6 @@ import $ from 'jquery'
 export default class Utils {
   static ajax (options) {
     options.url = GlobalEnv.env().serverAPIUrl + options.url
-    $.ajax(options)
+    return $.ajax(options)
   }
 }

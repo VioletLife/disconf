@@ -15,7 +15,7 @@
             <template slot="title">应用中心</template>
             <el-menu-item index="1-1"><a :href="htmlPath.appPageList">我的应用</a></el-menu-item>
             <el-menu-item index="1-2">
-              <a :href="htmlPath.app">创建应用</a>
+              <router-link to="/app/add">创建应用</router-link>
             </el-menu-item>
           </el-submenu>
           <el-submenu index="2">
@@ -60,15 +60,7 @@
         activeCollapseNames: [],
         isCollapse: false,
         activeIndex: '0',
-        htmlPath: {
-          password: GlobalEnv.env().serverUrl + 'static/html/modifypassword.html',
-          app: GlobalEnv.env().serverUrl + 'static/html/newapp.html',
-          appConfigItem: GlobalEnv.env().serverUrl + 'static/html/newconfig_item.html',
-          appConfigFile: GlobalEnv.env().serverUrl + 'static/html/newconfig_file.html',
-          appLogin: GlobalEnv.env().serverUrl + 'static/html/login.html',
-          appPageList: GlobalEnv.env().serverUrl + 'static/html/main.html',
-          fileDownload: GlobalEnv.env().serverUrl + 'api/web/config/download/'
-        },
+        htmlPath: {},
         visible: false,
         userAppList: [],
         userEnvList: [],
@@ -87,10 +79,10 @@
       }
     },
     mounted: function () {
-
+      this.htmlPath = this.$store.state.htmlPath
     },
     methods: {
-      handleSelect (key, keyPath) {
+      handleSelect(key, keyPath) {
         console.log(key, keyPath)
       }
     }

@@ -40,7 +40,7 @@
               </el-input>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="goNextStep(1)" style="float: right;">下一步</el-button>
+              <el-button type="primary" @click="goNextStep(1,'appNameFormRef')" style="float: right;">下一步</el-button>
             </el-form-item>
           </el-form>
         </template>
@@ -75,7 +75,9 @@
             创建环境
           </el-button>
         </template>
-        <template v-if="currentActiveStep===2"></template>
+        <template v-if="currentActiveStep===3">
+          <span>应用创建完成，去<a :href="appPageListUrl">我的应用</a>创建配置</span>
+        </template>
       </el-col>
     </el-row>
     <el-dialog title="添加应用环境信息" :visible.sync="dialogAppEnvDefaultVisible">
@@ -171,6 +173,9 @@
         dataType: 'json',
         success: function (response) {
           if (response && response.success && response.success === 'true') {
+            response.page.result.forEach(function (envDefault) {
+              envDefault['isEnvDefault'] = true
+            })
             vmSelf.envDefaultList = response.page.result
             vmSelf.envCacheDefaultList = JSON.parse(JSON.stringify(response.page.result))
           }
@@ -178,14 +183,48 @@
       })
     },
     methods: {
-      goNextStep (step) {
+      goNextStep (step, formName) {
         let vmSelf = this
-        if (step === 1) {
-          this.finishStep(step)
+        if (step === 1 && formName) {
+          this.$refs[formName].validate((valid) => {
+            if (valid) {
+              this.finishStep(step)
+            }
+          })
         }
         if (step === 2) {
-          this.finishStep(step)
-          this.finishStep(3)
+          /***
+           * 创建应用
+           */
+          let app = {
+            app: {
+              name: this.appNameForm.appName,
+              description: this.appNameForm.appDescription
+            },
+            appEnvs: []
+          }
+          this.envDefaultList.forEach(function (env) {
+            let envVariables = {
+              env: {
+                envName: env.envName,
+                envComments: env.envComments,
+                isEnvDefault: env.isEnvDefault,
+                envId: env.isEnvDefault ? env.id : 0
+              }
+            }
+            app.appEnvs.push(envVariables)
+          })
+          Utils.ajax({
+            type: 'POST',
+            url: 'api/app/create',
+            contentType: 'application/json;charset=utf-8',
+            dataType: 'json',
+            data: JSON.stringify(app)
+          }).then((response) => {
+            console.info(response)
+            this.finishStep(step)
+            this.finishStep(3)
+          })
         }
       },
       finishStep (step) {
@@ -243,7 +282,8 @@
             let newAppEnvLocal = {
               id: autoId,
               envName: this.envDefaultForm.envName,
-              envComments: this.envDefaultForm.envComments
+              envComments: this.envDefaultForm.envComments,
+              isEnvDefault: false
             }
             this.envDefaultList.push(newAppEnvLocal)
             this.envDefaultForm.envName = ''
@@ -251,6 +291,11 @@
             this.dialogAppEnvDefaultVisible = false
           }
         })
+      }
+    },
+    computed: {
+      appPageListUrl () {
+        return this.$store.state.htmlPath.appPageList
       }
     }
   }
