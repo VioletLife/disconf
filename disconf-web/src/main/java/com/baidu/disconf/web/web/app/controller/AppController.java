@@ -1,13 +1,17 @@
 package com.baidu.disconf.web.web.app.controller;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.validation.Valid;
 
+import com.baidu.disconf.web.service.app.service.AppEnvMgr;
+import com.baidu.disconf.web.service.app.vo.AppVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -35,6 +39,10 @@ public class AppController extends BaseController {
 
     @Autowired
     private AppValidator appValidator;
+
+
+    @Autowired
+    private AppEnvMgr appEnvMgr;
 
     /**
      * list
@@ -66,6 +74,18 @@ public class AppController extends BaseController {
         appMgr.create(appNewForm);
 
         return buildSuccess("创建成功");
+    }
+
+
+    @RequestMapping(value = "create", method = RequestMethod.POST, headers = {"content-type=application/json;charset=utf-8"})
+    @ResponseBody
+    public JsonObjectBase createAppInstance(@RequestBody AppVo appVo) {
+        AtomicReference<JsonObjectBase> info = new AtomicReference<>();
+        appEnvMgr.createApp(appVo, info::set);
+        if (info.get() == null) {
+            return buildSuccess(info.get());
+        }
+        return buildSuccess(appVo);
     }
 
 }
