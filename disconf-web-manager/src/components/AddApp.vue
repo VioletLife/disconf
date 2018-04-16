@@ -74,6 +74,10 @@
                      style="float: right;margin-top: 16px;margin-bottom: 16px;">
             创建环境
           </el-button>
+          <el-button type="primary" @click="backToFirstStep"
+                     style="float: right;margin-top: 16px;margin-bottom: 16px;">
+            上一步
+          </el-button>
         </template>
         <template v-if="currentActiveStep===3">
           <span>应用创建完成，去<a :href="appPageListUrl">我的应用</a>创建配置</span>
@@ -228,7 +232,7 @@
             data: JSON.stringify(app)
           }).then((response) => {
             loading.close()
-            if (response && response.message && response.message.status.code !== 0) {
+            if (response && response.message && response.message.status && response.message.status.code && response.message.status.code !== 0) {
               this.$message({
                 type: 'error',
                 message: response.message.status.message
@@ -304,6 +308,12 @@
             this.dialogAppEnvDefaultVisible = false
           }
         })
+      },
+      backToFirstStep () {
+        this.activeStepsStatus.forEach(function (status) {
+          status.isCompleted = false
+        })
+        this.currentActiveStep = 0
       }
     },
     computed: {
