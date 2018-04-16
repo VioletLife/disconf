@@ -2,6 +2,10 @@ package com.baidu.disconf.web.web.env.controller;
 
 import java.util.List;
 
+import com.baidu.disconf.web.service.app.mybatis.AppEnv;
+import com.baidu.disconf.web.service.app.mybatis.AppEnvDynamicSqlSupport;
+import com.baidu.disconf.web.service.app.mybatis.AppEnvMapper;
+import org.mybatis.dynamic.sql.where.condition.IsEqualTo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +33,10 @@ public class EnvController extends BaseController {
     @Autowired
     private EnvMgr envMgr;
 
+
+    @Autowired
+    private AppEnvMapper appEnvMapper;
+
     /**
      * list
      *
@@ -41,6 +49,17 @@ public class EnvController extends BaseController {
         List<EnvListVo> envListVos = envMgr.getVoList();
 
         return buildListSuccess(envListVos, envListVos.size());
+    }
+
+
+    @RequestMapping(value = "/app/list", method = RequestMethod.GET)
+    @ResponseBody
+    public JsonObjectBase appEnvList(Long appId) {
+        List<AppEnv> appEnvs = appEnvMapper.selectByExample()
+                .where(AppEnvDynamicSqlSupport.appId, IsEqualTo.of(() -> appId))
+                .build()
+                .execute();
+        return buildListSuccess(appEnvs);
     }
 
 }

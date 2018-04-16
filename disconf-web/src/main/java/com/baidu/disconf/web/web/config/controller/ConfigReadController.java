@@ -8,7 +8,11 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import com.baidu.disconf.web.service.app.mybatis.AppEnvVersion;
+import com.baidu.disconf.web.service.app.mybatis.AppEnvVersionDynamicSqlSupport;
+import com.baidu.disconf.web.service.app.mybatis.AppEnvVersionMapper;
 import org.apache.commons.io.IOUtils;
+import org.mybatis.dynamic.sql.where.condition.IsEqualTo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +57,10 @@ public class ConfigReadController extends BaseController {
     @Autowired
     private ConfigValidator configValidator;
 
+
+    @Autowired
+    private AppEnvVersionMapper versionMapper;
+
     /**
      * 获取版本的List
      *
@@ -64,17 +72,22 @@ public class ConfigReadController extends BaseController {
 
         LOG.info(versionListForm.toString());
 
-        List<String> versionList =
-                configMgr.getVersionListByAppEnv(versionListForm.getAppId(), versionListForm.getEnvId());
+        List<AppEnvVersion> appEnvVersions = versionMapper.selectByExample()
+                .where(AppEnvVersionDynamicSqlSupport.appId, IsEqualTo.of(() -> versionListForm.getAppId()))
+                .and(AppEnvVersionDynamicSqlSupport.appEnvId, IsEqualTo.of(() -> versionListForm.getEnvId()))
+                .build()
+                .execute();
 
-        return buildListSuccess(versionList, versionList.size());
+//        List<String> versionList =
+//                configMgr.getVersionListByAppEnv(versionListForm.getAppId(), versionListForm.getEnvId());
+
+        return buildListSuccess(appEnvVersions);
     }
 
     /**
      * 获取列表,有分页的
      *
      * @param confListForm
-     *
      * @return
      */
     @RequestMapping(value = "/list", method = RequestMethod.GET)
@@ -96,7 +109,6 @@ public class ConfigReadController extends BaseController {
      * 获取列表,有分页的, 没有ZK信息
      *
      * @param confListForm
-     *
      * @return
      */
     @RequestMapping(value = "/simple/list", method = RequestMethod.GET)
@@ -118,7 +130,6 @@ public class ConfigReadController extends BaseController {
      * 获取某个
      *
      * @param configId
-     *
      * @return
      */
     @RequestMapping(value = "/{configId}", method = RequestMethod.GET)
@@ -137,7 +148,6 @@ public class ConfigReadController extends BaseController {
      * 获取 zk
      *
      * @param configId
-     *
      * @return
      */
     @RequestMapping(value = "/zk/{configId}", method = RequestMethod.GET)
@@ -156,7 +166,6 @@ public class ConfigReadController extends BaseController {
      * 下载
      *
      * @param configId
-     *
      * @return
      */
     @RequestMapping(value = "/download/{configId}", method = RequestMethod.GET)
@@ -190,7 +199,6 @@ public class ConfigReadController extends BaseController {
      * 批量下载配置文件
      *
      * @param confListForm
-     *
      * @return
      */
     @RequestMapping(value = "/downloadfilebatch", method = RequestMethod.GET)

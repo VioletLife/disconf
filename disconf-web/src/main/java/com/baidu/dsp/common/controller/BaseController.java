@@ -73,6 +73,21 @@ public class BaseController implements ApplicationContextAware {
         return JsonObjectUtils.buildListSuccess(value, totalCount, null);
     }
 
+
+    /**
+     * 列表数据
+     * @param value 列表数据
+     * @param <T>
+     * @return
+     */
+    protected <T> JsonObjectBase buildListSuccess(List<?> value) {
+
+        if (value != null && value.size() > 0) {
+            return JsonObjectUtils.buildListSuccess(value, value.size(), null);
+        }
+        return JsonObjectUtils.buildListSuccess(value, 0, null);
+    }
+
     /**
      * OK: 列表数据
      *
@@ -138,6 +153,7 @@ public class BaseController implements ApplicationContextAware {
 
     /**
      * 构造返回参数
+     *
      * @param message
      * @return
      */
