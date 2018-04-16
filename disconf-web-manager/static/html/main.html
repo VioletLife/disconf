@@ -118,8 +118,8 @@
                 style="color: rgb(48, 49, 51);font-size: 16px;padding-left: 20px;line-height: 32px;font-weight: bold;">我的应用</span>
                 <div class="side-nav">
                   <ul>
-                    <template v-for="app in userAppList">
-                      <li :index="appMenuItemIndex(1,app.id)" @click="handleAppMenuItemClick(app)">
+                    <template v-for="(app,index) in userAppList">
+                      <li :index="appMenuItemIndex(1,app.id)" @click="handleAppMenuItemClick(app,index)">
                         <a>{{app.name}}</a>
                       </li>
                     </template>
@@ -156,11 +156,18 @@
 
             </el-col>
           </el-row>
+
           <el-row style="    margin-left: -11px;    margin-top: 10px;">
             <el-col :span="24">
               <el-tabs v-model="activeName" @tab-click="handleTabClick" type="card">
                 <template v-for="env in userEnvList">
-                  <el-tab-pane :label="env.name" :name="appEnvItemName(env)">
+                  <el-tab-pane :label="env.envName" :name="appEnvItemName(env)">
+                    <el-row style="    margin-right: 15px;">
+                      <el-col :span="24">
+                        <el-button type="primary" style="float: right;" @click="createVersionForEnv(env)">创建新版本
+                        </el-button>
+                      </el-col>
+                    </el-row>
                     <template
                       v-for="(version,index) in currentAppVersionInfo">
                       <el-card class="box-card" style="width: 96%;margin: 6px auto;">
@@ -249,7 +256,11 @@
                       </el-card>
                     </template>
                   </el-tab-pane>
+
                 </template>
+                <el-tab-pane name="env_0_plus">
+                  <span slot="label"><i class="el-icon-plus"></i></span>
+                </el-tab-pane>
               </el-tabs>
               <el-dialog :title="confContentDialog.confContentTitle"
                          :visible.sync="confContentDialog.confContentVisible">
@@ -398,6 +409,20 @@
       <el-button type="primary" @click="confirmUpdateConfItem">保 存</el-button>
     </div>
   </el-dialog>
+  <el-dialog :visible.sync="addVersionFormDialogVisible" title="创建新版本" ref="addVersionFormRef">
+    <el-form :model="addVersionForm" :rules="addVersionFormRules">
+      <el-form-item label="版本号：" prop="versionName" :label-width="formLabelWidth">
+        <el-input v-model="addVersionForm.versionName"></el-input>
+      </el-form-item>
+      <el-form-item label="版本说明：" :label-width="formLabelWidth">
+        <el-input v-model="addVersionForm.versionComments"></el-input>
+      </el-form-item>
+    </el-form>
+    <div slot="footer" class="dialog-footer">
+      <el-button @click="addVersionFormDialogVisible = false">取 消</el-button>
+      <el-button type="primary" @click="confirmAddVersionFormDialog('addVersionFormRef')">创建</el-button>
+    </div>
+  </el-dialog>
 </div>
 
 <script>
@@ -484,7 +509,16 @@
                 confContentVisible: false,
                 confContentTitle: '',
                 confContent: ''
-              }
+              },
+              addVersionForm: {
+                versionName: '',
+                versionComments: ''
+              },
+              addVersionRules: {
+                versionName: [{required: true, message: '请输入版本号', trigger: 'blur'},
+                  {min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur'}]
+              },
+              addVersionFormDialogVisible: false
             }
           },
           mounted: function () {
@@ -500,69 +534,95 @@
                    */
                   vmSelf.currentAppName = response.page.result[0].name
                   vmSelf.currentAppId = response.page.result[0].id
-                  vmSelf.loadAppAndVersionList(vmSelf.currentAppId, vmSelf.currentAppEnvId)
+                  vmSelf.loadAppAndEnvList(vmSelf.currentAppId)
                 }
               }
             })
-            window.disconf.ajax({
-              type: 'GET',
-              url: 'api/env/list',
-              success: function (response) {
-                if (response.success === 'true') {
-                  vmSelf.userEnvList = response.page.result
-                  vmSelf.$nextTick(() => {
-                    /**
-                     * 默认选中第一个环境
-                     * @type {string}
-                     */
-                    vmSelf.activeName = `env_` + vmSelf.userEnvList[0].id
-                    vmSelf.currentAppEnvId = vmSelf.userEnvList[0].id
-                    vmSelf.currentAppEnvName = vmSelf.userEnvList[0].name
-                    vmSelf.loadAppAndVersionList(vmSelf.currentAppId, vmSelf.currentAppEnvId)
-                  })
-                }
-              }
-            })
+            // window.disconf.ajax({
+            //   type: 'GET',
+            //   url: 'api/env/list',
+            //   success: function (response) {
+            //     if (response.success === 'true') {
+            //       vmSelf.userEnvList = response.page.result
+            //       vmSelf.$nextTick(() => {
+            //         /**
+            //          * 默认选中第一个环境
+            //          * @type {string}
+            //          */
+            //         vmSelf.activeName = `env_` + vmSelf.userEnvList[0].id
+            //         vmSelf.currentAppEnvId = vmSelf.userEnvList[0].id
+            //         vmSelf.currentAppEnvName = vmSelf.userEnvList[0].name
+            //         vmSelf.loadAppAndVersionList(vmSelf.currentAppId, vmSelf.currentAppEnvId)
+            //       })
+            //     }
+            //   }
+            // })
           },
           methods: {
-            handleSelect (key, keyPath) {
+            handleSelect(key, keyPath) {
               console.log(key, keyPath)
             },
-            handleOpen (key, keyPath) {
+            handleOpen(key, keyPath) {
               console.log(key, keyPath)
             },
-            handleClose (key, keyPath) {
+            handleClose(key, keyPath) {
               console.log(key, keyPath)
             },
-            appMenuItemIndex (menuIndex, appId) {
+            appMenuItemIndex(menuIndex, appId) {
               return `${menuIndex}-${appId}`
             },
-            appEnvItemName (env) {
+            appEnvItemName(env) {
               return `env_${env.id}`
             },
-            handleEnvChange (value) {
+            handleEnvChange(value) {
               // console.info(value);
               // this.currentAppEnvId = parseInt(value);
               // this.$nextTick(() => {
               //   this.loadAppAndVersionList(this.currentAppId, this.currentAppEnvId);
               // });
             },
-            handleAppMenuItemClick (app) {
+            handleAppMenuItemClick(app, index) {
               this.currentAppName = app.name
               this.currentAppId = app.id
-              this.currentAppEnvId = this.userEnvList[0].id
-              this.currentAppEnvName = this.userEnvList[0].name
-              console.info('this.currentAppId:' + this.currentAppId + ',this.currentAppEnvId:' + this.currentAppEnvId)
-              this.$nextTick(() => {
-                this.loadAppAndVersionList(this.currentAppId, this.currentAppEnvId)
+              this.loadAppAndEnvList(app.id)
+            },
+            loadAppAndEnvList(appId) {
+              let vmSelf = this
+              window.disconf.ajax({
+                type: 'GET',
+                url: 'api/env/app/list',
+                data: {
+                  appId: appId
+                },
+                success: function (response) {
+                  if (response.success === 'true') {
+                    vmSelf.userEnvList = response.page.result
+                    vmSelf.$nextTick(() => {
+                      if (vmSelf.userEnvList && vmSelf.userEnvList[0]) {
+                        /**
+                         * 默认选中第一个环境
+                         * @type {string}
+                         */
+                        vmSelf.activeName = `env_` + vmSelf.userEnvList[0].id
+                        vmSelf.currentAppEnvId = vmSelf.userEnvList[0].id
+                        vmSelf.currentAppEnvName = vmSelf.userEnvList[0].envName
+                        vmSelf.loadAppAndVersionList(vmSelf.currentAppId, vmSelf.currentAppEnvId)
+                      }
+                    })
+                  }
+                }
               })
             },
-            handleTabClick (tab, event) {
-              this.currentAppEnvId = parseInt(tab.name.replace('env_', ''))
-              this.currentAppEnvName = tab.label
-              this.loadAppAndVersionList(this.currentAppId, this.currentAppEnvId)
+            handleTabClick(tab, event) {
+              if (tab.name === 'env_0_plus') {
+
+              } else {
+                this.currentAppEnvId = parseInt(tab.name.replace('env_', ''))
+                this.currentAppEnvName = tab.label
+                this.loadAppAndVersionList(this.currentAppId, this.currentAppEnvId)
+              }
             },
-            loadAppAndVersionList (appId, envId) {
+            loadAppAndVersionList(appId, envId) {
               var vmSelf = this
               if (appId > 0 && envId > 0) {
                 var createVersionConf = function ({version, versionConf}) {
@@ -585,21 +645,21 @@
                       response.page.result.forEach(function (version, index) {
                         allVersionNames.push(String(index))
                         window.disconf.ajax({
-                          type: 'GET',
-                          url: 'api/web/config/list',
-                          async: false,
-                          data: {
-                            appId,
-                            envId,
-                            version
-                          },
-                          success: function (versionResponse) {
-                            for (var index = 0; index < versionResponse.page.result.length; index++) {
-                              versionResponse.page.result[index]['confIndex'] = index + 1
+                            type: 'GET',
+                            url: 'api/web/config/list',
+                            async: false,
+                            data: {
+                              appId,
+                              envId,
+                              version: version.versionName
+                            },
+                            success: function (versionResponse) {
+                              for (var index = 0; index < versionResponse.page.result.length; index++) {
+                                versionResponse.page.result[index]['confIndex'] = index + 1
+                              }
+                              allVersion.push(createVersionConf({version, versionConf: versionResponse.page.result}))
                             }
-                            allVersion.push(createVersionConf({version, versionConf: versionResponse.page.result}))
                           }
-                        }
                         )
                       })
                       vmSelf.activeCollapseNames = allVersionNames
@@ -609,7 +669,7 @@
                 })
               }
             },
-            showConfContent (row) {
+            showConfContent(row) {
               this.confContentDialog.confContent = row.value
               this.confContentDialog.confContentVisible = true
               this.confContentDialog.confContentTitle = `${row.type}:${row.key}`
@@ -620,7 +680,7 @@
               //     confContent: ""
               // }
             },
-            handleEdit (index, row, version) {
+            handleEdit(index, row, version) {
               /**
                * 应用
                * 环境配置
@@ -650,7 +710,7 @@
                 window.location.href = editorUrl
               }
             },
-            handleDelete (index, row, version) {
+            handleDelete(index, row, version) {
               let tipsMessage = row.typeId === 0 ? '确认删除该配置文件：' : '确认删除该配置项：'
               let vmSelf = this
 
@@ -679,10 +739,10 @@
                 }
               })
             },
-            handleDownload (index, row, version) {
+            handleDownload(index, row, version) {
 
             },
-            addConf (appId, envId, version) {
+            addConf(appId, envId, version) {
               /**
                * 新增配置
                * 包含配置文件和配置项
@@ -694,7 +754,7 @@
               this.addConfForm.fileData.version = version
               this.addConfFormVisible = true
             },
-            confirmAddConf () {
+            confirmAddConf() {
               var vmSelf = this
               /**
                * 确认新增配置
@@ -727,42 +787,42 @@
                 })
               }
             },
-            zkDeployData (appId, envId, version) {
+            zkDeployData(appId, envId, version) {
               var vmSelf = this
               window.disconf.ajax({
-                type: 'GET',
-                url: 'api/zoo/zkdeploy',
-                async: false,
-                data: {
-                  appId,
-                  envId,
-                  version
-                },
-                success: function (response) {
-                  vmSelf.confContentDialog.confContent = response.result.hostInfo
-                  vmSelf.confContentDialog.confContentVisible = true
-                  vmSelf.confContentDialog.confContentTitle = 'ZK部署情况'
+                  type: 'GET',
+                  url: 'api/zoo/zkdeploy',
+                  async: false,
+                  data: {
+                    appId,
+                    envId,
+                    version
+                  },
+                  success: function (response) {
+                    vmSelf.confContentDialog.confContent = response.result.hostInfo
+                    vmSelf.confContentDialog.confContentVisible = true
+                    vmSelf.confContentDialog.confContentTitle = 'ZK部署情况'
+                  }
                 }
-              }
               )
             },
-            batchDownLoad () {
+            batchDownLoad() {
 
             },
-            downLoadUrl (appId, envId, version) {
+            downLoadUrl(appId, envId, version) {
               var serverUrl = window.disconf.serverUrl
               return `${serverUrl}api/web/config/downloadfilebatch?appId=${appId}&envId=${envId}&version=${version}`
             },
-            handlePropertiesPreview (file) {
+            handlePropertiesPreview(file) {
               console.info(file)
             },
-            handlePropertiesRemove () {
+            handlePropertiesRemove() {
 
             },
-            handlePropertiesSuccess (response, file, fileList) {
+            handlePropertiesSuccess(response, file, fileList) {
               this.closeAddConfDialog(response, file, fileList)
             },
-            handlePropertiesChange (file, fileList) {
+            handlePropertiesChange(file, fileList) {
               if (file && /\.properties$/gi.test(file.name) && file.size <= 10 * 1024) {
 
               } else {
@@ -778,16 +838,16 @@
                 this.$message.error('请上传properties文件并且文件小于10KB')
               }
             },
-            handleYamlPreview (file) {
+            handleYamlPreview(file) {
               console.info(file)
             },
-            handleYamlRemove () {
+            handleYamlRemove() {
 
             },
-            handleYamlSuccess (response, file, fileList) {
+            handleYamlSuccess(response, file, fileList) {
               this.closeAddConfDialog(response, file, fileList)
             },
-            handleYamlChange (file, fileList) {
+            handleYamlChange(file, fileList) {
               if (file && /\.yaml$/gi.test(file.name) && file.size <= 10 * 1024) {
 
               } else {
@@ -803,7 +863,7 @@
                 this.$message.error('请上传yaml文件并且文件小于10KB')
               }
             },
-            closeAddConfDialog (response, file, fileList) {
+            closeAddConfDialog(response, file, fileList) {
               this.$message({
                 message: '创建成功',
                 type: 'success'
@@ -816,7 +876,7 @@
                 this.addConfFormVisible = false
               }, 200)
             },
-            confirmUpdateConfItem () {
+            confirmUpdateConfItem() {
               var vmSelf = this
               /**
                * 创建配置项
@@ -856,6 +916,42 @@
                   }
                 }
               })
+            },
+            createVersionForEnv(env) {
+              /**
+               * 创建新版本
+               */
+              this.addVersionFormDialogVisible = true
+            },
+            confirmAddVersionFormDialog(formName) {
+              let vmSelf = this
+              this.$refs[formName].validate((valid) => {
+                if (valid) {
+                  let versionData = {
+                    appId: this.currentAppId,
+                    appEnvId: this.currentAppEnvId,
+                    versionName: this.addVersionForm.versionName,
+                    versionComments: this.addVersionForm.versionComments
+                  }
+                  window.disconf.ajax({
+                    type: 'POST',
+                    url: 'api/version/app/env/create',
+                    data: JSON.stringify(versionData),
+                    dataType: 'json',
+                    contentType: 'application/json;charset=utf-8',
+                    success: function (response) {
+                      if (response.message && response.message.state && response.message.state.code !== 0) {
+                        vmSelf.$message({
+                          type: 'error',
+                          message: response.message.state.message
+                        })
+                      } else {
+                        vmSelf.loadAppAndVersionList(this.currentAppId, this.currentAppEnvId)
+                      }
+                    }
+                  })
+                }
+              })
             }
           },
           watch: {
@@ -867,10 +963,10 @@
             }
           },
           filters: {
-            versionFormat (value) {
+            versionFormat(value) {
               return `版本:${value}`
             },
-            downloadFormat (value) {
+            downloadFormat(value) {
               return window.disconf.serverAPIUrl + 'api/web/config/download/' + value
             }
           },
