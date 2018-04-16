@@ -193,6 +193,12 @@
           })
         }
         if (step === 2) {
+          let loading = this.$loading({
+            lock: true,
+            text: '正在创建应用...',
+            spinner: 'el-icon-loading',
+            background: 'rgba(0, 0, 0, 0.7)'
+          })
           /***
            * 创建应用
            */
@@ -221,9 +227,16 @@
             dataType: 'json',
             data: JSON.stringify(app)
           }).then((response) => {
-            console.info(response)
-            this.finishStep(step)
-            this.finishStep(3)
+            loading.close()
+            if (response && response.message && response.message.status.code !== 0) {
+              this.$message({
+                type: 'error',
+                message: response.message.status.message
+              })
+            } else {
+              this.finishStep(step)
+              this.finishStep(3)
+            }
           })
         }
       },
