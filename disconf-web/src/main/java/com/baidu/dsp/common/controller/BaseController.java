@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.baidu.disconf.web.common.message.ResponseMessage;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.context.ApplicationContext;
@@ -43,7 +44,6 @@ public class BaseController implements ApplicationContextAware {
      *
      * @param key
      * @param value
-     *
      * @return
      */
     protected <T> JsonObjectBase buildSuccess(String key, T value) {
@@ -54,7 +54,6 @@ public class BaseController implements ApplicationContextAware {
      * OK：非列表数据
      *
      * @param value
-     *
      * @return
      */
     protected <T> JsonObjectBase buildSuccess(T value) {
@@ -67,7 +66,6 @@ public class BaseController implements ApplicationContextAware {
      * @param value
      * @param totalCount
      * @param <T>
-     *
      * @return
      */
     protected <T> JsonObjectBase buildListSuccess(List<?> value, int totalCount) {
@@ -80,7 +78,6 @@ public class BaseController implements ApplicationContextAware {
      *
      * @param data
      * @param <T>
-     *
      * @return
      */
     protected <T> JsonObjectBase buildListSuccess(DaoPageResult<T> data) {
@@ -93,7 +90,6 @@ public class BaseController implements ApplicationContextAware {
      *
      * @param field
      * @param message
-     *
      * @return
      */
     protected JsonObjectBase buildParamError(String field, String message, ErrorCode errorCode) {
@@ -109,7 +105,6 @@ public class BaseController implements ApplicationContextAware {
      * 错误：参数错误
      *
      * @param bindingResult
-     *
      * @return
      */
     protected JsonObjectBase buildFieldError(BindingResult bindingResult, ErrorCode errorCode) {
@@ -133,12 +128,25 @@ public class BaseController implements ApplicationContextAware {
      * 错误：全局的
      *
      * @param message
-     *
      * @return
      */
     protected JsonObjectBase buildGlobalError(String message, ErrorCode errorCode) {
 
         return JsonObjectUtils.buildGlobalError(message, errorCode);
+    }
+
+
+    /**
+     * 构造返回参数
+     * @param message
+     * @return
+     */
+    protected JsonObjectBase buildResponseMessage(ResponseMessage message) {
+        JsonObjectBase jsonObjectBase = new JsonObjectBase();
+        Map<String, Object> responseMessageHashMap = new HashMap<>();
+        responseMessageHashMap.put("status", message);
+        jsonObjectBase.setMessage(responseMessageHashMap);
+        return jsonObjectBase;
     }
 
     /**

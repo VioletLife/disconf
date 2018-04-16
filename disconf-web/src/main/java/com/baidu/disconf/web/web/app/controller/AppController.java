@@ -2,9 +2,11 @@ package com.baidu.disconf.web.web.app.controller;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 import javax.validation.Valid;
 
+import com.baidu.disconf.web.common.message.CodeMessage;
 import com.baidu.disconf.web.service.app.service.AppEnvMgr;
 import com.baidu.disconf.web.service.app.vo.AppVo;
 import org.slf4j.Logger;
@@ -80,10 +82,10 @@ public class AppController extends BaseController {
     @RequestMapping(value = "create", method = RequestMethod.POST, headers = {"content-type=application/json;charset=utf-8"})
     @ResponseBody
     public JsonObjectBase createAppInstance(@RequestBody AppVo appVo) {
-        AtomicReference<JsonObjectBase> info = new AtomicReference<>();
+        AtomicReference<CodeMessage> info = new AtomicReference<>();
         appEnvMgr.createApp(appVo, info::set);
-        if (info.get() == null) {
-            return buildSuccess(info.get());
+        if (info.get() != null) {
+            return buildResponseMessage(info.get().toResponseMessage());
         }
         return buildSuccess(appVo);
     }
