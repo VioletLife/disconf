@@ -172,15 +172,15 @@
                       v-for="(version,index) in currentAppVersionInfo">
                       <el-card class="box-card" style="width: 96%;margin: 6px auto;">
                         <div slot="header" class="clearfix">
-                          <span>{{version.version | versionFormat}}</span>
+                          <span>{{version.version.versionName | versionFormat}}</span>
                           <a
                             class="el-button el-button--primary el-button--small"
-                            :href="downLoadUrl(currentAppId,env.id,version.version)"
+                            :href="downLoadUrl(currentAppId,env.id,version.version.versionName)"
                             style="float: right;margin-left: 10px;">批量下载</a>
-                          <el-button type="primary" @click="zkDeployData(currentAppId,env.id,version.version)"
+                          <el-button type="primary" @click="zkDeployData(currentAppId,env.id,version.version.versionName)"
                                      size="small" style="float: right;">ZK部署情况
                           </el-button>
-                          <el-button type="primary" @click="addConf(currentAppId,env.id,version.version)"
+                          <el-button type="primary" @click="addConf(currentAppId,env.id,version.version.versionName)"
                                      size="small" style="float: right;">新建配置
                           </el-button>
                         </div>
@@ -236,7 +236,7 @@
                                 size="mini"
                                 icon="el-icon-edit"
                                 type="primary"
-                                @click="handleEdit(scope.$index, scope.row,version.version)">
+                                @click="handleEdit(scope.$index, scope.row,version.version.versionName)">
                               </el-button>
                               <el-button
                                 size="mini"
@@ -409,13 +409,13 @@
       <el-button type="primary" @click="confirmUpdateConfItem">保 存</el-button>
     </div>
   </el-dialog>
-  <el-dialog :visible.sync="addVersionFormDialogVisible" title="创建新版本" ref="addVersionFormRef">
-    <el-form :model="addVersionForm" :rules="addVersionFormRules">
+  <el-dialog :visible.sync="addVersionFormDialogVisible" title="创建新版本">
+    <el-form :model="addVersionForm" :rules="addVersionRules" ref="addVersionFormRef">
       <el-form-item label="版本号：" prop="versionName" :label-width="formLabelWidth">
         <el-input v-model="addVersionForm.versionName"></el-input>
       </el-form-item>
       <el-form-item label="版本说明：" :label-width="formLabelWidth">
-        <el-input v-model="addVersionForm.versionComments"></el-input>
+        <el-input v-model="addVersionForm.versionComments" type="textarea" :rows="2"></el-input>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -810,7 +810,7 @@
 
             },
             downLoadUrl(appId, envId, version) {
-              var serverUrl = window.disconf.serverUrl
+              var serverUrl = window.disconf.serverAPIUrl
               return `${serverUrl}api/web/config/downloadfilebatch?appId=${appId}&envId=${envId}&version=${version}`
             },
             handlePropertiesPreview(file) {
@@ -940,13 +940,14 @@
                     dataType: 'json',
                     contentType: 'application/json;charset=utf-8',
                     success: function (response) {
+                      vmSelf.addVersionFormDialogVisible = false
                       if (response.message && response.message.state && response.message.state.code !== 0) {
                         vmSelf.$message({
                           type: 'error',
                           message: response.message.state.message
                         })
                       } else {
-                        vmSelf.loadAppAndVersionList(this.currentAppId, this.currentAppEnvId)
+                        vmSelf.loadAppAndVersionList(vmSelf.currentAppId, vmSelf.currentAppEnvId)
                       }
                     }
                   })
