@@ -31,6 +31,7 @@ public class RoleResourceMgrImpl implements RoleResourceMgr {
     @Autowired
     private RoleResourceDao roleResDao;
 
+
     /**
      *
      */
@@ -96,7 +97,6 @@ public class RoleResourceMgrImpl implements RoleResourceMgr {
     /**
      * @param pattern
      * @param method
-     *
      * @return
      */
     @Override

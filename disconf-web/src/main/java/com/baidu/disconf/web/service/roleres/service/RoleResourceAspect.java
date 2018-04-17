@@ -42,9 +42,7 @@ public class RoleResourceAspect {
      *
      * @param pjp            方法
      * @param requestMapping 方法上的annotation
-     *
      * @return
-     *
      * @throws Throwable
      */
     @Around("anyPublicMethod() && @annotation(requestMapping) && !@annotation(com.baidu.dsp.common.annotation.NoAuth)")
@@ -121,7 +119,6 @@ public class RoleResourceAspect {
      * @param url
      * @param method
      * @param userRoleId
-     *
      * @return
      */
     private boolean isMethodAccessible(String url, RequestMethod method, Integer userRoleId) {
@@ -140,11 +137,10 @@ public class RoleResourceAspect {
      *
      * @param url
      * @param method
-     *
      * @return
      */
     private List<Integer> getPriviledgedRoles(String url, RequestMethod method) {
-
+        roleResMgr.evictCache();
         Map<String, Map<RequestMethod, List<Integer>>> roleResMap = roleResMgr.getAllAsMap();
         Map<RequestMethod, List<Integer>> methodMap = roleResMap.get(url);
         if (methodMap == null) {

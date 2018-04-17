@@ -11,6 +11,9 @@ import com.baidu.dsp.common.vo.JsonObjectBase;
 import com.baidu.dsp.common.vo.JsonObjectUtils;
 import com.baidu.ub.common.commons.ThreadContext;
 import com.github.knightliao.apollo.db.bo.BaseObject;
+import org.apache.commons.lang3.StringUtils;
+import org.mybatis.dynamic.sql.select.MyBatis3SelectModelAdapter;
+import org.mybatis.dynamic.sql.select.QueryExpressionDSL;
 import org.mybatis.dynamic.sql.select.render.SelectStatementProvider;
 import org.mybatis.dynamic.sql.where.condition.IsEqualTo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,5 +93,33 @@ public class AppEnvMgrImpl implements AppEnvMgr {
     public List<AppEnv> selectAppEnvByAppId(Long appId) {
         List<AppEnv> appEnvs = appEnvMapper.selectByExample().where(AppEnvDynamicSqlSupport.appId, IsEqualTo.of(() -> appId)).build().execute();
         return appEnvs;
+    }
+
+    @Override
+    public QueryExpressionDSL<MyBatis3SelectModelAdapter<List<AppEnv>>> selectByExample() {
+        return appEnvMapper.selectByExample();
+    }
+
+    @Override
+    public void createEnvForApp(AppEnv appEnv, Consumer<CodeMessage> consumer) {
+        if (appEnv != null && appEnv.getAppId() != null && appEnv.getAppId() > 0 && StringUtils.isNotEmpty(appEnv.getEnvName())) {
+            Long countRecord = appEnvMapper.countByExample()
+                    .where(AppEnvDynamicSqlSupport.appId, IsEqualTo.of(appEnv::getAppId))
+                    .and(AppEnvDynamicSqlSupport.envName, IsEqualTo.of(appEnv::getEnvName))
+                    .build()
+                    .execute();
+            if (countRecord != null && countRecord > 0) {
+                consumer.accept(CodeMessage.CODE_103);
+            } else {
+                Visitor visitor = ThreadContext.getSessionVisitor();
+                appEnv.setUpdator(visitor.getLoginUserId());
+                appEnv.setCreator(visitor.getLoginUserId());
+                appEnv.setCreateTime(new Date());
+                appEnv.setUpdateTime(new Date());
+                appEnvMapper.insertSelective(appEnv);
+            }
+        } else {
+            consumer.accept(CodeMessage.CODE_102);
+        }
     }
 }
