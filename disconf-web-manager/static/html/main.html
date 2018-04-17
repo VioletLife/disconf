@@ -559,34 +559,34 @@
             // })
           },
           methods: {
-            handleSelect(key, keyPath) {
+            handleSelect (key, keyPath) {
               console.log(key, keyPath)
             },
-            handleOpen(key, keyPath) {
+            handleOpen (key, keyPath) {
               console.log(key, keyPath)
             },
-            handleClose(key, keyPath) {
+            handleClose (key, keyPath) {
               console.log(key, keyPath)
             },
-            appMenuItemIndex(menuIndex, appId) {
+            appMenuItemIndex (menuIndex, appId) {
               return `${menuIndex}-${appId}`
             },
-            appEnvItemName(env) {
+            appEnvItemName (env) {
               return `env_${env.id}`
             },
-            handleEnvChange(value) {
+            handleEnvChange (value) {
               // console.info(value);
               // this.currentAppEnvId = parseInt(value);
               // this.$nextTick(() => {
               //   this.loadAppAndVersionList(this.currentAppId, this.currentAppEnvId);
               // });
             },
-            handleAppMenuItemClick(app, index) {
+            handleAppMenuItemClick (app, index) {
               this.currentAppName = app.name
               this.currentAppId = app.id
               this.loadAppAndEnvList(app.id)
             },
-            loadAppAndEnvList(appId) {
+            loadAppAndEnvList (appId) {
               let vmSelf = this
               window.disconf.ajax({
                 type: 'GET',
@@ -613,7 +613,7 @@
                 }
               })
             },
-            handleTabClick(tab, event) {
+            handleTabClick (tab, event) {
               if (tab.name === 'env_0_plus') {
 
               } else {
@@ -622,7 +622,7 @@
                 this.loadAppAndVersionList(this.currentAppId, this.currentAppEnvId)
               }
             },
-            loadAppAndVersionList(appId, envId) {
+            loadAppAndVersionList (appId, envId) {
               var vmSelf = this
               if (appId > 0 && envId > 0) {
                 var createVersionConf = function ({version, versionConf}) {
@@ -645,21 +645,21 @@
                       response.page.result.forEach(function (version, index) {
                         allVersionNames.push(String(index))
                         window.disconf.ajax({
-                            type: 'GET',
-                            url: 'api/web/config/list',
-                            async: false,
-                            data: {
-                              appId,
-                              envId,
-                              version: version.versionName
-                            },
-                            success: function (versionResponse) {
-                              for (var index = 0; index < versionResponse.page.result.length; index++) {
-                                versionResponse.page.result[index]['confIndex'] = index + 1
-                              }
-                              allVersion.push(createVersionConf({version, versionConf: versionResponse.page.result}))
+                          type: 'GET',
+                          url: 'api/web/config/list',
+                          async: false,
+                          data: {
+                            appId,
+                            envId,
+                            version: version.versionName
+                          },
+                          success: function (versionResponse) {
+                            for (var index = 0; index < versionResponse.page.result.length; index++) {
+                              versionResponse.page.result[index]['confIndex'] = index + 1
                             }
+                            allVersion.push(createVersionConf({version, versionConf: versionResponse.page.result}))
                           }
+                        }
                         )
                       })
                       vmSelf.activeCollapseNames = allVersionNames
@@ -669,7 +669,7 @@
                 })
               }
             },
-            showConfContent(row) {
+            showConfContent (row) {
               this.confContentDialog.confContent = row.value
               this.confContentDialog.confContentVisible = true
               this.confContentDialog.confContentTitle = `${row.type}:${row.key}`
@@ -680,7 +680,7 @@
               //     confContent: ""
               // }
             },
-            handleEdit(index, row, version) {
+            handleEdit (index, row, version) {
               /**
                * 应用
                * 环境配置
@@ -710,7 +710,7 @@
                 window.location.href = editorUrl
               }
             },
-            handleDelete(index, row, version) {
+            handleDelete (index, row, version) {
               let tipsMessage = row.typeId === 0 ? '确认删除该配置文件：' : '确认删除该配置项：'
               let vmSelf = this
 
@@ -739,10 +739,10 @@
                 }
               })
             },
-            handleDownload(index, row, version) {
+            handleDownload (index, row, version) {
 
             },
-            addConf(appId, envId, version) {
+            addConf (appId, envId, version) {
               /**
                * 新增配置
                * 包含配置文件和配置项
@@ -754,7 +754,7 @@
               this.addConfForm.fileData.version = version
               this.addConfFormVisible = true
             },
-            confirmAddConf() {
+            confirmAddConf () {
               var vmSelf = this
               /**
                * 确认新增配置
@@ -787,42 +787,42 @@
                 })
               }
             },
-            zkDeployData(appId, envId, version) {
+            zkDeployData (appId, envId, version) {
               var vmSelf = this
               window.disconf.ajax({
-                  type: 'GET',
-                  url: 'api/zoo/zkdeploy',
-                  async: false,
-                  data: {
-                    appId,
-                    envId,
-                    version
-                  },
-                  success: function (response) {
-                    vmSelf.confContentDialog.confContent = response.result.hostInfo
-                    vmSelf.confContentDialog.confContentVisible = true
-                    vmSelf.confContentDialog.confContentTitle = 'ZK部署情况'
-                  }
+                type: 'GET',
+                url: 'api/zoo/zkdeploy',
+                async: false,
+                data: {
+                  appId,
+                  envId,
+                  version
+                },
+                success: function (response) {
+                  vmSelf.confContentDialog.confContent = response.result.hostInfo
+                  vmSelf.confContentDialog.confContentVisible = true
+                  vmSelf.confContentDialog.confContentTitle = 'ZK部署情况'
                 }
+              }
               )
             },
-            batchDownLoad() {
+            batchDownLoad () {
 
             },
-            downLoadUrl(appId, envId, version) {
+            downLoadUrl (appId, envId, version) {
               var serverUrl = window.disconf.serverAPIUrl
               return `${serverUrl}api/web/config/downloadfilebatch?appId=${appId}&envId=${envId}&version=${version}`
             },
-            handlePropertiesPreview(file) {
+            handlePropertiesPreview (file) {
               console.info(file)
             },
-            handlePropertiesRemove() {
+            handlePropertiesRemove () {
 
             },
-            handlePropertiesSuccess(response, file, fileList) {
+            handlePropertiesSuccess (response, file, fileList) {
               this.closeAddConfDialog(response, file, fileList)
             },
-            handlePropertiesChange(file, fileList) {
+            handlePropertiesChange (file, fileList) {
               if (file && /\.properties$/gi.test(file.name) && file.size <= 10 * 1024) {
 
               } else {
@@ -838,16 +838,16 @@
                 this.$message.error('请上传properties文件并且文件小于10KB')
               }
             },
-            handleYamlPreview(file) {
+            handleYamlPreview (file) {
               console.info(file)
             },
-            handleYamlRemove() {
+            handleYamlRemove () {
 
             },
-            handleYamlSuccess(response, file, fileList) {
+            handleYamlSuccess (response, file, fileList) {
               this.closeAddConfDialog(response, file, fileList)
             },
-            handleYamlChange(file, fileList) {
+            handleYamlChange (file, fileList) {
               if (file && /\.yaml$/gi.test(file.name) && file.size <= 10 * 1024) {
 
               } else {
@@ -863,7 +863,7 @@
                 this.$message.error('请上传yaml文件并且文件小于10KB')
               }
             },
-            closeAddConfDialog(response, file, fileList) {
+            closeAddConfDialog (response, file, fileList) {
               this.$message({
                 message: '创建成功',
                 type: 'success'
@@ -876,7 +876,7 @@
                 this.addConfFormVisible = false
               }, 200)
             },
-            confirmUpdateConfItem() {
+            confirmUpdateConfItem () {
               var vmSelf = this
               /**
                * 创建配置项
@@ -917,13 +917,13 @@
                 }
               })
             },
-            createVersionForEnv(env) {
+            createVersionForEnv (env) {
               /**
                * 创建新版本
                */
               this.addVersionFormDialogVisible = true
             },
-            confirmAddVersionFormDialog(formName) {
+            confirmAddVersionFormDialog (formName) {
               let vmSelf = this
               this.$refs[formName].validate((valid) => {
                 if (valid) {
@@ -964,10 +964,10 @@
             }
           },
           filters: {
-            versionFormat(value) {
+            versionFormat (value) {
               return `版本:${value}`
             },
-            downloadFormat(value) {
+            downloadFormat (value) {
               return window.disconf.serverAPIUrl + 'api/web/config/download/' + value
             }
           },
