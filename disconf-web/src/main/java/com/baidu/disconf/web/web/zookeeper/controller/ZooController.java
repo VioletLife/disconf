@@ -92,7 +92,7 @@ public class ZooController extends BaseController {
 
         ConfigFullModel configFullModel = zkDeployValidator.verify(zkDeployForm);
 
-        String data = zkDeployMgr.getDeployInfo(configFullModel.getApp().getName(), configFullModel.getEnv().getName(),
+        String data = zkDeployMgr.getDeployInfo(configFullModel.getApp().getName(), configFullModel.getEnv().getEnvName(),
                 zkDeployForm.getVersion());
 
         return buildSuccess("hostInfo", data);

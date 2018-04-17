@@ -77,4 +77,7 @@ public interface AppMgr {
      * @return
      */
     String getEmails(Long id);
+
+
+    List<com.baidu.disconf.web.service.app.mybatis.App> selectAll();
 }

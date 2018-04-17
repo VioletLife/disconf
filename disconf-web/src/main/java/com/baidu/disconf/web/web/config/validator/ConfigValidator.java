@@ -1,5 +1,8 @@
 package com.baidu.disconf.web.web.config.validator;
 
+import com.baidu.disconf.web.service.app.mybatis.AppEnv;
+import com.baidu.disconf.web.service.app.service.AppEnvMgr;
+import com.baidu.disconf.web.service.app.service.AppEnvVersionMgr;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,6 +41,13 @@ public class ConfigValidator {
 
     @Autowired
     private AuthMgr authMgr;
+
+
+    @Autowired
+    private AppEnvMgr appEnvMgr;
+
+    @Autowired
+    private AppEnvVersionMgr appEnvVersionMgr;
 
     /**
      * 校验
@@ -174,15 +184,15 @@ public class ConfigValidator {
         //
         // env
         //
-        Env env = envMgr.getById(confNewForm.getEnvId());
-        if (env == null) {
+        AppEnv appEnv = appEnvMgr.selectAppEnvById(confNewForm.getEnvId());
+        if (appEnv == null) {
             throw new FieldException(ConfNewForm.ENVID, "env.not.exist", null);
         }
 
         //
         // key
         //
-        Config config = configFetchMgr.getConfByParameter(app.getId(), env.getId(), confNewForm.getVersion(),
+        Config config = configFetchMgr.getConfByParameter(app.getId(), appEnv.getId(), confNewForm.getVersion(),
                 confNewForm.getKey(), disConfigTypeEnum);
         if (config != null) {
             throw new FieldException(ConfNewItemForm.KEY, "key.exist", null);

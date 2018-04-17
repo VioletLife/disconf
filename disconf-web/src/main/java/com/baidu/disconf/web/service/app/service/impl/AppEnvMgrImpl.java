@@ -1,10 +1,7 @@
 package com.baidu.disconf.web.service.app.service.impl;
 
 import com.baidu.disconf.web.common.message.CodeMessage;
-import com.baidu.disconf.web.service.app.mybatis.AppDynamicSqlSupport;
-import com.baidu.disconf.web.service.app.mybatis.AppEnvMapper;
-import com.baidu.disconf.web.service.app.mybatis.AppEnvVersionMapper;
-import com.baidu.disconf.web.service.app.mybatis.AppMapper;
+import com.baidu.disconf.web.service.app.mybatis.*;
 import com.baidu.disconf.web.service.app.service.AppEnvMgr;
 import com.baidu.disconf.web.service.app.vo.AppEnvVo;
 import com.baidu.disconf.web.service.app.vo.AppVo;
@@ -79,5 +76,19 @@ public class AppEnvMgrImpl implements AppEnvMgr {
                 }));
             }
         }
+
+
+    }
+
+    @Override
+    public AppEnv selectAppEnvById(Long id) {
+        return appEnvMapper.selectByPrimaryKey(id);
+    }
+
+
+    @Override
+    public List<AppEnv> selectAppEnvByAppId(Long appId) {
+        List<AppEnv> appEnvs = appEnvMapper.selectByExample().where(AppEnvDynamicSqlSupport.appId, IsEqualTo.of(() -> appId)).build().execute();
+        return appEnvs;
     }
 }

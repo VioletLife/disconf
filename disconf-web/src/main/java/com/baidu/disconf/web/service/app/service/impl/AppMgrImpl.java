@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.baidu.disconf.web.service.app.mybatis.AppMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -38,6 +39,10 @@ public class AppMgrImpl implements AppMgr {
 
     @Autowired
     private UserMgr userMgr;
+
+
+    @Autowired
+    private AppMapper appMapper;
 
     /**
      *
@@ -130,5 +135,10 @@ public class AppMgrImpl implements AppMgr {
     public List<App> getAppList() {
 
         return appDao.findAll();
+    }
+
+    @Override
+    public List<com.baidu.disconf.web.service.app.mybatis.App> selectAll() {
+        return appMapper.selectByExample().build().execute();
     }
 }

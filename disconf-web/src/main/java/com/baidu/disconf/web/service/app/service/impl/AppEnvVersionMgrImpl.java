@@ -6,11 +6,15 @@ import com.baidu.disconf.web.service.app.mybatis.AppEnvVersion;
 import com.baidu.disconf.web.service.app.mybatis.AppEnvVersionDynamicSqlSupport;
 import com.baidu.disconf.web.service.app.mybatis.AppEnvVersionMapper;
 import com.baidu.disconf.web.service.app.service.AppEnvVersionMgr;
+import com.baidu.disconf.web.service.user.dto.Visitor;
+import com.baidu.ub.common.commons.ThreadContext;
 import org.apache.commons.lang3.StringUtils;
 import org.mybatis.dynamic.sql.where.condition.IsEqualTo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+import java.util.List;
 import java.util.function.Consumer;
 
 @Service
@@ -33,7 +37,23 @@ public class AppEnvVersionMgrImpl implements AppEnvVersionMgr {
                 consumer.accept(CodeMessage.CODE_101.toResponseMessage());
                 return version;
             }
+            Visitor visitor = ThreadContext.getSessionVisitor();
+            version.setCreator(visitor.getLoginUserId());
+            version.setCreateTime(new Date());
+            version.setUpdator(visitor.getLoginUserId());
+            version.setUpdateTime(new Date());
+            appEnvVersionMapper.insertSelective(version);
         }
         return version;
+    }
+
+    @Override
+    public List<AppEnvVersion> selectVersionByAppIdAndEnvId(Long appId, Long envId) {
+        return appEnvVersionMapper.selectByExample()
+                .where(AppEnvVersionDynamicSqlSupport.appId,IsEqualTo.of(()->appId))
+                .and(AppEnvVersionDynamicSqlSupport.appEnvId,IsEqualTo.of(()->envId))
+                .build()
+                .execute()
+                ;
     }
 }

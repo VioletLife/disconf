@@ -1,5 +1,7 @@
 package com.baidu.disconf.web.web.config.validator;
 
+import com.baidu.disconf.web.service.app.mybatis.AppEnv;
+import com.baidu.disconf.web.service.app.service.AppEnvMgr;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -28,6 +30,9 @@ public class ConfigValidator4Fetch {
     @Autowired
     private ConfigMgr configMgr;
 
+    @Autowired
+    private AppEnvMgr appEnvMgr;
+
     /**
      * 此接口是客户的接口，非常 重要，目前没有权限的控制
      *
@@ -55,6 +60,10 @@ public class ConfigValidator4Fetch {
         }
 
         Env env = envMgr.getByName(confForm.getEnv());
+        /**
+         * TODO:目前暂未处理！！！！！！！
+         */
+        AppEnv appEnv=new AppEnv();
         if (env == null) {
             throw new FieldException("env", "env " + confForm.getEnv() + " doesn't exist in db.", null);
         }
@@ -73,6 +82,6 @@ public class ConfigValidator4Fetch {
             throw new FieldException("version", "version is empty", null);
         }
 
-        return new ConfigFullModel(app, env, confForm.getVersion(), confForm.getKey());
+        return new ConfigFullModel(app, appEnv, confForm.getVersion(), confForm.getKey());
     }
 }

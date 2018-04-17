@@ -1,5 +1,7 @@
 package com.baidu.disconf.web.web.zookeeper.validator;
 
+import com.baidu.disconf.web.service.app.mybatis.AppEnv;
+import com.baidu.disconf.web.service.app.service.AppEnvMgr;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,10 @@ public class ZkDeployValidator {
 
     @Autowired
     private EnvMgr envMgr;
+
+
+    @Autowired
+    private AppEnvMgr appEnvMgr;
 
     /**
      * @param zkDeployForm
@@ -51,8 +57,8 @@ public class ZkDeployValidator {
             throw new FieldException("app is empty", null);
         }
 
-        Env env = envMgr.getById(zkDeployForm.getEnvId());
-        if (env == null) {
+        AppEnv appEnv = appEnvMgr.selectAppEnvById(zkDeployForm.getEnvId());
+        if (appEnv == null) {
             throw new FieldException("env " + zkDeployForm.getEnvId() + " doesn't exist in db.", null);
         }
 
@@ -63,6 +69,6 @@ public class ZkDeployValidator {
             throw new FieldException("version is empty", null);
         }
 
-        return new ConfigFullModel(app, env, zkDeployForm.getVersion(), "");
+        return new ConfigFullModel(app, appEnv, zkDeployForm.getVersion(), "");
     }
 }

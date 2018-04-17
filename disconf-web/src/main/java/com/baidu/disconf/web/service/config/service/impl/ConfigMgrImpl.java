@@ -6,6 +6,8 @@ import java.nio.charset.Charset;
 import java.util.*;
 
 import com.alibaba.fastjson.JSON;
+import com.baidu.disconf.web.service.app.mybatis.AppEnv;
+import com.baidu.disconf.web.service.app.service.AppEnvMgr;
 import com.baidu.disconf.web.service.config.vo.ConfHistoryVo;
 import com.baidu.disconf.web.service.config.vo.ConfigVo;
 import org.apache.commons.io.FileUtils;
@@ -79,6 +81,10 @@ public class ConfigMgrImpl implements ConfigMgr {
 
     @Autowired
     private ConfigHistoryMgr configHistoryMgr;
+
+
+    @Autowired
+    private AppEnvMgr appEnvMgr;
 
     /**
      * 根据APPid获取其版本列表
@@ -155,7 +161,7 @@ public class ConfigMgrImpl implements ConfigMgr {
         //
         //
         final App app = appMgr.getById(confListForm.getAppId());
-        final Env env = envMgr.getById(confListForm.getEnvId());
+        final AppEnv env = appEnvMgr.selectAppEnvById(confListForm.getEnvId());
 
         //
         //
@@ -163,7 +169,7 @@ public class ConfigMgrImpl implements ConfigMgr {
         final boolean myFetchZk = fetchZk;
         Map<String, ZkDisconfData> zkDataMap = new HashMap<String, ZkDisconfData>();
         if (myFetchZk) {
-            zkDataMap = zkDeployMgr.getZkDisconfDataMap(app.getName(), env.getName(), confListForm.getVersion());
+            zkDataMap = zkDeployMgr.getZkDisconfDataMap(app.getName(), env.getEnvName(), confListForm.getVersion());
         }
         final Map<String, ZkDisconfData> myzkDataMap = zkDataMap;
 
@@ -177,7 +183,7 @@ public class ConfigMgrImpl implements ConfigMgr {
                     public ConfListVo transfer(Config input) {
 
                         String appNameString = app.getName();
-                        String envName = env.getName();
+                        String envName = env.getEnvName();
 
                         ZkDisconfData zkDisconfData = null;
                         if (myzkDataMap != null && myzkDataMap.keySet().contains(input.getName())) {
@@ -208,9 +214,9 @@ public class ConfigMgrImpl implements ConfigMgr {
         Config config = configDao.get(configId);
 
         App app = appMgr.getById(config.getAppId());
-        Env env = envMgr.getById(config.getEnvId());
+        AppEnv appEnv = appEnvMgr.selectAppEnvById(config.getEnvId());
 
-        return convert(config, app.getName(), env.getName(), null);
+        return convert(config, app.getName(), appEnv.getEnvName(), null);
     }
 
     /**
@@ -404,7 +410,7 @@ public class ConfigMgrImpl implements ConfigMgr {
 
         Properties prop = new Properties();
         try {
-            prop.load(IOUtils.toInputStream(dbData,Charset.forName("UTF-8")));
+            prop.load(IOUtils.toInputStream(dbData, Charset.forName("UTF-8")));
         } catch (Exception e) {
             LOG.error(e.toString());
             errorKeyList.add(zkData);

@@ -3,6 +3,10 @@ package com.baidu.disconf.web.tasks.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.baidu.disconf.web.service.app.mybatis.AppEnv;
+import com.baidu.disconf.web.service.app.mybatis.AppEnvVersion;
+import com.baidu.disconf.web.service.app.service.AppEnvMgr;
+import com.baidu.disconf.web.service.app.service.AppEnvVersionMgr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -55,6 +59,12 @@ public class ConfigConsistencyMonitorServiceImpl implements IConfigConsistencyMo
     @Autowired
     private LogMailBean logMailBean;
 
+    @Autowired
+    private AppEnvMgr appEnvMgr;
+
+    @Autowired
+    private AppEnvVersionMgr appEnvVersionMgr;
+
     // 每3分钟执行一次自动化校验
     //@Scheduled(fixedDelay = 3 * 60 * 1000)
     @Override
@@ -96,28 +106,27 @@ public class ConfigConsistencyMonitorServiceImpl implements IConfigConsistencyMo
      */
     private void checkMgr() {
 
-        List<App> apps = appMgr.getAppList();
-        List<Env> envs = envMgr.getList();
+        List<com.baidu.disconf.web.service.app.mybatis.App> apps = appMgr.selectAll();
 
         // app
-        for (App app : apps) {
-
-            checkAppConfigConsistency(app, envs);
+        for (com.baidu.disconf.web.service.app.mybatis.App app : apps) {
+            List<AppEnv> appEnvs = appEnvMgr.selectAppEnvByAppId(app.getAppId());
+            checkAppConfigConsistency(app, appEnvs);
         }
     }
 
     /**
      * 校验APP 一致性
      */
-    private void checkAppConfigConsistency(App app, List<Env> envs) {
+    private void checkAppConfigConsistency(com.baidu.disconf.web.service.app.mybatis.App app, List<AppEnv> envs) {
 
         // env
-        for (Env env : envs) {
-
+        for (AppEnv env : envs) {
+            List<AppEnvVersion> appEnvVersions = appEnvVersionMgr.selectVersionByAppIdAndEnvId(app.getAppId(), env.getId());
             // version
-            List<String> versionList = configMgr.getVersionListByAppEnv(app.getId(), env.getId());
+//            List<String> versionList = configMgr.getVersionListByAppEnv(app.getId(), env.getId());
 
-            for (String version : versionList) {
+            for (AppEnvVersion version : appEnvVersions) {
 
                 checkAppEnvVersionConfigConsistency(app, env, version);
             }
@@ -127,18 +136,18 @@ public class ConfigConsistencyMonitorServiceImpl implements IConfigConsistencyMo
     /**
      * 校验APP/ENV/VERSION 一致性
      */
-    private void checkAppEnvVersionConfigConsistency(App app, Env env, String version) {
+    private void checkAppEnvVersionConfigConsistency(com.baidu.disconf.web.service.app.mybatis.App app, AppEnv env, AppEnvVersion version) {
 
-        String monitorInfo = "monitor " + app.getName() + "\t" + env.getName() + "\t" + version;
+        String monitorInfo = "monitor " + app.getName() + "\t" + env.getEnvName() + "\t" + version.getVersionName();
         LOG.info(monitorInfo);
 
         //
         //
         //
         ConfListForm confiConfListForm = new ConfListForm();
-        confiConfListForm.setAppId(app.getId());
+        confiConfListForm.setAppId(app.getAppId());
         confiConfListForm.setEnvId(env.getId());
-        confiConfListForm.setVersion(version);
+        confiConfListForm.setVersion(version.getVersionName());
 
         //
         //
@@ -146,7 +155,7 @@ public class ConfigConsistencyMonitorServiceImpl implements IConfigConsistencyMo
         DaoPageResult<ConfListVo> daoPageResult = configMgr.getConfigList(confiConfListForm, true, true);
 
         // 准备发送邮件通知
-        String toEmails = appMgr.getEmails(app.getId());
+        String toEmails = appMgr.getEmails(app.getAppId());
 
         List<ConfListVo> confListVos = daoPageResult.getResult();
 

@@ -1,6 +1,7 @@
 package com.baidu.disconf.web.web.config.dto;
 
 import com.baidu.disconf.web.service.app.bo.App;
+import com.baidu.disconf.web.service.app.mybatis.AppEnv;
 import com.baidu.disconf.web.service.env.bo.Env;
 
 /**
@@ -10,7 +11,7 @@ import com.baidu.disconf.web.service.env.bo.Env;
 public class ConfigFullModel {
 
     private App app;
-    private Env env;
+    private AppEnv env;
     private String version;
     private String key;
 
@@ -30,11 +31,11 @@ public class ConfigFullModel {
         this.app = app;
     }
 
-    public Env getEnv() {
+    public AppEnv getEnv() {
         return env;
     }
 
-    public void setEnv(Env env) {
+    public void setEnv(AppEnv env) {
         this.env = env;
     }
 
@@ -46,7 +47,7 @@ public class ConfigFullModel {
         this.version = version;
     }
 
-    public ConfigFullModel(App app, Env env, String version, String key) {
+    public ConfigFullModel(App app, AppEnv env, String version, String key) {
         super();
         this.app = app;
         this.env = env;
