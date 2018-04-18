@@ -24,7 +24,7 @@
 <script>
   export default {
     name: 'DisconfFooter',
-    data() {
+    data () {
       return {}
     },
     props: {

@@ -53,7 +53,7 @@
           </el-row>
           <el-row>
             <el-col :span="24">
-              <el-card v-for="env in envDefaultList" class="box-card" style="margin-top: 8px;">
+              <el-card v-for="env in envDefaultList" class="box-card" style="margin-top: 8px;" :key="env.id">
                 <div slot="header" class="clearfix">
                   <span>{{env.envName}}</span>
                   <i class="el-icon-delete" @click="deleteCurrentAppEnv(env)"></i>
@@ -188,7 +188,6 @@
     },
     methods: {
       goNextStep (step, formName) {
-        let vmSelf = this
         if (step === 1 && formName) {
           this.$refs[formName].validate((valid) => {
             if (valid) {

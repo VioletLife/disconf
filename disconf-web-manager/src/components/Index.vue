@@ -2,13 +2,12 @@
   <div></div>
 </template>
 <script>
-
   export default {
     name: 'Index',
-    data() {
+    data () {
       return {}
     },
-    mounted() {
+    mounted () {
       /**
        * 重定向到登录页
        */

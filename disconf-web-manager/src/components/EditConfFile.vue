@@ -145,12 +145,13 @@
 </template>
 <script>
   import {
-    resolve, merge, MergeOptions, MergeAddExplicitOptions, createFileItemForProcess
+    resolve, merge, MergeOptions, createFileItemForProcess
   } from '../js/disconf/resolver'
   import ClipboardJS from 'clipboard'
   import ACELoader from '../js/ace'
   import Utils from '../js/utils'
   import GlobalEnv from '../js/global_env'
+
   export default {
     name: 'EditConfFile',
     data () {
