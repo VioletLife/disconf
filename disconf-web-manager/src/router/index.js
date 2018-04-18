@@ -6,6 +6,7 @@ import AddConfItem from '@/components/AddConfItem'
 import EditConfItem from '@/components/EditConfItem'
 import AddApp from '@/components/AddApp'
 import Index from '@/components/Index'
+import ModifyPassword from '@/components/ModifyPassword'
 
 Vue.use(Router)
 
@@ -40,6 +41,11 @@ export default new Router({
       path: '/app/add',
       name: 'AddApp',
       component: AddApp
+    },
+    {
+      path: '/modify/password',
+      name: 'ModifyPassword',
+      component: ModifyPassword
     }
   ]
 })

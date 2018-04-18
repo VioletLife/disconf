@@ -48,7 +48,6 @@
   </div>
 </template>
 <script>
-  import GlobalEnv from './js/global_env'
   import DisconfFooter from './components/DisconfFooter.vue'
 
   export default {
@@ -82,7 +81,7 @@
       this.htmlPath = this.$store.state.htmlPath
     },
     methods: {
-      handleSelect(key, keyPath) {
+      handleSelect (key, keyPath) {
         console.log(key, keyPath)
       }
     }

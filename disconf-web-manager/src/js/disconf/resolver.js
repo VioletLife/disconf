@@ -213,13 +213,12 @@ let merge = function (fileContent, targetItems) {
   }
   return {
     fileItems,
-    toString() {
+    toString () {
       let fileContentCache = ''
       this.fileItems.forEach(function (fileItem) {
         if (fileItem.comments && fileItem.comments.length > 0) {
           fileContentCache += `#${fileItem.comments}\n${fileItem.key}=${fileItem.value}\n\n`
-        }
-        else {
+        } else {
           fileContentCache += `${fileItem.key}=${fileItem.value}\n\n`
         }
       })

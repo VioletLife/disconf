@@ -6,7 +6,7 @@ import 'es6-promise/auto'
 import ElementUi from 'element-ui'
 import './css/base.css'
 import 'element-ui/lib/theme-chalk/index.css'
-
+import './js/directives/permission'
 import App from './App'
 import router from './router'
 import $ from 'jquery'
@@ -17,7 +17,6 @@ import store from './store/store'
  * 导入全局配置
  */
 import './js/global_env'
-
 
 window.$ = window.jQuery = $
 window._ = _

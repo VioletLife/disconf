@@ -1,0 +1,3 @@
+export default {
+  SET_USER_PERMISSIONS: 'SET_USER_PERMISSIONS'
+}
