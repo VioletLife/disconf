@@ -7,6 +7,7 @@ import EditConfItem from '@/components/EditConfItem'
 import AddApp from '@/components/AddApp'
 import Index from '@/components/Index'
 import ModifyPassword from '@/components/ModifyPassword'
+import UserPermission from '@/components/UserPermission'
 
 Vue.use(Router)
 
@@ -46,6 +47,11 @@ export default new Router({
       path: '/modify/password',
       name: 'ModifyPassword',
       component: ModifyPassword
+    },
+    {
+      path: '/auth/permission',
+      name: 'UserPermission',
+      component: UserPermission
     }
   ]
 })
