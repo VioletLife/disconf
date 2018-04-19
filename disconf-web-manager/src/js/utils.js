@@ -7,7 +7,7 @@ export default class Utils {
   static ajax(options) {
     options.url = GlobalEnv.env().serverAPIUrl + options.url
     let rawSuccess = options.success
-    let globalInterceptor = (response) => {
+    options.success = (response) => {
       if (response && response.message && response.message.global && response.message.global === '请登录系统') {
         Message.error(response.message.global)
         setTimeout(function () {
@@ -18,7 +18,6 @@ export default class Utils {
         rawSuccess(response)
       }
     }
-    options.success = globalInterceptor
     return $.ajax(options)
   }
 }
