@@ -19,6 +19,8 @@ public enum CodeMessage {
     CODE_101(101, "版本号已经存在"),
     CODE_102(102, "AppId无效或者环境名称无效"),
     CODE_103(103, "当前应用已经存在同名称的环境信息"),
+    CODE_104(104, "该权限编码已存在"),
+    CODE_105(105, "权限编码或者权限名称无效"),
     CODE_0(0, "Ok");
     private int code;
     private String message;
