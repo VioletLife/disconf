@@ -20,4 +20,10 @@ export default class Utils {
     }
     return $.ajax(options)
   }
+
+  static sleep(timeout) {
+    return new Promise((resolve, reject) => {
+      setTimeout(resolve, timeout)
+    })
+  }
 }

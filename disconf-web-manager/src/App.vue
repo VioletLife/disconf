@@ -24,7 +24,9 @@
             <el-submenu index="2-2">
               <template slot="title">权限设置</template>
               <el-menu-item index="2-2-1">角色管理</el-menu-item>
-              <el-menu-item index="2-2-2">权限管理</el-menu-item>
+              <el-menu-item index="2-2-2">
+                <router-link to="/auth/permission">权限管理</router-link>
+              </el-menu-item>
             </el-submenu>
           </el-submenu>
           <el-submenu index="3">
@@ -33,7 +35,9 @@
           </el-submenu>
           <el-submenu index="4">
             <template slot="title">个人中心</template>
-            <el-menu-item index="4-1"><a :href="htmlPath.password">修改密码</a></el-menu-item>
+            <el-menu-item index="4-1">
+              <router-link to="/modify/password">修改密码</router-link>
+            </el-menu-item>
             <el-menu-item index="4-2"><a href="#" id="signout">退出</a></el-menu-item>
           </el-submenu>
         </el-menu>
@@ -81,7 +85,7 @@
       this.htmlPath = this.$store.state.htmlPath
     },
     methods: {
-      handleSelect (key, keyPath) {
+      handleSelect(key, keyPath) {
         console.log(key, keyPath)
       }
     }
