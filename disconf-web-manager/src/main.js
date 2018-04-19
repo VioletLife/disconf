@@ -13,6 +13,7 @@ import $ from 'jquery'
 import _ from 'lodash'
 import * as Global from './js/global'
 import store from './store/store'
+import './js/components/index'
 /**
  * 导入全局配置
  */
@@ -23,6 +24,7 @@ window._ = _
 window.__GLOBAL__ = Global
 
 Vue.use(ElementUi)
+
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
