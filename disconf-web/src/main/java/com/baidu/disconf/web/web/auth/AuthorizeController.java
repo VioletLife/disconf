@@ -61,7 +61,7 @@ public class AuthorizeController extends BaseController {
         AtomicReference<ResponseMessage> reference = new AtomicReference<>(null);
         AuthPermission authPermission = authPermissionMgr.insertSelective(permission, reference::set);
         if (reference.get() != null) {
-            return buildSuccess(reference.get());
+            return buildResponseMessage(reference.get());
         }
         return buildSuccess(authPermission);
     }

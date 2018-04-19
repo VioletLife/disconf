@@ -9,6 +9,7 @@ import com.baidu.disconf.web.service.auth.mybatis.AuthPermissionMapper;
 import com.baidu.disconf.web.service.auth.service.AuthPermissionMgr;
 import com.baidu.disconf.web.service.user.dto.Visitor;
 import com.baidu.ub.common.commons.ThreadContext;
+import com.github.pagehelper.PageHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.mybatis.dynamic.sql.select.MyBatis3SelectModelAdapter;
@@ -20,9 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -35,6 +34,7 @@ public class AuthPermissionMgrImpl implements AuthPermissionMgr {
 
     @Override
     public Page<AuthPermission> selectByExampleWithRowbounds(Page<AuthPermission> rowBounds, String permissionName) {
+        PageHelper.startPage(rowBounds.getOffset(), rowBounds.getLimit());
         QueryExpressionDSL<MyBatis3SelectModelAdapter<List<AuthPermission>>> expressionDSL = authPermissionMapper.selectByExampleWithRowbounds(rowBounds);
         List<AuthPermission> cache;
         Visitor visitor = ThreadContext.getSessionVisitor();
@@ -52,7 +52,14 @@ public class AuthPermissionMgrImpl implements AuthPermissionMgr {
                     .build()
                     .execute();
         }
-        Optional<List<AuthPermission>> authPermissions = Optional.of(cache);
+        com.github.pagehelper.Page page = null;
+        Optional<List<AuthPermission>> authPermissions = Optional.of(Collections.emptyList());
+        if (cache instanceof com.github.pagehelper.Page) {
+            page = (com.github.pagehelper.Page) cache;
+            page.getResult();
+            rowBounds.setTotal(page.getTotal());
+            authPermissions = Optional.of(page.getResult());
+        }
         rowBounds.setResult(authPermissions);
         return rowBounds;
     }
@@ -68,6 +75,12 @@ public class AuthPermissionMgrImpl implements AuthPermissionMgr {
             if (countRecord != null && countRecord > 0) {
                 consumer.accept(CodeMessage.CODE_104.toResponseMessage());
             } else {
+                Visitor visitor = ThreadContext.getSessionVisitor();
+                permission.setId(null);
+                permission.setCreateTime(new Date());
+                permission.setCreator(visitor.getLoginUserId());
+                permission.setUpdateTime(new Date());
+                permission.setUpdator(visitor.getLoginUserId());
                 authPermissionMapper.insertSelective(permission);
             }
         } else {
