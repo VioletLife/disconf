@@ -21,41 +21,45 @@
    */
   export default {
     name: 'PageSequence',
-    data() {
+    data () {
       return {
-        pageCount: 1,
         currentPageNumber: 1
       }
     },
-    mounted() {
-      if (this.data.allCount > 0) {
-        let isLastPage = this.data.allCount % this.data.pageSize > 0
-        let computedPages = this.data.allCount / this.data.pageSize
-        computedPages = isLastPage ? (computedPages + 1) : computedPages
-        this.pageCount = parseInt(String(computedPages))
-      }
-      this.$emit('pageChange', this.currentPageNumber)
+    mounted () {
+
     },
     methods: {
-      pageChange(pageNumber) {
+      pageChange (pageNumber) {
         this.currentPageNumber = pageNumber
         this.$emit('pageChange', pageNumber)
       },
-      pagePrev() {
+      pagePrev () {
         if (this.currentPageNumber >= 2) {
           this.currentPageNumber = this.currentPageNumber - 1
         }
         this.$emit('pageChange', this.currentPageNumber)
       },
-      pageNext() {
+      pageNext () {
         let nextPageNumber = this.currentPageNumber + 1
         if (nextPageNumber <= this.pageCount) {
           this.currentPageNumber = nextPageNumber
-        }
-        else {
+        } else {
           this.currentPageNumber = this.pageCount
         }
         this.$emit('pageChange', this.currentPageNumber)
+      }
+    },
+    computed: {
+      pageCount () {
+        if (this.data.allCount > 0) {
+          let isLastPage = this.data.allCount % this.data.pageSize > 0
+          let computedPages = this.data.allCount / this.data.pageSize
+          computedPages = isLastPage ? (computedPages + 1) : computedPages
+          this.$emit('pageChange', this.currentPageNumber)
+          return parseInt(String(computedPages))
+        }
+        return 1
       }
     },
     props: {

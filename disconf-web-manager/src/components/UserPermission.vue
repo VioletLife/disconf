@@ -73,11 +73,32 @@
             v-model="permissionForm.permissionComments">
           </el-input>
         </el-form-item>
-
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="closeAddPermissionDialog">取 消</el-button>
         <el-button type="primary" @click="confirmAddPermissionDialog('permissionFormRef')">确 定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog :visible.sync="updatePermissionDialog" title="更新权限">
+      <el-form :model="updatePermissionForm" :rules="updatePermissionFormRules" ref="updatePermissionFormRef">
+        <el-form-item label="权限编码：" :label-width="formLabelWidth">
+          <span>{{updatePermissionForm.permissionCode}}</span>
+        </el-form-item>
+        <el-form-item label="权限名称" :label-width="formLabelWidth" prop="permissionName">
+          <el-input v-model="updatePermissionForm.permissionName" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="权限说明" :label-width="formLabelWidth" prop="permissionComments">
+          <el-input
+            type="textarea"
+            :rows="3"
+            placeholder="配置说明"
+            v-model="updatePermissionForm.permissionComments">
+          </el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="closeUpdatePermissionDialog">取 消</el-button>
+        <el-button type="primary" @click="confirmUpdatePermissionDialog('updatePermissionFormRef')">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -94,6 +115,11 @@
           permissionName: '',
           permissionComments: ''
         },
+        updatePermissionForm: {
+          permissionCode: '',
+          permissionName: '',
+          permissionComments: ''
+        },
         permissionFormRules: {
           permissionCode: [
             {required: true, message: '请填写权限编码', trigger: 'blur'},
@@ -104,8 +130,15 @@
             {min: 1, max: 20, message: '长度在 1 到 20字符', trigger: 'blur'}
           ]
         },
+        updatePermissionFormRules: {
+          permissionName: [
+            {required: true, message: '请填写权限名称', trigger: 'blur'},
+            {min: 1, max: 20, message: '长度在 1 到 20字符', trigger: 'blur'}
+          ]
+        },
         formLabelWidth: '100px',
         addPermissionDialog: false,
+        updatePermissionDialog: false,
         addPermissionDialogForm: {},
         addPermissionDialogOpenMode: 'ADD',
         permissionName: '',
@@ -113,8 +146,9 @@
         page: {
           allCount: 0,
           pageNumber: 1,
-          pageSize: 50
-        }
+          pageSize: 2
+        },
+        currentEditPermissionId: 0
       }
     },
     mounted() {
@@ -148,15 +182,56 @@
         this.page.pageNumber = pageNumber
         this.searchPermission()
       },
-      editPermission() {
-
+      editPermission(row) {
+        this.updatePermissionForm.permissionCode = row.permissionCode
+        this.updatePermissionForm.permissionName = row.permissionName
+        this.updatePermissionForm.permissionComments = row.permissionComments
+        this.currentEditPermissionId = row.id
+        this.updatePermissionDialog = true
       },
-      deletePermission() {
-
+      deletePermission(row) {
+        let vmSelf = this
+        const h = this.$createElement
+        this.$msgbox({
+          title: '删除确认',
+          message: h('div', null, ['确定删除：', h('span', {style: {color: 'red'}}, [row.permissionName + '（' + row.permissionCode + '）'])]),
+          showCancelButton: true,
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          callback: function (action) {
+            if (action === 'confirm') {
+              Utils.ajax({
+                url: 'api/auth/permission/delete',
+                data: {
+                  permissionId: row.id
+                },
+                dataType: 'json',
+                success: function (response) {
+                  vmSelf.$message({
+                    type: 'success',
+                    message: '删除成功'
+                  })
+                  Utils.sleep(500).then(() => {
+                    vmSelf.searchPermission()
+                  })
+                }
+              })
+            }
+          }
+        })
       },
       closeAddPermissionDialog() {
         this.addPermissionDialog = false
         this.resetAddPermissionDialog()
+      },
+      closeUpdatePermissionDialog() {
+        this.updatePermissionDialog = false
+        this.resetUpdatePermissionDialog()
+      },
+      resetUpdatePermissionDialog() {
+        this.updatePermissionForm.permissionCode = ''
+        this.updatePermissionForm.permissionName = ''
+        this.updatePermissionForm.permissionComments = ''
       },
       resetAddPermissionDialog() {
         this.permissionForm.permissionCode = ''
@@ -190,6 +265,43 @@
                   vmSelf.$message({
                     type: 'success',
                     message: '权限添加成功'
+                  })
+                  Utils.sleep(500).then(() => {
+                    vmSelf.searchPermission()
+                  })
+                }
+              }
+            })
+          }
+        })
+      },
+      confirmUpdatePermissionDialog(formName) {
+        let vmSelf = this
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            let updateData = {
+              id: this.currentEditPermissionId,
+              permissionName: this.updatePermissionForm.permissionName,
+              permissionComments: this.updatePermissionForm.permissionComments
+            }
+            Utils.ajax({
+              type: 'POST',
+              url: 'api/auth/permission/update',
+              dataType: 'json',
+              contentType: 'application/json;charset=utf-8',
+              data: JSON.stringify(updateData),
+              success: function (response) {
+                if (response && response.message && response.message.status && response.message.status.code && response.message.status.code !== 0) {
+                  vmSelf.$message({
+                    type: 'error',
+                    message: response.message.status.message
+                  })
+                } else {
+                  vmSelf.updatePermissionDialog = false
+                  vmSelf.resetUpdatePermissionDialog()
+                  vmSelf.$message({
+                    type: 'success',
+                    message: '权限更新成功'
                   })
                   Utils.sleep(500).then(() => {
                     vmSelf.searchPermission()
