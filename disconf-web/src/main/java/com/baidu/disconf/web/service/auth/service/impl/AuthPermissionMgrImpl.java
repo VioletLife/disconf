@@ -88,4 +88,28 @@ public class AuthPermissionMgrImpl implements AuthPermissionMgr {
         }
         return permission;
     }
+
+    @Override
+    public AuthPermission updateSelective(AuthPermission permission, Consumer<ResponseMessage> consumer) {
+        if (permission != null && permission.getId() != null && permission.getId() > 0) {
+            Visitor visitor = ThreadContext.getSessionVisitor();
+            permission.setUpdator(visitor.getLoginUserId());
+            permission.setUpdateTime(new Date());
+            authPermissionMapper.updateByPrimaryKeySelective(permission);
+        } else {
+            consumer.accept(CodeMessage.CODE_106.toResponseMessage());
+        }
+        return permission;
+    }
+
+
+    @Override
+    public int deleteByPrimaryKey(Long permissionId, Consumer<ResponseMessage> consumer) {
+        if (permissionId != null && permissionId > 0) {
+            return authPermissionMapper.deleteByPrimaryKey(permissionId);
+        } else {
+            consumer.accept(CodeMessage.CODE_106.toResponseMessage());
+        }
+        return 0;
+    }
 }

@@ -12,4 +12,6 @@ import java.util.function.Consumer;
 public interface AuthPermissionMgr {
     Page<AuthPermission> selectByExampleWithRowbounds(Page<AuthPermission> rowBounds, String permissionName);
     AuthPermission insertSelective(AuthPermission permission, Consumer<ResponseMessage> consumer);
+    AuthPermission updateSelective(AuthPermission permission, Consumer<ResponseMessage> consumer);
+    int deleteByPrimaryKey(Long permissionId, Consumer<ResponseMessage> consumer);
 }

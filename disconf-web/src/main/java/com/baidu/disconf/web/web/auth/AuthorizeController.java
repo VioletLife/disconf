@@ -57,12 +57,41 @@ public class AuthorizeController extends BaseController {
      * @return 数据更新后的权限数据
      */
     @RequestMapping(value = "permission/create", method = RequestMethod.POST)
-    public JsonObjectBase permissionList(@RequestBody AuthPermission permission) {
+    public JsonObjectBase permissionCreate(@RequestBody AuthPermission permission) {
         AtomicReference<ResponseMessage> reference = new AtomicReference<>(null);
         AuthPermission authPermission = authPermissionMgr.insertSelective(permission, reference::set);
         if (reference.get() != null) {
             return buildResponseMessage(reference.get());
         }
         return buildSuccess(authPermission);
+    }
+
+
+    /**
+     * 更新权限数据
+     * 权限编码不能更新，如果出现权限编码错误，则只能删除重新添加
+     *
+     * @param permission 权限更新数据
+     * @return 数据跟新后的权限数据
+     */
+    @RequestMapping(value = "permission/update", method = RequestMethod.POST)
+    public JsonObjectBase permissionUpdate(@RequestBody AuthPermission permission) {
+        AtomicReference<ResponseMessage> reference = new AtomicReference<>(null);
+        AuthPermission authPermission = authPermissionMgr.updateSelective(permission, reference::set);
+        if (reference.get() != null) {
+            return buildResponseMessage(reference.get());
+        }
+        return buildSuccess(authPermission);
+    }
+
+
+    @RequestMapping(value = "permission/delete", method = RequestMethod.GET)
+    public JsonObjectBase permissionDelete(Long permissionId) {
+        AtomicReference<ResponseMessage> reference = new AtomicReference<>(null);
+        int delete = authPermissionMgr.deleteByPrimaryKey(permissionId, reference::set);
+        if (reference.get() != null) {
+            return buildResponseMessage(reference.get());
+        }
+        return buildSuccess(delete);
     }
 }
