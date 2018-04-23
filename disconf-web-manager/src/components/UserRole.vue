@@ -323,11 +323,13 @@
         this.updateRoleForm.roleCode = ''
         this.updateRoleForm.roleName = ''
         this.updateRoleForm.roleComments = ''
+        this.updateRoleForm.rolePermissions = []
       },
       resetAddRoleDialog() {
         this.roleForm.roleCode = ''
         this.roleForm.roleName = ''
         this.roleForm.roleComments = ''
+        this.roleForm.rolePermissions = []
       },
       confirmAddRoleDialog(formName) {
         let vmSelf = this
@@ -421,7 +423,7 @@
         let params = {
           permissionName: '',
           pageNumber: this.page.pageNumber,
-          pageSize: this.page.pageSize
+          pageSize:1000
         }
         Utils.ajax({
           type: 'GET',
