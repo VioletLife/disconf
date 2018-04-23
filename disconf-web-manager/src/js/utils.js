@@ -4,7 +4,7 @@ import {Message} from 'element-ui'
 import State from '../store/state'
 
 export default class Utils {
-  static ajax(options) {
+  static ajax (options) {
     options.url = GlobalEnv.env().serverAPIUrl + options.url
     let rawSuccess = options.success
     options.success = (response) => {
@@ -13,15 +13,14 @@ export default class Utils {
         setTimeout(function () {
           window.location.href = State.htmlPath.appLogin
         }, 500)
-      }
-      else {
+      } else {
         rawSuccess(response)
       }
     }
     return $.ajax(options)
   }
 
-  static sleep(timeout) {
+  static sleep (timeout) {
     return new Promise((resolve, reject) => {
       setTimeout(resolve, timeout)
     })

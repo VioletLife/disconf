@@ -108,7 +108,7 @@
 
   export default {
     name: 'UserPermission',
-    data() {
+    data () {
       return {
         permissionForm: {
           permissionCode: '',
@@ -151,11 +151,11 @@
         currentEditPermissionId: 0
       }
     },
-    mounted() {
+    mounted () {
       this.searchPermission()
     },
     methods: {
-      searchPermission() {
+      searchPermission () {
         let vmSelf = this
         let params = {
           permissionName: this.permissionName,
@@ -175,21 +175,21 @@
           }
         })
       },
-      addNewPermission() {
+      addNewPermission () {
         this.addPermissionDialog = true
       },
-      pageChange(pageNumber) {
+      pageChange (pageNumber) {
         this.page.pageNumber = pageNumber
         this.searchPermission()
       },
-      editPermission(row) {
+      editPermission (row) {
         this.updatePermissionForm.permissionCode = row.permissionCode
         this.updatePermissionForm.permissionName = row.permissionName
         this.updatePermissionForm.permissionComments = row.permissionComments
         this.currentEditPermissionId = row.id
         this.updatePermissionDialog = true
       },
-      deletePermission(row) {
+      deletePermission (row) {
         let vmSelf = this
         const h = this.$createElement
         this.$msgbox({
@@ -220,25 +220,25 @@
           }
         })
       },
-      closeAddPermissionDialog() {
+      closeAddPermissionDialog () {
         this.addPermissionDialog = false
         this.resetAddPermissionDialog()
       },
-      closeUpdatePermissionDialog() {
+      closeUpdatePermissionDialog () {
         this.updatePermissionDialog = false
         this.resetUpdatePermissionDialog()
       },
-      resetUpdatePermissionDialog() {
+      resetUpdatePermissionDialog () {
         this.updatePermissionForm.permissionCode = ''
         this.updatePermissionForm.permissionName = ''
         this.updatePermissionForm.permissionComments = ''
       },
-      resetAddPermissionDialog() {
+      resetAddPermissionDialog () {
         this.permissionForm.permissionCode = ''
         this.permissionForm.permissionName = ''
         this.permissionForm.permissionComments = ''
       },
-      confirmAddPermissionDialog(formName) {
+      confirmAddPermissionDialog (formName) {
         let vmSelf = this
         this.$refs[formName].validate((valid) => {
           if (valid) {
@@ -275,7 +275,7 @@
           }
         })
       },
-      confirmUpdatePermissionDialog(formName) {
+      confirmUpdatePermissionDialog (formName) {
         let vmSelf = this
         this.$refs[formName].validate((valid) => {
           if (valid) {
