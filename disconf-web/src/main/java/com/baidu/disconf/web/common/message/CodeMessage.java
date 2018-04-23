@@ -22,6 +22,8 @@ public enum CodeMessage {
     CODE_104(104, "该权限编码已存在"),
     CODE_105(105, "权限编码或者权限名称无效"),
     CODE_106(106, "权限ID错误"),
+    CODE_107(107, "角色编码或者角色名称无效"),
+    CODE_108(108, "角色ID无效"),
     CODE_0(0, "Ok");
     private int code;
     private String message;

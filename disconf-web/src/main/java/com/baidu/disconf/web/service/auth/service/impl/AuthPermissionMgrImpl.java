@@ -56,7 +56,6 @@ public class AuthPermissionMgrImpl implements AuthPermissionMgr {
         Optional<List<AuthPermission>> authPermissions = Optional.of(Collections.emptyList());
         if (cache instanceof com.github.pagehelper.Page) {
             page = (com.github.pagehelper.Page) cache;
-            page.getResult();
             rowBounds.setTotal(page.getTotal());
             authPermissions = Optional.of(page.getResult());
         }

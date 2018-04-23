@@ -1,5 +1,7 @@
 package com.baidu.disconf.web.service;
 
+import com.baidu.disconf.web.service.user.dto.Visitor;
+import com.baidu.ub.common.commons.ThreadContext;
 import com.github.knightliao.apollo.db.bo.BaseObject;
 import org.objenesis.ObjenesisHelper;
 import org.springframework.beans.BeanUtils;
@@ -10,6 +12,13 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BaseService {
+    /**
+     * 获取当前登录用户
+     * @return
+     */
+    default Visitor getCurrentVisitor() {
+        return ThreadContext.getSessionVisitor();
+    }
 
 
     /**
