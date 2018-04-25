@@ -23,11 +23,16 @@
             <el-menu-item index="2-1">开通账户</el-menu-item>
             <el-submenu index="2-2">
               <template slot="title">权限设置</template>
-              <el-menu-item index="2-2-1"><router-link to="/auth/role">角色管理</router-link></el-menu-item>
+              <el-menu-item index="2-2-1">
+                <router-link to="/auth/role">角色管理</router-link>
+              </el-menu-item>
               <el-menu-item index="2-2-2">
                 <router-link to="/auth/permission">权限管理</router-link>
               </el-menu-item>
             </el-submenu>
+            <el-menu-item index="2-3">
+              <router-link to="/org/department">部门管理</router-link>
+            </el-menu-item>
           </el-submenu>
           <el-submenu index="3">
             <template slot="title">基础设置</template>
@@ -85,7 +90,7 @@
       this.htmlPath = this.$store.state.htmlPath
     },
     methods: {
-      handleSelect (key, keyPath) {
+      handleSelect(key, keyPath) {
         console.log(key, keyPath)
       }
     }

@@ -159,7 +159,7 @@
 
   export default {
     name: 'UserRole',
-    data() {
+    data () {
       return {
         roleForm: {
           roleCode: '',
@@ -211,12 +211,12 @@
         lookRoleDialogTitle: ''
       }
     },
-    mounted() {
+    mounted () {
       this.searchRole()
       this.searchPermissions()
     },
     methods: {
-      searchRole() {
+      searchRole () {
         let vmSelf = this
         let params = {
           roleName: this.roleName,
@@ -261,14 +261,14 @@
           }
         })
       },
-      addNewRole() {
+      addNewRole () {
         this.addRoleDialog = true
       },
-      pageChange(pageNumber) {
+      pageChange (pageNumber) {
         this.page.pageNumber = pageNumber
         this.searchRole()
       },
-      editRole(row) {
+      editRole (row) {
         this.updateRoleForm.roleCode = row.roleCode
         this.updateRoleForm.roleName = row.roleName
         this.updateRoleForm.roleComments = row.roleComments
@@ -280,7 +280,7 @@
         this.updateRoleForm.rolePermissions = selectedKeys
         this.updateRoleDialog = true
       },
-      deleteRole(row) {
+      deleteRole (row) {
         let vmSelf = this
         const h = this.$createElement
         this.$msgbox({
@@ -311,27 +311,27 @@
           }
         })
       },
-      closeAddRoleDialog() {
+      closeAddRoleDialog () {
         this.addRoleDialog = false
         this.resetAddRoleDialog()
       },
-      closeUpdateRoleDialog() {
+      closeUpdateRoleDialog () {
         this.updateRoleDialog = false
         this.resetUpdateRoleDialog()
       },
-      resetUpdateRoleDialog() {
+      resetUpdateRoleDialog () {
         this.updateRoleForm.roleCode = ''
         this.updateRoleForm.roleName = ''
         this.updateRoleForm.roleComments = ''
         this.updateRoleForm.rolePermissions = []
       },
-      resetAddRoleDialog() {
+      resetAddRoleDialog () {
         this.roleForm.roleCode = ''
         this.roleForm.roleName = ''
         this.roleForm.roleComments = ''
         this.roleForm.rolePermissions = []
       },
-      confirmAddRoleDialog(formName) {
+      confirmAddRoleDialog (formName) {
         let vmSelf = this
         this.$refs[formName].validate((valid) => {
           if (valid) {
@@ -374,7 +374,7 @@
           }
         })
       },
-      confirmUpdateRoleDialog(formName) {
+      confirmUpdateRoleDialog (formName) {
         let vmSelf = this
         this.$refs[formName].validate((valid) => {
           if (valid) {
@@ -418,12 +418,12 @@
           }
         })
       },
-      searchPermissions() {
+      searchPermissions () {
         let vmSelf = this
         let params = {
           permissionName: '',
           pageNumber: this.page.pageNumber,
-          pageSize:1000
+          pageSize: 1000
         }
         Utils.ajax({
           type: 'GET',
@@ -439,7 +439,7 @@
           }
         })
       },
-      lookRolePermission(row) {
+      lookRolePermission (row) {
         this.lookRoleDialogTitle = row.roleName + '>已分配权限'
         this.lookRoleForm.permissions = row.permissions
         this.lookRoleDialog = true
@@ -447,7 +447,7 @@
     },
     computed: {},
     filters: {
-      permissionNumber(value) {
+      permissionNumber (value) {
         return `权限${value + 1}：`
       }
     }

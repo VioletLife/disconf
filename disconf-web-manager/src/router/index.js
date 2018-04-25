@@ -9,6 +9,7 @@ import Index from '@/components/Index'
 import ModifyPassword from '@/components/ModifyPassword'
 import UserPermission from '@/components/UserPermission'
 import UserRole from '@/components/UserRole'
+import Department from '@/components/Department'
 
 Vue.use(Router)
 
@@ -58,6 +59,11 @@ export default new Router({
       path: '/auth/role',
       name: 'UserRole',
       component: UserRole
+    },
+    {
+      path: '/org/department',
+      name: 'Department',
+      component: Department
     }
   ]
 })
