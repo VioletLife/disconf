@@ -70,11 +70,19 @@ public class OrgDepartmentMgrImpl implements OrgDepartmentMgr {
             if (!orgDepartment.getIsOrgRoot() && StringUtils.isAnyBlank(orgDepartment.getParentCode())) {
                 consumer.accept(CodeMessage.CODE_109.toResponseMessage());
             } else {
-                orgDepartment.setCreateTime(new Date());
-                orgDepartment.setCreator(getCurrentVisitor().getLoginUserId());
-                orgDepartment.setUpdator(getCurrentVisitor().getLoginUserId());
-                orgDepartment.setUpdateTime(new Date());
-                orgDepartmentMapper.insertSelective(orgDepartment);
+                Long countRecord = orgDepartmentMapper.countByExample()
+                        .where(OrgDepartmentDynamicSqlSupport.departmentCode, IsEqualTo.of(orgDepartment::getDepartmentCode))
+                        .build()
+                        .execute();
+                if (countRecord != null && countRecord > 0) {
+                    consumer.accept(CodeMessage.CODE_112.toResponseMessage());
+                } else {
+                    orgDepartment.setCreateTime(new Date());
+                    orgDepartment.setCreator(getCurrentVisitor().getLoginUserId());
+                    orgDepartment.setUpdator(getCurrentVisitor().getLoginUserId());
+                    orgDepartment.setUpdateTime(new Date());
+                    orgDepartmentMapper.insertSelective(orgDepartment);
+                }
             }
         }
         return orgDepartment;
@@ -133,7 +141,7 @@ public class OrgDepartmentMgrImpl implements OrgDepartmentMgr {
                         nextMaxNumber = Integer.parseInt(nodeNumber);
                     }
                 }
-                return parentCode + String.format("%03d", nextMaxNumber);
+                return parentCode + String.format("%03d", nextMaxNumber + 1);
             } else {
                 return parentCode + String.format("%03d", 1);
             }
@@ -155,4 +163,72 @@ public class OrgDepartmentMgrImpl implements OrgDepartmentMgr {
             }
         }
     }
+
+
+    @Override
+    public int updateSelective(OrgDepartment orgDepartment, Consumer<ResponseMessage> consumer) {
+        if (orgDepartment != null && orgDepartment.getId() != null && orgDepartment.getId() > 0 && StringUtils.isNotEmpty(orgDepartment.getDepartmentCode()) && StringUtils.isNotEmpty(orgDepartment.getDepartmentName())) {
+            orgDepartment.setUpdateTime(new Date());
+            orgDepartment.setUpdator(getCurrentVisitor().getLoginUserId());
+            orgDepartmentMapper.updateByPrimaryKeySelective(orgDepartment);
+            /**
+             * 更新子节点显示和隐藏状态
+             */
+            if (orgDepartment.getIsHiddenNode()) {
+                /**
+                 * 如果节点隐藏，则子节点应该全部处于隐藏状态
+                 */
+                hideChildrenNode(orgDepartment);
+            } else {
+                /**
+                 * 如果子节点处于显示状态，则父级节点也该全部处于显示状态
+                 */
+                showParentNode(orgDepartment);
+            }
+            orgDepartmentMapper.updateByPrimaryKeySelective(orgDepartment);
+        } else {
+            consumer.accept(CodeMessage.CODE_113.toResponseMessage());
+        }
+        return 0;
+    }
+
+
+    /**
+     * 隐藏子节点
+     *
+     * @param node
+     */
+    public void hideChildrenNode(OrgDepartment node) {
+        if (node != null && StringUtils.isNotEmpty(node.getDepartmentCode())) {
+            List<OrgDepartment> orgDepartments = orgDepartmentMapper.selectByExample()
+                    .where(OrgDepartmentDynamicSqlSupport.parentCode, IsEqualTo.of(node::getDepartmentCode))
+                    .build()
+                    .execute();
+            for (OrgDepartment department : orgDepartments) {
+                hideChildrenNode(department);
+                department.setIsHiddenNode(true);
+                orgDepartmentMapper.updateByPrimaryKeySelective(department);
+            }
+
+        }
+    }
+
+    public void showParentNode(OrgDepartment node) {
+        if (node != null && !node.getIsOrgRoot()) {
+            List<OrgDepartment> orgDepartments = orgDepartmentMapper.selectByExample()
+                    .where(OrgDepartmentDynamicSqlSupport.departmentCode, IsEqualTo.of(node::getParentCode))
+                    .build()
+                    .execute();
+            for (OrgDepartment department : orgDepartments) {
+                showParentNode(department);
+                department.setIsHiddenNode(false);
+                orgDepartmentMapper.updateByPrimaryKeySelective(department);
+            }
+
+        } else {
+            node.setIsHiddenNode(false);
+            orgDepartmentMapper.updateByPrimaryKeySelective(node);
+        }
+    }
+
 }

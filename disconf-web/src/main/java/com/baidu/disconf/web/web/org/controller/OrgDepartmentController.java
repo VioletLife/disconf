@@ -10,10 +10,7 @@ import com.baidu.dsp.common.controller.BaseController;
 import com.baidu.dsp.common.vo.JsonObjectBase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +19,7 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * @author QingDengYue
  */
-@Controller
+@RestController
 @RequestMapping(WebConstants.API_PREFIX + "/org")
 public class OrgDepartmentController extends BaseController {
 
@@ -50,9 +47,12 @@ public class OrgDepartmentController extends BaseController {
      */
     @RequestMapping(value = "department/create", method = RequestMethod.POST)
     public JsonObjectBase createDepartment(@RequestBody OrgDepartment orgDepartment) {
-        List<OrgDepartmentVo> departmentVos;
-        departmentVos = orgDepartmentMgr.selectCurrentVisitorDepartment();
-        return buildSuccess(departmentVos);
+        AtomicReference<ResponseMessage> reference = new AtomicReference<>(null);
+        OrgDepartment department = orgDepartmentMgr.insertSelective(orgDepartment, reference::set);
+        if (reference.get() != null) {
+            return buildResponseMessage(reference.get());
+        }
+        return buildSuccess(department);
     }
 
     /**
@@ -61,7 +61,7 @@ public class OrgDepartmentController extends BaseController {
      * @param departmentId 部门ID
      * @return 0 表示删除成功
      */
-    @RequestMapping(value = "department/delete", method = RequestMethod.POST)
+    @RequestMapping(value = "department/delete")
     public JsonObjectBase deleteDepartment(Long departmentId) {
         AtomicReference<ResponseMessage> reference = new AtomicReference<>(null);
         orgDepartmentMgr.deleteDepartmentByPrimaryId(departmentId, reference::set);
@@ -71,6 +71,21 @@ public class OrgDepartmentController extends BaseController {
         return buildSuccess(0);
     }
 
+    /**
+     * 更新部门数据
+     *
+     * @param orgDepartment 部门数据
+     * @return
+     */
+    @RequestMapping(value = "department/update", method = RequestMethod.POST)
+    public JsonObjectBase updateDepartment(@RequestBody OrgDepartment orgDepartment) {
+        AtomicReference<ResponseMessage> reference = new AtomicReference<>(null);
+        orgDepartmentMgr.updateSelective(orgDepartment, reference::set);
+        if (reference.get() != null) {
+            return buildResponseMessage(reference.get());
+        }
+        return buildSuccess(0);
+    }
 
     /**
      * 自动生成系统编码

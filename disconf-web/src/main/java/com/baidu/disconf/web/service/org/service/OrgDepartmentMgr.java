@@ -49,4 +49,16 @@ public interface OrgDepartmentMgr extends BaseService {
      * @return 下一个未使用编码
      */
     String generateDepartmentCode(String parentCode);
+
+
+    /**
+     * 更新部门数据
+     * 如果当前节点隐藏则其子节点全部隐藏
+     * 如果子节点显示且必须父级节点显示 子节点才能够处于显示状态
+     *
+     * @param orgDepartment 部门数据
+     * @param consumer      ResponseMessage
+     * @return
+     */
+    int updateSelective(OrgDepartment orgDepartment, Consumer<ResponseMessage> consumer);
 }
