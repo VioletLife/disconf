@@ -95,6 +95,9 @@
             <el-menu-item index="2-2-1"><a :href="htmlPath.appRole">角色管理</a></el-menu-item>
             <el-menu-item index="2-2-2"><a :href="htmlPath.appPermission">权限管理</a></el-menu-item>
           </el-submenu>
+          <el-menu-item index="2-3">
+            <a :href="htmlPath.appDepartment">部门管理</a>
+          </el-menu-item>
         </el-submenu>
         <el-submenu index="3">
           <template slot="title">基础设置</template>
@@ -502,6 +505,7 @@
                 passwordV2: window.disconf.originServerUrl + '#/modify/password',
                 appPermission: window.disconf.originServerUrl + '#/auth/permission',
                 appRole: window.disconf.originServerUrl + '#/auth/role',
+                appDepartment: window.disconf.originServerUrl + '#/org/department',
                 appConfigItem: window.disconf.serverUrl + 'newconfig_item.html',
                 appConfigFile: window.disconf.serverUrl + 'newconfig_file.html',
                 appLogin: window.disconf.serverUrl + 'login.html',
