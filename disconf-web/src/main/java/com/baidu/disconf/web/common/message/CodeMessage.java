@@ -24,6 +24,9 @@ public enum CodeMessage {
     CODE_106(106, "权限ID错误"),
     CODE_107(107, "角色编码或者角色名称无效"),
     CODE_108(108, "角色ID无效"),
+    CODE_109(109, "部门数据错误"),
+    CODE_110(110, "已关联用户，请先删除用户账户"),
+    CODE_111(111, "部门ID无效"),
     CODE_0(0, "Ok");
     private int code;
     private String message;
