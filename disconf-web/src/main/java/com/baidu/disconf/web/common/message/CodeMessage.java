@@ -29,6 +29,9 @@ public enum CodeMessage {
     CODE_111(111, "部门ID无效"),
     CODE_112(112, "编码已存在"),
     CODE_113(113, "部门数据错误"),
+    CODE_114(114, "用户数据错误"),
+    CODE_115(115, "账户名称已存在"),
+    CODE_116(116, "用户ID无效"),
     CODE_0(0, "Ok");
     private int code;
     private String message;

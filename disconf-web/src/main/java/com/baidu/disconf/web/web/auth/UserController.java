@@ -3,13 +3,15 @@ package com.baidu.disconf.web.web.auth;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import com.baidu.disconf.web.common.message.ResponseMessage;
+import com.baidu.disconf.web.service.Page;
+import com.baidu.disconf.web.service.user.vo.UserResponseVo;
+import com.baidu.disconf.web.service.user.vo.UserVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import com.baidu.disconf.web.service.sign.form.SigninForm;
 import com.baidu.disconf.web.service.sign.service.SignMgr;
@@ -27,6 +29,9 @@ import com.baidu.dsp.common.constant.WebConstants;
 import com.baidu.dsp.common.controller.BaseController;
 import com.baidu.dsp.common.vo.JsonObjectBase;
 import com.baidu.ub.common.commons.ThreadContext;
+
+import java.util.Date;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author liaoqiqi
@@ -54,7 +59,6 @@ public class UserController extends BaseController {
      * GET 获取
      *
      * @param
-     *
      * @return
      */
     @NoAuth
@@ -79,7 +83,6 @@ public class UserController extends BaseController {
      *
      * @param signin
      * @param request
-     *
      * @return
      */
     @NoAuth
@@ -113,7 +116,6 @@ public class UserController extends BaseController {
      * 登出
      *
      * @param request
-     *
      * @return
      */
     @NoAuth
@@ -130,7 +132,6 @@ public class UserController extends BaseController {
      * 修改密码
      *
      * @param
-     *
      * @return
      */
     @RequestMapping(value = "/password", method = RequestMethod.PUT)
@@ -148,5 +149,74 @@ public class UserController extends BaseController {
         redisLogin.logout(request);
 
         return buildSuccess("修改成功，请重新登录");
+    }
+
+
+    /**
+     * 创建新用户
+     *
+     * @param userVo 用户信息对象
+     * @return 用户信息对象
+     */
+    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonObjectBase createAccount(@RequestBody UserVo userVo) {
+        AtomicReference<ResponseMessage> reference = new AtomicReference<>(null);
+        UserVo user = userMgr.createUser(userVo, reference::set);
+        if (reference.get() != null) {
+            return buildResponseMessage(reference.get());
+        }
+        return buildSuccess(user);
+    }
+
+
+    /**
+     * 更新用户信息
+     *
+     * @param userVo 用户信息对象
+     * @return 用户信息对象
+     */
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonObjectBase updateAccount(@RequestBody UserVo userVo) {
+        AtomicReference<ResponseMessage> reference = new AtomicReference<>(null);
+        UserVo user = userMgr.updateUserSelective(userVo, reference::set);
+        if (reference.get() != null) {
+            return buildResponseMessage(reference.get());
+        }
+        return buildSuccess(user);
+    }
+
+
+    /**
+     * 删除用户
+     *
+     * @param userId 用户ID
+     * @return 删除成功
+     */
+    @RequestMapping(value = "/delete")
+    @ResponseBody
+    public JsonObjectBase deleteAccount(Long userId) {
+        AtomicReference<ResponseMessage> reference = new AtomicReference<>(null);
+        int key = userMgr.deleteByPrimaryKey(userId, reference::set);
+        if (reference.get() != null) {
+            return buildResponseMessage(reference.get());
+        }
+        return buildSuccess(key);
+    }
+
+
+    @RequestMapping(value = "/list")
+    @ResponseBody
+    public JsonObjectBase usersList(
+            @RequestParam(required = false, defaultValue = "") String userAccount,
+            @RequestParam(required = false, defaultValue = "") String departmentCode,
+            @RequestParam(required = false) Date startTime,
+            @RequestParam(required = false) Date endTime,
+            @RequestParam(required = false, defaultValue = "1") Integer pageNumber,
+            @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
+        Page<UserResponseVo> page = new Page<>(pageNumber, pageSize);
+        Page<UserResponseVo> responseVoPage = userMgr.selectByExampleWithRowbounds(page, userAccount, startTime, endTime, departmentCode);
+        return buildSuccess(responseVoPage);
     }
 }

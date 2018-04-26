@@ -28,7 +28,7 @@ import com.github.knightliao.apollo.utils.time.DateUtils;
  * @version 2014-6-16
  */
 @Service
-@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+@Transactional(propagation = Propagation.REQUIRED)
 public class AppMgrImpl implements AppMgr {
 
     @Autowired
@@ -43,6 +43,7 @@ public class AppMgrImpl implements AppMgr {
 
     @Autowired
     private AppMapper appMapper;
+
 
     /**
      *

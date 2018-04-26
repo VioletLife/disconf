@@ -1,33 +1,28 @@
-package com.baidu.disconf.web.service.app.mybatis;
+package com.baidu.disconf.web.service.user.mybatis;
 
 import com.baidu.disconf.web.service.BaseVo;
 import java.io.Serializable;
+import java.util.Date;
 import javax.annotation.Generated;
 
-public class App extends BaseVo implements Serializable {
+public class AuthUserRole extends BaseVo implements Serializable {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private Long appId;
+    private Long id;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private Long userId;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private String name;
+    private Long roleId;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private String description;
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private String createTime;
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private String updateTime;
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private String emails;
+    private Date createTime;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private Long creator;
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    private Date updateTime;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private Long updator;
@@ -35,13 +30,13 @@ public class App extends BaseVo implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public Long getAppId() {
-        return appId;
+    public Long getId() {
+        return id;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setAppId(Long appId) {
-        this.appId = appId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
@@ -55,53 +50,23 @@ public class App extends BaseVo implements Serializable {
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public String getName() {
-        return name;
+    public Long getRoleId() {
+        return roleId;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setName(String name) {
-        this.name = name == null ? null : name.trim();
+    public void setRoleId(Long roleId) {
+        this.roleId = roleId;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public String getDescription() {
-        return description;
-    }
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setDescription(String description) {
-        this.description = description == null ? null : description.trim();
-    }
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public String getCreateTime() {
+    public Date getCreateTime() {
         return createTime;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setCreateTime(String createTime) {
-        this.createTime = createTime == null ? null : createTime.trim();
-    }
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public String getUpdateTime() {
-        return updateTime;
-    }
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setUpdateTime(String updateTime) {
-        this.updateTime = updateTime == null ? null : updateTime.trim();
-    }
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public String getEmails() {
-        return emails;
-    }
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setEmails(String emails) {
-        this.emails = emails == null ? null : emails.trim();
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
@@ -112,6 +77,16 @@ public class App extends BaseVo implements Serializable {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public void setCreator(Long creator) {
         this.creator = creator;
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")

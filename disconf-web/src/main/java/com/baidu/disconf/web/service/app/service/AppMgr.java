@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.baidu.disconf.web.service.BaseService;
 import com.baidu.disconf.web.service.app.bo.App;
 import com.baidu.disconf.web.service.app.form.AppNewForm;
 import com.baidu.disconf.web.service.app.vo.AppListVo;
@@ -12,7 +13,7 @@ import com.baidu.disconf.web.service.app.vo.AppListVo;
  * @author liaoqiqi
  * @version 2014-6-16
  */
-public interface AppMgr {
+public interface AppMgr extends BaseService {
 
     /**
      * 根据APP名获取APP

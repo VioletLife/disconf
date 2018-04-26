@@ -13,6 +13,9 @@ public final class AppDynamicSqlSupport {
     public static final SqlColumn<Long> appId = app.appId;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    public static final SqlColumn<Long> userId = app.userId;
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public static final SqlColumn<String> name = app.name;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
@@ -28,8 +31,16 @@ public final class AppDynamicSqlSupport {
     public static final SqlColumn<String> emails = app.emails;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    public static final SqlColumn<Long> creator = app.creator;
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    public static final SqlColumn<Long> updator = app.updator;
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public static final class App extends SqlTable {
         public final SqlColumn<Long> appId = column("app_id", JDBCType.BIGINT);
+
+        public final SqlColumn<Long> userId = column("user_id", JDBCType.BIGINT);
 
         public final SqlColumn<String> name = column("name", JDBCType.VARCHAR);
 
@@ -40,6 +51,10 @@ public final class AppDynamicSqlSupport {
         public final SqlColumn<String> updateTime = column("update_time", JDBCType.VARCHAR);
 
         public final SqlColumn<String> emails = column("emails", JDBCType.VARCHAR);
+
+        public final SqlColumn<Long> creator = column("creator", JDBCType.BIGINT);
+
+        public final SqlColumn<Long> updator = column("updator", JDBCType.BIGINT);
 
         public App() {
             super("app");
