@@ -20,7 +20,9 @@
           </el-submenu>
           <el-submenu index="2">
             <template slot="title">账户中心</template>
-            <el-menu-item index="2-1">开通账户</el-menu-item>
+            <el-menu-item index="2-1">
+              <router-link to="/account/user">开通账户</router-link>
+            </el-menu-item>
             <el-submenu index="2-2">
               <template slot="title">权限设置</template>
               <el-menu-item index="2-2-1">

@@ -10,6 +10,9 @@ import ModifyPassword from '@/components/ModifyPassword'
 import UserPermission from '@/components/UserPermission'
 import UserRole from '@/components/UserRole'
 import Department from '@/components/Department'
+import User from '@/components/User'
+import AddUser from '@/components/AddUser'
+import EditUser from '@/components/EditUser'
 
 Vue.use(Router)
 
@@ -64,6 +67,21 @@ export default new Router({
       path: '/org/department',
       name: 'Department',
       component: Department
+    },
+    {
+      path: '/account/user',
+      name: 'User',
+      component: User
+    },
+    {
+      path: '/account/user/create',
+      name: 'AddUser',
+      component: AddUser
+    },
+    {
+      path: '/account/user/edit',
+      name: 'EditUser',
+      component: EditUser
     }
   ]
 })
