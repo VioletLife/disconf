@@ -89,7 +89,7 @@
         </el-submenu>
         <el-submenu index="2">
           <template slot="title">账户中心</template>
-          <el-menu-item index="2-1">开通账户</el-menu-item>
+          <el-menu-item index="2-1"><a :href="htmlPath.appUser">开通账户</a></el-menu-item>
           <el-submenu index="2-2">
             <template slot="title">权限设置</template>
             <el-menu-item index="2-2-1"><a :href="htmlPath.appRole">角色管理</a></el-menu-item>
@@ -504,6 +504,7 @@
                 app: window.disconf.originServerUrl + '#/app/add',
                 passwordV2: window.disconf.originServerUrl + '#/modify/password',
                 appPermission: window.disconf.originServerUrl + '#/auth/permission',
+                appUser: window.disconf.originServerUrl + '#/account/user',
                 appRole: window.disconf.originServerUrl + '#/auth/role',
                 appDepartment: window.disconf.originServerUrl + '#/org/department',
                 appConfigItem: window.disconf.serverUrl + 'newconfig_item.html',
