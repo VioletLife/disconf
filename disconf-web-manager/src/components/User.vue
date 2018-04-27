@@ -119,6 +119,24 @@
         </el-row>
       </template>
     </el-dialog>
+
+    <el-dialog :visible.sync="resetPasswordVisible" title="重置密码">
+      <el-form :model="resetPasswordForm" :rules="resetPasswordFormRules" ref="resetPasswordFormRef">
+        <el-form-item label="原密码：" :label-width="formLabelWidth" prop="oldPassword">
+          <el-input v-model="resetPasswordForm.oldPassword" placeholder="请输入原密码"></el-input>
+        </el-form-item>
+        <el-form-item label="新密码：" :label-width="formLabelWidth" prop="newPassword1">
+          <el-input v-model="resetPasswordForm.newPassword1" placeholder="请输入新密码"></el-input>
+        </el-form-item>
+        <el-form-item label="确认密码：" :label-width="formLabelWidth" prop="newPassword2">
+          <el-input v-model="resetPasswordForm.newPassword2" placeholder="请输入再次输入新密码"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="closeResetPasswordDialog">取 消</el-button>
+        <el-button type="primary" @click="confirmResetPasswordDialog('resetPasswordFormRef')">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -129,9 +147,30 @@
     data () {
       return {
         lookUserRolesVisible: false,
+        formLabelWidth: '100px',
         lookUserRolesData: {
           title: '',
           currentRole: {}
+        },
+        resetPasswordVisible: false,
+        resetPasswordForm: {
+          oldPassword: '',
+          newPassword1: '',
+          newPassword2: ''
+        },
+        resetPasswordFormRules: {
+          oldPassword: [
+            {required: true, message: '请填写原密码', trigger: 'blur'},
+            {min: 6, max: 12, message: '长度在 6 到 12字符', trigger: 'blur'}
+          ],
+          newPassword1: [
+            {required: true, message: '请填写新密码', trigger: 'blur'},
+            {min: 6, max: 12, message: '长度在 6 到 12字符', trigger: 'blur'}
+          ],
+          newPassword2: [
+            {required: true, message: '请再次输入新密码', trigger: 'blur'},
+            {min: 6, max: 12, message: '长度在 6 到 12字符', trigger: 'blur'}
+          ]
         },
         page: {
           allCount: 0,
@@ -142,7 +181,8 @@
         userData: [],
         createTime: null,
         departmentCode: [],
-        departmentData: []
+        departmentData: [],
+        currentSelectedUser: null
       }
     },
     mounted () {
@@ -150,6 +190,58 @@
       this.searchUser()
     },
     methods: {
+      closeResetPasswordDialog () {
+        this.resetPasswordVisible = false
+        this.resetResetPasswordForm()
+      },
+      confirmResetPasswordDialog (formName) {
+        let vmSelf = this
+        if (this.resetPasswordForm.newPassword1 === this.resetPasswordForm.newPassword2) {
+          this.$refs[formName].validate((valid) => {
+            if (valid) {
+              let params = {
+                userId: vmSelf.currentSelectedUser.userId,
+                oldPassword: vmSelf.resetPasswordForm.oldPassword,
+                newPassword: vmSelf.resetPasswordForm.newPassword1
+              }
+              Utils.ajax({
+                type: 'POST',
+                url: 'api/account/password/reset',
+                dataType: 'json',
+                contentType: 'application/json;charset=utf-8',
+                data: JSON.stringify(params),
+                success: function (response) {
+                  if (response && response.message && response.message.status && response.message.status.code && response.message.status.code !== 0) {
+                    vmSelf.$message({
+                      type: 'error',
+                      message: response.message.status.message
+                    })
+                  } else {
+                    vmSelf.$message({
+                      type: 'success',
+                      message: '密码重置成功'
+                    })
+                    vmSelf.resetPasswordVisible = false
+                    Utils.sleep(500).then(() => {
+                      vmSelf.searchUser()
+                    })
+                  }
+                }
+              })
+            }
+          })
+        } else {
+          this.$message({
+            type: 'error',
+            message: '两次密码必须一致'
+          })
+        }
+      },
+      resetResetPasswordForm () {
+        this.resetPasswordForm.oldPassword = ''
+        this.resetPasswordForm.newPassword1 = ''
+        this.resetPasswordForm.newPassword2 = ''
+      },
       loadDepartmentTree () {
         let vmSelf = this
         Utils.ajax({
@@ -183,7 +275,8 @@
         }
       },
       pageChange (pageNumber) {
-
+        this.page.pageNumber = pageNumber
+        this.searchUser()
       },
       lookUser (row) {
         this.$router.push({
@@ -194,15 +287,45 @@
       },
       editUser (row) {
         this.$router.push({
-          path: '/account/user/create',
+          path: '/account/user/edit',
           query: {userId: row.userId}
         })
       },
       resetPassword (row) {
-
+        this.currentSelectedUser = row
+        this.resetPasswordVisible = true
       },
       deleteUser (row) {
-
+        let vmSelf = this
+        const h = this.$createElement
+        this.$msgbox({
+          title: '删除确认',
+          message: h('div', null, ['确定删除账户：', h('span', {style: {color: 'red'}}, [row.userAccount])]),
+          showCancelButton: true,
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          callback: function (action) {
+            if (action === 'confirm') {
+              Utils.ajax({
+                type: 'GET',
+                url: 'api/account/delete',
+                data: {
+                  userId: row.userId
+                },
+                dataType: 'json',
+                success: function (response) {
+                  vmSelf.$message({
+                    type: 'success',
+                    message: '删除成功'
+                  })
+                  Utils.sleep(500).then(() => {
+                    vmSelf.searchUser()
+                  })
+                }
+              })
+            }
+          }
+        })
       },
       searchUser () {
         let vmSelf = this
