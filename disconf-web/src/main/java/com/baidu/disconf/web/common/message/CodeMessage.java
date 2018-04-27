@@ -32,6 +32,7 @@ public enum CodeMessage {
     CODE_114(114, "用户数据错误"),
     CODE_115(115, "账户名称已存在"),
     CODE_116(116, "用户ID无效"),
+    CODE_117(117, "请输入正确的密码"),
     CODE_0(0, "Ok");
     private int code;
     private String message;

@@ -5,6 +5,7 @@ import javax.validation.Valid;
 
 import com.baidu.disconf.web.common.message.ResponseMessage;
 import com.baidu.disconf.web.service.Page;
+import com.baidu.disconf.web.service.user.vo.ResetPasswordVo;
 import com.baidu.disconf.web.service.user.vo.UserResponseVo;
 import com.baidu.disconf.web.service.user.vo.UserVo;
 import org.slf4j.Logger;
@@ -218,5 +219,23 @@ public class UserController extends BaseController {
         Page<UserResponseVo> page = new Page<>(pageNumber, pageSize);
         Page<UserResponseVo> responseVoPage = userMgr.selectByExampleWithRowbounds(page, userAccount, startTime, endTime, departmentCode);
         return buildSuccess(responseVoPage);
+    }
+
+
+    /**
+     * 重置用户密码
+     *
+     * @param passwordVo
+     * @return
+     */
+    @RequestMapping(value = "/password/reset", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonObjectBase resetPassword(@RequestBody ResetPasswordVo passwordVo) {
+        AtomicReference<ResponseMessage> reference = new AtomicReference<>(null);
+        userMgr.resetUserPassword(passwordVo, reference::set);
+        if (reference.get() != null) {
+            return buildResponseMessage(reference.get());
+        }
+        return buildSuccess(0);
     }
 }

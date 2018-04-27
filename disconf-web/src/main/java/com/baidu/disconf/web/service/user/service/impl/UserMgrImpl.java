@@ -10,9 +10,7 @@ import com.baidu.disconf.web.service.auth.mybatis.*;
 import com.baidu.disconf.web.service.auth.vo.AuthRolePermissionVo;
 import com.baidu.disconf.web.service.org.mybatis.OrgDepartmentMapper;
 import com.baidu.disconf.web.service.user.mybatis.*;
-import com.baidu.disconf.web.service.user.vo.AuthRoleUserVo;
-import com.baidu.disconf.web.service.user.vo.UserResponseVo;
-import com.baidu.disconf.web.service.user.vo.UserVo;
+import com.baidu.disconf.web.service.user.vo.*;
 import com.github.pagehelper.PageHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.mybatis.dynamic.sql.SortSpecification;
@@ -37,7 +35,6 @@ import com.baidu.disconf.web.service.user.dao.UserDao;
 import com.baidu.disconf.web.service.user.dto.Visitor;
 import com.baidu.disconf.web.service.user.service.UserInnerMgr;
 import com.baidu.disconf.web.service.user.service.UserMgr;
-import com.baidu.disconf.web.service.user.vo.VisitorVo;
 import com.baidu.ub.common.commons.ThreadContext;
 
 /**
@@ -231,7 +228,7 @@ public class UserMgrImpl implements UserMgr {
         if (userVo.getUserId() != null && userVo.getUserId() > 0) {
             for (AuthUserRole userRole : userVo.getRoles()) {
                 if (userRole.getRoleId() != null && userRole.getRoleId() > 0) {
-                    userRole.setUserId(userRole.getUserId());
+                    userRole.setUserId(userVo.getUserId());
                     userRole.setCreateTime(new Date());
                     userRole.setUpdateTime(new Date());
                     userRole.setCreator(getCurrentVisitor().getLoginUserId());
@@ -345,5 +342,33 @@ public class UserMgrImpl implements UserMgr {
         }
         rowBounds.setResult(Optional.of(lastUsers));
         return rowBounds;
+    }
+
+
+    @Override
+    public void resetUserPassword(ResetPasswordVo passwordVo, Consumer<ResponseMessage> consumer) {
+        if (passwordVo != null
+                && passwordVo.getUserId() != null
+                && passwordVo.getUserId() > 0
+                && StringUtils.isNotEmpty(passwordVo.getOldPassword())
+                && StringUtils.isNotEmpty(passwordVo.getNewPassword())
+                ) {
+            Long countRecord = userMapper.countByExample()
+                    .where(UserDynamicSqlSupport.userId, IsEqualTo.of(passwordVo::getUserId))
+                    .and(UserDynamicSqlSupport.password, IsEqualTo.of(() -> SignUtils.createPassword(passwordVo.getOldPassword())))
+                    .build()
+                    .execute();
+            if (countRecord != null && countRecord > 0) {
+                com.baidu.disconf.web.service.user.mybatis.User updateUser = userMapper.selectByPrimaryKey(passwordVo.getUserId());
+                updateUser.setPassword(SignUtils.createPassword(passwordVo.getNewPassword()));
+                updateUser.setUpdateTime(new Date());
+                updateUser.setUpdator(getCurrentVisitor().getLoginUserId());
+                userMapper.updateByPrimaryKeySelective(updateUser);
+            } else {
+                consumer.accept(CodeMessage.CODE_117.toResponseMessage());
+            }
+        } else {
+            consumer.accept(CodeMessage.CODE_117.toResponseMessage());
+        }
     }
 }

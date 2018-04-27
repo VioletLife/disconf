@@ -39,7 +39,7 @@ public interface UserMapper extends MybatisMapper {
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @InsertProvider(type = SqlProviderAdapter.class, method = "insert")
-    @Options(useGeneratedKeys = true, keyColumn = "record.userId")
+    @Options(useGeneratedKeys = true, keyProperty = "record.userId")
     int insert(InsertStatementProvider<User> insertStatement);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")

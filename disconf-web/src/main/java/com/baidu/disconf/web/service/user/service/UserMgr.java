@@ -10,6 +10,7 @@ import com.baidu.disconf.web.service.BaseService;
 import com.baidu.disconf.web.service.Page;
 import com.baidu.disconf.web.service.user.bo.User;
 import com.baidu.disconf.web.service.user.dto.Visitor;
+import com.baidu.disconf.web.service.user.vo.ResetPasswordVo;
 import com.baidu.disconf.web.service.user.vo.UserResponseVo;
 import com.baidu.disconf.web.service.user.vo.UserVo;
 import com.baidu.disconf.web.service.user.vo.VisitorVo;
@@ -101,6 +102,14 @@ public interface UserMgr extends BaseService {
      * @return
      */
     Page<UserResponseVo> selectByExampleWithRowbounds(Page<UserResponseVo> rowBounds, String userAccount, Date startTime, Date endTIme, String departmentCode);
+
+
+    /**
+     * 重置用户密码
+     * @param passwordVo 密码数据对象
+     * @param consumer 错误信息
+     */
+    void resetUserPassword(ResetPasswordVo passwordVo,Consumer<ResponseMessage> consumer);
 
 
 }
