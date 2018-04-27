@@ -287,8 +287,8 @@
       },
       editUser (row) {
         this.$router.push({
-          path: '/account/user/edit',
-          query: {userId: row.userId}
+          name: 'EditUser',
+          params: row
         })
       },
       resetPassword (row) {

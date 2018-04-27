@@ -12,7 +12,6 @@ import UserRole from '@/components/UserRole'
 import Department from '@/components/Department'
 import User from '@/components/User'
 import AddUser from '@/components/AddUser'
-import EditUser from '@/components/EditUser'
 
 Vue.use(Router)
 
@@ -81,7 +80,7 @@ export default new Router({
     {
       path: '/account/user/edit',
       name: 'EditUser',
-      component: EditUser
+      component: AddUser
     }
   ]
 })

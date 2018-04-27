@@ -1,14 +1,14 @@
 <template>
-  <div id="editUser" class="page-container">
+  <div id="lookUser" class="page-container">
 
   </div>
 </template>
 <script>
   export default {
-    name: 'editUser'
+    name: 'LookUser'
   }
 </script>
 <style lang="stylus">
-  #editUser
+  #lookUser
     width 100%
 </style>

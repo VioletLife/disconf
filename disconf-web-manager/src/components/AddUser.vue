@@ -82,7 +82,7 @@
 
   export default {
     name: 'AddUser',
-    data () {
+    data() {
       return {
         rolesList: [],
         rolesData: [],
@@ -123,28 +123,88 @@
           allCount: 0,
           pageNumber: 1,
           pageSize: 50
-        }
+        },
+        isEditMode: false,
+        currentEditUser: null
       }
     },
-    mounted () {
+    mounted() {
       this.loadDepartmentTree()
       this.searchRole()
+      Utils.sleep(400).then(() => {
+        if (this.$route.name === 'EditUser') {
+          this.isEditMode = true
+          this.currentEditUser = this.$route.params
+          let {
+            userAccount,
+            password,
+            name,
+            mobilePhone,
+            email,
+            qq,
+            weixin,
+            comments
+          } = this.currentEditUser
+          this.addUserForm.userAccount = userAccount
+          this.addUserForm.password = password
+          this.addUserForm.password1 = '******'
+          this.addUserForm.password2 = '******'
+          this.addUserForm.name = name
+          this.addUserForm.mobilePhone = mobilePhone
+          this.addUserForm.email = email
+          this.addUserForm.qq = qq
+          this.addUserForm.weixin = weixin
+          this.addUserForm.comments = comments
+          /**
+           * 构造角色选中信息
+           */
+          this.$route.params.roles.forEach((value) => {
+            this.rolesList.push(value.roleId)
+          })
+          /**
+           * 构造部门选中信息
+           */
+          let departmentData = this.departmentCache[this.$route.params.departmentCode]
+          let departmentNodePath = []
+          let lookParentNode = (key, node) => {
+            if (key === 'departmentCode') {
+              departmentNodePath.push(node[key])
+            }
+            if (key === 'parentNode' && node[key]) {
+              for (let nextKey of Object.keys(node[key])) {
+                lookParentNode(nextKey, node[key])
+              }
+            }
+          }
+          if (departmentData) {
+            for (let key of Object.keys(departmentData)) {
+              lookParentNode(key, departmentData)
+            }
+            departmentNodePath = departmentNodePath.reverse()
+            this.departmentCode = departmentNodePath
+            console.info(departmentNodePath)
+          }
+        }
+      })
     },
     methods: {
-      removeInvalidChildrens (node) {
+      removeInvalidChildrens(node, parent) {
         this.departmentCache[node.departmentCode] = node
         if (node && node.children) {
           if (node.children && node.children.length === 0) {
             delete node.children
           } else {
-            node.children.forEach((childrenNode) => this.removeInvalidChildrens(childrenNode))
+            node.children.forEach((childrenNode) => {
+              childrenNode.parentNode = node
+              this.removeInvalidChildrens(childrenNode, node)
+            })
           }
         }
       },
-      handleDepartmentCodeChange (value) {
-        console.info(value)
+      handleDepartmentCodeChange(value) {
+
       },
-      searchRole () {
+      searchRole() {
         let vmSelf = this
         let params = {
           roleName: '',
@@ -189,11 +249,49 @@
           }
         })
       },
-      resetAddUserForm () {
+      resetAddUserForm() {
+        let vmSelf = this
+        const h = this.$createElement
+        this.$msgbox({
+          title: '重置确认',
+          message: h('div', null, ['确定重置所有数据?']),
+          showCancelButton: true,
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          callback: function (action) {
+            if (action === 'confirm') {
+              vmSelf.addUserForm.userAccount = ''
+              vmSelf.addUserForm.password = ''
+              vmSelf.addUserForm.password1 = ''
+              vmSelf.addUserForm.password2 = ''
+              vmSelf.addUserForm.mobilePhone = ''
+              vmSelf.addUserForm.email = ''
+              vmSelf.addUserForm.qq = ''
+              vmSelf.addUserForm.weixin = ''
+              vmSelf.addUserForm.comments = ''
+              vmSelf.departmentCode = []
+              vmSelf.rolesList = []
+            }
+          }
+        })
       },
-      cancelAddUserForm () {
+      cancelAddUserForm() {
+        let vmSelf = this
+        const h = this.$createElement
+        this.$msgbox({
+          title: '取消确认',
+          message: h('div', null, ['确定取消?']),
+          showCancelButton: true,
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          callback: function (action) {
+            if (action === 'confirm') {
+              vmSelf.$router.push({path: '/account/user'})
+            }
+          }
+        })
       },
-      saveAddUserForm (formName) {
+      saveAddUserForm(formName) {
         let vmSelf = this
         this.$refs[formName].validate((valid) => {
           if (valid) {
@@ -208,7 +306,7 @@
                 userAccount: vmSelf.addUserForm.userAccount,
                 mobilePhone: vmSelf.addUserForm.mobilePhone,
                 email: vmSelf.addUserForm.email,
-                token:'',
+                token: '',
                 qq: vmSelf.addUserForm.qq,
                 weixin: vmSelf.addUserForm.weixin,
                 departmentId: vmSelf.departmentCache[vmSelf.departmentCode[vmSelf.departmentCode.length - 1]].id,
@@ -216,29 +314,57 @@
                 comments: vmSelf.addUserForm.comments,
                 roles: rolesData
               }
-              Utils.ajax({
-                type: 'POST',
-                url: 'api/account/create',
-                dataType: 'json',
-                data: JSON.stringify(userParams),
-                contentType: 'application/json;charset=utf-8',
-                success: function (response) {
-                  if (response && response.message && response.message.status && response.message.status.code && response.message.status.code !== 0) {
-                    vmSelf.$message({
-                      type: 'error',
-                      message: response.message.status.message
-                    })
-                  } else {
-                    vmSelf.$message({
-                      type: 'success',
-                      message: '角色添加成功'
-                    })
-                    Utils.sleep(500).then(() => {
-                      vmSelf.$router.push({path: '/account/user'})
-                    })
+
+              if (vmSelf.isEditMode) {
+                userParams.userId = vmSelf.currentEditUser.userId
+                Utils.ajax({
+                  type: 'POST',
+                  url: 'api/account/update',
+                  dataType: 'json',
+                  data: JSON.stringify(userParams),
+                  contentType: 'application/json;charset=utf-8',
+                  success: function (response) {
+                    if (response && response.message && response.message.status && response.message.status.code && response.message.status.code !== 0) {
+                      vmSelf.$message({
+                        type: 'error',
+                        message: response.message.status.message
+                      })
+                    } else {
+                      vmSelf.$message({
+                        type: 'success',
+                        message: '账户已更新'
+                      })
+                      Utils.sleep(500).then(() => {
+                        vmSelf.$router.push({path: '/account/user'})
+                      })
+                    }
                   }
-                }
-              })
+                })
+              } else {
+                Utils.ajax({
+                  type: 'POST',
+                  url: 'api/account/create',
+                  dataType: 'json',
+                  data: JSON.stringify(userParams),
+                  contentType: 'application/json;charset=utf-8',
+                  success: function (response) {
+                    if (response && response.message && response.message.status && response.message.status.code && response.message.status.code !== 0) {
+                      vmSelf.$message({
+                        type: 'error',
+                        message: response.message.status.message
+                      })
+                    } else {
+                      vmSelf.$message({
+                        type: 'success',
+                        message: '账户添加成功'
+                      })
+                      Utils.sleep(500).then(() => {
+                        vmSelf.$router.push({path: '/account/user'})
+                      })
+                    }
+                  }
+                })
+              }
             } else {
               this.$message({
                 type: 'error',
@@ -248,12 +374,15 @@
           }
         })
       },
-      loadDepartmentTree () {
+      loadDepartmentTree() {
         let vmSelf = this
         Utils.ajax({
           url: 'api/org/department/list',
           success: function (response) {
-            response.result.forEach((childrenNode) => vmSelf.removeInvalidChildrens(childrenNode))
+            response.result.forEach((childrenNode) => {
+              childrenNode.parentNode = null
+              vmSelf.removeInvalidChildrens(childrenNode, null)
+            })
             vmSelf.departmentData = response.result
           }
         })
