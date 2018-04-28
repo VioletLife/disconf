@@ -283,65 +283,70 @@ public class UserMgrImpl implements UserMgr {
             rowBounds.setTotal(page.getTotal());
             List<com.baidu.disconf.web.service.user.mybatis.User> result = (List<com.baidu.disconf.web.service.user.mybatis.User>) page.getResult();
             for (com.baidu.disconf.web.service.user.mybatis.User user : result) {
-                /**
-                 * 获取每一个用户的角色和权限数据
-                 */
-                UserResponseVo userResponseVo = new UserResponseVo();
-                BeanUtils.copyProperties(user, userResponseVo);
-                userResponseVo.setOrgDepartment(orgDepartmentMapper.selectByPrimaryKey(userResponseVo.getDepartmentId()));
-
-                /**
-                 * 获取角色的角色列表
-                 */
-                List<AuthUserRole> authUserRoles = authUserRoleMapper.selectByExample()
-                        .where(AuthUserRoleDynamicSqlSupport.userId, IsEqualTo.of(userResponseVo::getUserId))
-                        .build()
-                        .execute();
-                List<AuthRoleUserVo> authRoleUserVos = new ArrayList<>();
-                if (authUserRoles != null && authUserRoles.size() > 0) {
-                    for (AuthUserRole authUserRole : authUserRoles) {
-                        /**
-                         * 获取每一个角色所包含的权限数据
-                         */
-                        AuthRoleUserVo authRoleUserVo = new AuthRoleUserVo();
-                        BeanUtils.copyProperties(authUserRole, authRoleUserVo);
-                        if (authUserRole.getRoleId() > 0) {
-                            AuthRolePermissionVo authRolePermissionVo = new AuthRolePermissionVo();
-                            AuthRole authRole = authRoleMapper.selectByPrimaryKey(authRoleUserVo.getRoleId());
-                            /**
-                             * 保存角色信息
-                             */
-                            authRolePermissionVo.setRole(authRole);
-
-                            /**
-                             * 查询角色权限关联信息
-                             */
-                            List<AuthRolePermission> authRolePermissions = authRolePermissionMapper.selectByExample()
-                                    .where(AuthRolePermissionDynamicSqlSupport.roleId, IsEqualTo.of(authRoleUserVo::getRoleId))
-                                    .build()
-                                    .execute();
-                            List<AuthPermission> authPermissionList = new ArrayList<>();
-                            if (authRolePermissions != null && authRolePermissions.size() > 0) {
-                                for (AuthRolePermission authRolePermission : authRolePermissions) {
-                                    /**
-                                     * 查询权限信息
-                                     */
-                                    AuthPermission permission = authPermissionMapper.selectByPrimaryKey(authRolePermission.getPermissionId());
-                                    authPermissionList.add(permission);
-                                }
-                            }
-                            authRolePermissionVo.setPermissions(authPermissionList);
-                            authRoleUserVo.setRolePermission(authRolePermissionVo);
-                        }
-                        authRoleUserVos.add(authRoleUserVo);
-                    }
-                }
-                userResponseVo.setRoles(authRoleUserVos);
+                UserResponseVo userResponseVo = getUserResponseVo(user);
                 lastUsers.add(userResponseVo);
             }
         }
         rowBounds.setResult(Optional.of(lastUsers));
         return rowBounds;
+    }
+
+    private UserResponseVo getUserResponseVo(com.baidu.disconf.web.service.user.mybatis.User user) {
+        /**
+         * 获取每一个用户的角色和权限数据
+         */
+        UserResponseVo userResponseVo = new UserResponseVo();
+        BeanUtils.copyProperties(user, userResponseVo);
+        userResponseVo.setOrgDepartment(orgDepartmentMapper.selectByPrimaryKey(userResponseVo.getDepartmentId()));
+
+        /**
+         * 获取角色的角色列表
+         */
+        List<AuthUserRole> authUserRoles = authUserRoleMapper.selectByExample()
+                .where(AuthUserRoleDynamicSqlSupport.userId, IsEqualTo.of(userResponseVo::getUserId))
+                .build()
+                .execute();
+        List<AuthRoleUserVo> authRoleUserVos = new ArrayList<>();
+        if (authUserRoles != null && authUserRoles.size() > 0) {
+            for (AuthUserRole authUserRole : authUserRoles) {
+                /**
+                 * 获取每一个角色所包含的权限数据
+                 */
+                AuthRoleUserVo authRoleUserVo = new AuthRoleUserVo();
+                BeanUtils.copyProperties(authUserRole, authRoleUserVo);
+                if (authUserRole.getRoleId() > 0) {
+                    AuthRolePermissionVo authRolePermissionVo = new AuthRolePermissionVo();
+                    AuthRole authRole = authRoleMapper.selectByPrimaryKey(authRoleUserVo.getRoleId());
+                    /**
+                     * 保存角色信息
+                     */
+                    authRolePermissionVo.setRole(authRole);
+
+                    /**
+                     * 查询角色权限关联信息
+                     */
+                    List<AuthRolePermission> authRolePermissions = authRolePermissionMapper.selectByExample()
+                            .where(AuthRolePermissionDynamicSqlSupport.roleId, IsEqualTo.of(authRoleUserVo::getRoleId))
+                            .build()
+                            .execute();
+                    List<AuthPermission> authPermissionList = new ArrayList<>();
+                    if (authRolePermissions != null && authRolePermissions.size() > 0) {
+                        for (AuthRolePermission authRolePermission : authRolePermissions) {
+                            /**
+                             * 查询权限信息
+                             */
+                            AuthPermission permission = authPermissionMapper.selectByPrimaryKey(authRolePermission.getPermissionId());
+                            authPermissionList.add(permission);
+                        }
+                    }
+                    authRolePermissionVo.setPermissions(authPermissionList);
+                    authRoleUserVo.setRolePermission(authRolePermissionVo);
+                }
+                authRoleUserVos.add(authRoleUserVo);
+            }
+        }
+        userResponseVo.setRoles(authRoleUserVos);
+        return userResponseVo;
     }
 
 
@@ -370,5 +375,14 @@ public class UserMgrImpl implements UserMgr {
         } else {
             consumer.accept(CodeMessage.CODE_117.toResponseMessage());
         }
+    }
+
+    @Override
+    public UserResponseVo selectByPrimaryKey(Long userId) {
+        if (userId != null && userId > 0) {
+            com.baidu.disconf.web.service.user.mybatis.User user = userMapper.selectByPrimaryKey(userId);
+            return getUserResponseVo(user);
+        }
+        return null;
     }
 }

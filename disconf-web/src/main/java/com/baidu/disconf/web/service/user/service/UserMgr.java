@@ -93,11 +93,12 @@ public interface UserMgr extends BaseService {
 
 
     /**
-     *  查询用户列表
-     * @param rowBounds 分页数据
-     * @param userAccount 用户名称
-     * @param startTime 开始时间
-     * @param endTIme 结束时间
+     * 查询用户列表
+     *
+     * @param rowBounds      分页数据
+     * @param userAccount    用户名称
+     * @param startTime      开始时间
+     * @param endTIme        结束时间
      * @param departmentCode 部门编码
      * @return
      */
@@ -106,10 +107,20 @@ public interface UserMgr extends BaseService {
 
     /**
      * 重置用户密码
+     *
      * @param passwordVo 密码数据对象
-     * @param consumer 错误信息
+     * @param consumer   错误信息
      */
-    void resetUserPassword(ResetPasswordVo passwordVo,Consumer<ResponseMessage> consumer);
+    void resetUserPassword(ResetPasswordVo passwordVo, Consumer<ResponseMessage> consumer);
+
+
+    /**
+     * 获取用户信息详情
+     *
+     * @param userId 用户ID
+     * @return 用户详情
+     */
+    UserResponseVo selectByPrimaryKey(Long userId);
 
 
 }

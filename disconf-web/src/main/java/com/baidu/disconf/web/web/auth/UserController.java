@@ -238,4 +238,16 @@ public class UserController extends BaseController {
         }
         return buildSuccess(0);
     }
+
+
+    /**
+     * 查询用户信息
+     * @param userId 用户ID
+     * @return 用户信息
+     */
+    @RequestMapping(value = "/user/detail")
+    @ResponseBody
+    public JsonObjectBase userInformationDetail(Long userId) {
+        return buildSuccess(userMgr.selectByPrimaryKey(userId));
+    }
 }
