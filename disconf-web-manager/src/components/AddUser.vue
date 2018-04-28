@@ -82,7 +82,7 @@
 
   export default {
     name: 'AddUser',
-    data() {
+    data () {
       return {
         rolesList: [],
         rolesData: [],
@@ -128,67 +128,76 @@
         currentEditUser: null
       }
     },
-    mounted() {
+    mounted () {
       this.loadDepartmentTree()
       this.searchRole()
       Utils.sleep(400).then(() => {
         if (this.$route.name === 'EditUser') {
           this.isEditMode = true
-          this.currentEditUser = this.$route.params
-          let {
-            userAccount,
-            password,
-            name,
-            mobilePhone,
-            email,
-            qq,
-            weixin,
-            comments
-          } = this.currentEditUser
-          this.addUserForm.userAccount = userAccount
-          this.addUserForm.password = password
-          this.addUserForm.password1 = '******'
-          this.addUserForm.password2 = '******'
-          this.addUserForm.name = name
-          this.addUserForm.mobilePhone = mobilePhone
-          this.addUserForm.email = email
-          this.addUserForm.qq = qq
-          this.addUserForm.weixin = weixin
-          this.addUserForm.comments = comments
-          /**
-           * 构造角色选中信息
-           */
-          this.$route.params.roles.forEach((value) => {
-            this.rolesList.push(value.roleId)
-          })
-          /**
-           * 构造部门选中信息
-           */
-          let departmentData = this.departmentCache[this.$route.params.departmentCode]
-          let departmentNodePath = []
-          let lookParentNode = (key, node) => {
-            if (key === 'departmentCode') {
-              departmentNodePath.push(node[key])
-            }
-            if (key === 'parentNode' && node[key]) {
-              for (let nextKey of Object.keys(node[key])) {
-                lookParentNode(nextKey, node[key])
+          Utils.ajax({
+            url: 'api/account/user/detail',
+            data: {
+              userId: this.$route.query.userId
+            },
+            dataType: 'json',
+            success: (response) => {
+              this.currentEditUser = response.result
+              let {
+                userAccount,
+                password,
+                name,
+                mobilePhone,
+                email,
+                qq,
+                weixin,
+                comments
+              } = this.currentEditUser
+              this.addUserForm.userAccount = userAccount
+              this.addUserForm.password = password
+              this.addUserForm.password1 = '******'
+              this.addUserForm.password2 = '******'
+              this.addUserForm.name = name
+              this.addUserForm.mobilePhone = mobilePhone
+              this.addUserForm.email = email
+              this.addUserForm.qq = qq
+              this.addUserForm.weixin = weixin
+              this.addUserForm.comments = comments
+              /**
+               * 构造角色选中信息
+               */
+              this.currentEditUser.roles.forEach((value) => {
+                this.rolesList.push(value.roleId)
+              })
+              /**
+               * 构造部门选中信息
+               */
+              let departmentData = this.departmentCache[this.currentEditUser.departmentCode]
+              let departmentNodePath = []
+              let lookParentNode = (key, node) => {
+                if (key === 'departmentCode') {
+                  departmentNodePath.push(node[key])
+                }
+                if (key === 'parentNode' && node[key]) {
+                  for (let nextKey of Object.keys(node[key])) {
+                    lookParentNode(nextKey, node[key])
+                  }
+                }
+              }
+              if (departmentData) {
+                for (let key of Object.keys(departmentData)) {
+                  lookParentNode(key, departmentData)
+                }
+                departmentNodePath = departmentNodePath.reverse()
+                this.departmentCode = departmentNodePath
+                console.info(departmentNodePath)
               }
             }
-          }
-          if (departmentData) {
-            for (let key of Object.keys(departmentData)) {
-              lookParentNode(key, departmentData)
-            }
-            departmentNodePath = departmentNodePath.reverse()
-            this.departmentCode = departmentNodePath
-            console.info(departmentNodePath)
-          }
+          })
         }
       })
     },
     methods: {
-      removeInvalidChildrens(node, parent) {
+      removeInvalidChildrens (node, parent) {
         this.departmentCache[node.departmentCode] = node
         if (node && node.children) {
           if (node.children && node.children.length === 0) {
@@ -201,10 +210,10 @@
           }
         }
       },
-      handleDepartmentCodeChange(value) {
+      handleDepartmentCodeChange (value) {
 
       },
-      searchRole() {
+      searchRole () {
         let vmSelf = this
         let params = {
           roleName: '',
@@ -249,7 +258,7 @@
           }
         })
       },
-      resetAddUserForm() {
+      resetAddUserForm () {
         let vmSelf = this
         const h = this.$createElement
         this.$msgbox({
@@ -275,7 +284,7 @@
           }
         })
       },
-      cancelAddUserForm() {
+      cancelAddUserForm () {
         let vmSelf = this
         const h = this.$createElement
         this.$msgbox({
@@ -291,7 +300,7 @@
           }
         })
       },
-      saveAddUserForm(formName) {
+      saveAddUserForm (formName) {
         let vmSelf = this
         this.$refs[formName].validate((valid) => {
           if (valid) {
@@ -374,7 +383,7 @@
           }
         })
       },
-      loadDepartmentTree() {
+      loadDepartmentTree () {
         let vmSelf = this
         Utils.ajax({
           url: 'api/org/department/list',

@@ -280,15 +280,14 @@
       },
       lookUser (row) {
         this.$router.push({
-          path: '/account/user/create',
+          path: '/account/user/look',
           query: {userId: row.userId}
-        }
-        )
+        })
       },
       editUser (row) {
         this.$router.push({
-          name: 'EditUser',
-          params: row
+          path: '/account/user/edit',
+          query: {userId: row.userId}
         })
       },
       resetPassword (row) {
