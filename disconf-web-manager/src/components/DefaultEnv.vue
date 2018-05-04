@@ -72,7 +72,7 @@
 
   export default {
     name: 'DefaultEnv',
-    data() {
+    data () {
       return {
         envName: '',
         isEditMode: false,
@@ -98,11 +98,11 @@
         }
       }
     },
-    mounted() {
+    mounted () {
       this.searchDefaultEnv()
     },
     methods: {
-      searchDefaultEnv() {
+      searchDefaultEnv () {
         let vmSelf = this
         Utils.ajax({
           url: 'api/env/page/list',
@@ -117,10 +117,13 @@
           }
         })
       },
-      addNewDefaultEnv() {
+      addNewDefaultEnv () {
         this.dialogAppEnvDefaultVisible = true
+        this.title = '添加应用环境信息'
+        this.isEditMode = false
+        this.resetEnvForm()
       },
-      editDefaultEnv(row) {
+      editDefaultEnv (row) {
         this.isEditMode = true
         this.currentSelectedEnv = row
         this.dialogAppEnvDefaultVisible = true
@@ -128,7 +131,7 @@
         this.envDefaultForm.envName = row.envName
         this.envDefaultForm.envComments = row.envComments
       },
-      deleteDefaultEnv(row) {
+      deleteDefaultEnv (row) {
         let vmSelf = this
         const h = this.$createElement
         this.$msgbox({
@@ -156,15 +159,15 @@
           }
         })
       },
-      pageChange(pageNumber) {
+      pageChange (pageNumber) {
         this.page.pageNumber = pageNumber
         this.searchDefaultEnv()
       },
-      resetEnvForm() {
+      resetEnvForm () {
         this.envDefaultForm.envName = ''
         this.envDefaultForm.envComments = ''
       },
-      confirmAppEnvDefaultDialog(formName) {
+      confirmAppEnvDefaultDialog (formName) {
         let vmSelf = this
         this.$refs[formName].validate((valid) => {
           if (valid) {
