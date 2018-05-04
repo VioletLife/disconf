@@ -13,6 +13,7 @@ import Department from '@/components/Department'
 import User from '@/components/User'
 import AddUser from '@/components/AddUser'
 import LookUser from '@/components/LookUser'
+import DefaultEnv from '@/components/DefaultEnv'
 
 Vue.use(Router)
 
@@ -87,6 +88,11 @@ export default new Router({
       path: '/account/user/look',
       name: 'LookUser',
       component: LookUser
+    },
+    {
+      path: '/basic/default/env',
+      name: 'DefaultEnv',
+      component: DefaultEnv
     }
   ]
 })

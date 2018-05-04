@@ -38,7 +38,7 @@
           </el-submenu>
           <el-submenu index="3">
             <template slot="title">基础设置</template>
-            <el-menu-item index="3-1">基础环境</el-menu-item>
+            <el-menu-item index="3-1"><router-link to="/basic/default/env">基础环境</router-link></el-menu-item>
           </el-submenu>
           <el-submenu index="4">
             <template slot="title">个人中心</template>
