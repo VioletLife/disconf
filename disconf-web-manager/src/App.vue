@@ -38,14 +38,16 @@
           </el-submenu>
           <el-submenu index="3">
             <template slot="title">基础设置</template>
-            <el-menu-item index="3-1"><router-link to="/basic/default/env">基础环境</router-link></el-menu-item>
+            <el-menu-item index="3-1">
+              <router-link to="/basic/default/env">基础环境</router-link>
+            </el-menu-item>
           </el-submenu>
           <el-submenu index="4">
             <template slot="title">个人中心</template>
             <el-menu-item index="4-1">
               <router-link to="/modify/password">修改密码</router-link>
             </el-menu-item>
-            <el-menu-item index="4-2"><a href="#" id="signout">退出</a></el-menu-item>
+            <el-menu-item index="4-2"><span @click="signOut">退出</span></el-menu-item>
           </el-submenu>
         </el-menu>
       </el-header>
@@ -60,6 +62,7 @@
 </template>
 <script>
   import DisconfFooter from './components/DisconfFooter.vue'
+  import Utils from './js/utils'
 
   export default {
     name: 'app',
@@ -92,8 +95,17 @@
       this.htmlPath = this.$store.state.htmlPath
     },
     methods: {
-      handleSelect(key, keyPath) {
+      handleSelect (key, keyPath) {
         console.log(key, keyPath)
+      },
+      signOut () {
+        let vmSelf = this
+        Utils.ajax({
+          url: 'api/account/signout',
+          success: function (response) {
+            window.location.href = vmSelf.$store.state.htmlPath.appLogin
+          }
+        })
       }
     }
   }
