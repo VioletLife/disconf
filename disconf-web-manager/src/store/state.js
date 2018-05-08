@@ -10,5 +10,6 @@ export default {
     appPageList: GlobalEnv.env().serverUrl + 'static/html/main.html',
     fileDownload: GlobalEnv.env().serverUrl + 'api/web/config/download/'
   },
-  currentPermissions: {}
+  currentPermissions: {},
+  applicationLayout: false
 }

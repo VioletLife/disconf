@@ -14,15 +14,18 @@ import User from '@/components/User'
 import AddUser from '@/components/AddUser'
 import LookUser from '@/components/LookUser'
 import DefaultEnv from '@/components/DefaultEnv'
+import Login from '@/components/Login'
+import Utils from '../js/utils'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   routes: [
     {
       path: '/',
-      name: 'Index',
-      component: Index
+      redirect: {
+        name: 'Login'
+      }
     },
     {
       path: '/conf/file/add',
@@ -93,6 +96,51 @@ export default new Router({
       path: '/basic/default/env',
       name: 'DefaultEnv',
       component: DefaultEnv
+    },
+    {
+      path: '/login',
+      name: 'Login',
+      component: Login
     }
   ]
 })
+
+const validateClientState = (to, from, next) => {
+  console.info(router)
+  if (window) {
+    /**
+     * 表示浏览器端
+     */
+    let clientInfoKey = '__CLIENT__INFO__'
+    let dispatchMethod = 'setUserPermissions'
+    let clientInfoUserId = '__CLIENT__INFO__ID__'
+    let userId = window.localStorage.getItem(clientInfoUserId)
+    if (userId) {
+      userId = window.parseInt(userId)
+      let userInformation = window.localStorage.getItem(clientInfoKey)
+      if (userInformation) {
+        userInformation = JSON.parse(userInformation)
+        router.app.$store.dispatch(dispatchMethod, userInformation)
+      } else {
+        Utils.ajax({
+          url: 'api/account/user/detail',
+          data: {
+            userId: userId
+          },
+          success: function (response) {
+            if (response && response.result) {
+              router.app.$store.dispatch(dispatchMethod, response.result)
+              window.localStorage.setItem(clientInfoKey, JSON.stringify(response.result))
+            }
+          }
+        })
+      }
+    }
+  }
+}
+router.beforeEach((to, from, next) => {
+  validateClientState(to, from, next)
+  next()
+})
+
+export default router
