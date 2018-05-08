@@ -31,4 +31,8 @@ public class UserDaoImpl extends AbstractDao<Long, User> implements UserDao {
         return findOne(match(Columns.NAME, name));
     }
 
+    @Override
+    public User getUserByUserAccount(String userAccount) {
+        return findOne(match("user_account", userAccount));
+    }
 }

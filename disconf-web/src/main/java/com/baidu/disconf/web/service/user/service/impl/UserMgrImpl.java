@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -72,6 +73,10 @@ public class UserMgrImpl implements UserMgr {
 
     @Autowired
     private OrgDepartmentMapper orgDepartmentMapper;
+
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Override
     public Visitor getVisitor(Long userId) {
@@ -383,6 +388,22 @@ public class UserMgrImpl implements UserMgr {
             com.baidu.disconf.web.service.user.mybatis.User user = userMapper.selectByPrimaryKey(userId);
             return getUserResponseVo(user);
         }
+        return null;
+    }
+
+    @Override
+    public UserResponseVo login(String name, String password, boolean isRemember, Consumer<ResponseMessage> consumer) {
+        if (StringUtils.isNotEmpty(name) && StringUtils.isNotEmpty(password)) {
+            List<com.baidu.disconf.web.service.user.mybatis.User> users = userMapper.selectByExample()
+                    .where(UserDynamicSqlSupport.userAccount, IsEqualTo.of(() -> name))
+                    .and(UserDynamicSqlSupport.password, IsEqualTo.of(() -> SignUtils.createPassword(password)))
+                    .build()
+                    .execute();
+            if (users != null && users.size() > 0) {
+                return getUserResponseVo(users.get(0));
+            }
+        }
+        consumer.accept(CodeMessage.CODE_121.toResponseMessage());
         return null;
     }
 }

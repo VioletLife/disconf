@@ -13,4 +13,12 @@ public interface UserDao extends BaseDao<Long, User> {
 
     User getUserByName(String name);
 
+
+    /**
+     * 查询用户信息
+     * @param userAccount 用户名称
+     * @return 用户信息
+     */
+    User getUserByUserAccount(String userAccount);
+
 }

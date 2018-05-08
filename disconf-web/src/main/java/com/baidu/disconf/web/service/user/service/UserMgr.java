@@ -123,4 +123,17 @@ public interface UserMgr extends BaseService {
     UserResponseVo selectByPrimaryKey(Long userId);
 
 
+    /**
+     * 2018年5月7日18:07:47
+     *  用户登录
+     *
+     * @param name 用户名
+     * @param password 用户密码
+     * @param isRemember 是否记住登录
+     * @param consumer 错误信息
+     * @return 用户信息
+     */
+    UserResponseVo login(String name,String password,boolean isRemember,Consumer<ResponseMessage> consumer);
+
+
 }

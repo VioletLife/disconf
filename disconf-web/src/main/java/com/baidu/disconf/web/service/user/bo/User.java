@@ -39,6 +39,31 @@ public class User extends BaseObject<Long> {
     @Column(value = Columns.ROLE_ID)
     private int roleId;
 
+
+    @Column(value = "user_account")
+    private String userAccount;
+
+    @Column(value = "mobile_phone")
+    private String mobilePhone;
+
+    @Column(value = "email")
+    private String email;
+
+    @Column(value = "qq")
+    private String qq;
+
+    @Column(value = "weixin")
+    private String weixin;
+
+    @Column(value = "department_id")
+    private Long departmentId;
+
+    @Column(value = "department_code")
+    private String departmentCode;
+
+    @Column(value = "comments")
+    private String comments;
+
     public String getName() {
         return name;
     }
@@ -79,14 +104,87 @@ public class User extends BaseObject<Long> {
         this.roleId = roleId;
     }
 
+
+    public String getUserAccount() {
+        return userAccount;
+    }
+
+    public void setUserAccount(String userAccount) {
+        this.userAccount = userAccount;
+    }
+
+    public String getMobilePhone() {
+        return mobilePhone;
+    }
+
+    public void setMobilePhone(String mobilePhone) {
+        this.mobilePhone = mobilePhone;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getQq() {
+        return qq;
+    }
+
+    public void setQq(String qq) {
+        this.qq = qq;
+    }
+
+    public String getWeixin() {
+        return weixin;
+    }
+
+    public void setWeixin(String weixin) {
+        this.weixin = weixin;
+    }
+
+    public Long getDepartmentId() {
+        return departmentId;
+    }
+
+    public void setDepartmentId(Long departmentId) {
+        this.departmentId = departmentId;
+    }
+
+    public String getDepartmentCode() {
+        return departmentCode;
+    }
+
+    public void setDepartmentCode(String departmentCode) {
+        this.departmentCode = departmentCode;
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
+
     @Override
     public String toString() {
         return "User{" +
-                   "name='" + name + '\'' +
-                   ", token='" + token + '\'' +
-                   ", password='" + password + '\'' +
-                   ", ownApps='" + ownApps + '\'' +
-                   ", roleId=" + roleId +
-                   '}';
+                "name='" + name + '\'' +
+                ", token='" + token + '\'' +
+                ", password='" + password + '\'' +
+                ", ownApps='" + ownApps + '\'' +
+                ", roleId=" + roleId +
+                ", userAccount='" + userAccount + '\'' +
+                ", mobilePhone='" + mobilePhone + '\'' +
+                ", email='" + email + '\'' +
+                ", qq='" + qq + '\'' +
+                ", weixin='" + weixin + '\'' +
+                ", departmentId=" + departmentId +
+                ", departmentCode='" + departmentCode + '\'' +
+                ", comments='" + comments + '\'' +
+                '}';
     }
 }

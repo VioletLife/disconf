@@ -36,8 +36,7 @@ public class SignMgrImpl implements SignMgr {
      */
     @Override
     public User getUserByName(String name) {
-
-        return userDao.getUserByName(name);
+        return userDao.getUserByUserAccount(name);
     }
 
     /**
@@ -45,7 +44,6 @@ public class SignMgrImpl implements SignMgr {
      *
      * @param userPassword
      * @param passwordToBeValidate
-     *
      * @return
      */
     @Override
@@ -70,7 +68,7 @@ public class SignMgrImpl implements SignMgr {
         //
         // 获取用户
         //
-        User user = userDao.getUserByName(phone);
+        User user = userDao.getUserByUserAccount(phone);
 
         userDao.update(user);
 

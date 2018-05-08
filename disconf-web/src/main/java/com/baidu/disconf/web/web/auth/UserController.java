@@ -109,8 +109,13 @@ public class UserController extends BaseController {
         redisLogin.login(request, user, expireTime);
 
         VisitorVo visitorVo = userMgr.getCurVisitor();
-
-        return buildSuccess("visitor", visitorVo);
+        AtomicReference<ResponseMessage> reference = new AtomicReference<>(null);
+        UserResponseVo responseVo = userMgr.login(signin.getName(), signin.getPassword(), Integer.valueOf(1).equals(signin.getRemember()), reference::set);
+        if (reference.get() != null) {
+            return buildResponseMessage(reference.get());
+        } else {
+            return buildSuccess(responseVo);
+        }
     }
 
     /**
@@ -242,6 +247,7 @@ public class UserController extends BaseController {
 
     /**
      * 查询用户信息
+     *
      * @param userId 用户ID
      * @return 用户信息
      */
